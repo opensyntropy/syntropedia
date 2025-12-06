@@ -1,5 +1,10 @@
 # Syntropedia
 
+[![CI](https://github.com/opensyntropy/syntropedia/workflows/CI/badge.svg)](https://github.com/opensyntropy/syntropedia/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Data License: CC BY-SA 4.0](https://img.shields.io/badge/Data%20License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
 Sistema open-source de gestão colaborativa de espécies para agrofloresta e agricultura sintrópica.
 
 ## Sobre o Projeto
