@@ -1,0 +1,96 @@
+{
+  "common": {
+    "species": "Species",
+    "catalog": "Catalog",
+    "home": "Home",
+    "about": "About",
+    "contribute": "Contribute",
+    "login": "Login"
+  },
+  "stratum": {
+    "EMERGENT": "Emergent",
+    "CANOPY": "Canopy",
+    "SUBCANOPY": "Subcanopy",
+    "UNDERSTORY": "Understory",
+    "GROUND_COVER": "Ground Cover"
+  },
+  "successionalStage": {
+    "PIONEER": "Pioneer",
+    "EARLY_SECONDARY": "Early Secondary",
+    "LATE_SECONDARY": "Late Secondary",
+    "CLIMAX": "Climax"
+  },
+  "lifeCycle": {
+    "ANNUAL": "Annual",
+    "BIENNIAL": "Biennial",
+    "PERENNIAL": "Perennial"
+  },
+  "catalog": {
+    "title": "Species Catalog",
+    "description": "Explore {count} cataloged species. Use filters to refine your search.",
+    "filters": "Filters",
+    "clearFilters": "Clear ({count})",
+    "stratum": "Stratum",
+    "successionalStage": "Successional Stage",
+    "lifeCycle": "Life Cycle",
+    "noSpeciesFound": "No species found",
+    "tryAdjustingFilters": "Try adjusting the filters to see more results",
+    "image": "Image",
+    "scientificName": "Scientific Name",
+    "stage": "Stage"
+  },
+  "home": {
+    "hero": {
+      "title": "Syntropedia",
+      "subtitle": "Open Knowledge Encyclopedia on Syntropic Agriculture",
+      "description": "Discover, share, and learn about plant species for regenerative agroforestry systems",
+      "exploreCatalog": "Explore Catalog",
+      "learnMore": "Learn More"
+    },
+    "featured": {
+      "title": "Featured Species",
+      "description": "Discover some of the species cataloged in our database"
+    },
+    "about": {
+      "title": "What is Syntropedia?",
+      "p1": "Syntropedia is an open-source platform that gathers knowledge about plant species for agroforestry systems and syntropic agriculture.",
+      "p2": "Our community documents, shares, and learns about plants that transform agriculture, promoting regenerative and sustainable practices.",
+      "p3": "All data is licensed under Creative Commons, ensuring free access to knowledge for farmers, researchers, and enthusiasts.",
+      "learnMore": "Learn more about the project →"
+    },
+    "contribute": {
+      "title": "How to Contribute?",
+      "step1": {
+        "title": "Login",
+        "description": "Connect via Discourse forum to start contributing"
+      },
+      "step2": {
+        "title": "Add photos",
+        "description": "Contribute images of species you know"
+      },
+      "step3": {
+        "title": "Participate",
+        "description": "Discuss, share experiences, and learn from the community"
+      },
+      "cta": "Start Contributing →"
+    },
+    "statistics": {
+      "species": "Species Cataloged",
+      "photos": "Photos Contributed",
+      "contributors": "Active Contributors"
+    }
+  },
+  "footer": {
+    "description": "Open source encyclopedia of plant species for syntropic agriculture",
+    "quickLinks": "Quick Links",
+    "community": "Community",
+    "forum": "Forum",
+    "discord": "Discord",
+    "github": "GitHub",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "license": "License",
+    "rights": "All data is licensed under Creative Commons BY-SA 4.0"
+  }
+}

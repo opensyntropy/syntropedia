@@ -18,96 +18,93 @@ enum UserRole {
 }
 
 enum SpeciesStatus {
-  RASCUNHO
-  PUBLICADO
-  EM_REVISAO
+  DRAFT
+  PUBLISHED
+  IN_REVIEW
 }
 
-enum Estrato {
-  EMERGENTE
-  ALTO
-  MEDIO
-  BAIXO
-  RASTEIRO
+enum Stratum {
+  EMERGENT
+  CANOPY
+  SUBCANOPY
+  UNDERSTORY
+  GROUND_COVER
 }
 
-enum EstagioSucessional {
-  PIONEIRA
-  SECUNDARIA_INICIAL
-  SECUNDARIA_TARDIA
+enum SuccessionalStage {
+  PIONEER
+  EARLY_SECONDARY
+  LATE_SECONDARY
   CLIMAX
 }
 
-enum CicloVida {
-  ANUAL
-  BIENAL
-  PERENE_CURTA
-  PERENE_MEDIA
-  PERENE_LONGA
-  CENTENARIA
+enum LifeCycle {
+  ANNUAL
+  BIENNIAL
+  PERENNIAL
 }
 
-enum FormatoCopa {
-  CONICA
-  PIRAMIDAL
-  COLUNARE
-  ARREDONDADA
-  GLOBOSA
+enum CanopyShape {
+  CONICAL
+  PYRAMIDAL
+  COLUMNAR
+  ROUNDED
+  GLOBOSE
   OVAL
   IRREGULAR
-  PENDENTE
-  UMBELIFORME
-  PALMEIRA
+  WEEPING
+  UMBRELLA
+  PALM
 }
 
-enum TipoFolhagem {
-  PERENIFOLIA
-  SEMIPERENIFOLIA
-  CADUCIFOLIA
-  SEMIDECIDUA
+enum FoliageType {
+  EVERGREEN
+  SEMI_EVERGREEN
+  DECIDUOUS
+  SEMI_DECIDUOUS
 }
 
-enum VelocidadeCrescimento {
-  MUITO_RAPIDO
-  RAPIDO
-  MEDIO
-  LENTO
-  MUITO_LENTO
+enum GrowthRate {
+  VERY_FAST
+  FAST
+  MEDIUM
+  SLOW
+  VERY_SLOW
 }
 
-enum SistemaRadicular {
-  PIVOTANTE
-  FASCICULADO
-  TUBEROSO
-  ADVENTICIO
-  PNEUMATOFORO
-  ESCORA
-  MISTO
+enum RootSystem {
+  TAPROOT
+  FIBROUS
+  TUBEROUS
+  ADVENTITIOUS
+  PNEUMATOPHORE
+  PROP
+  MIXED
 }
 
-enum ProducaoBiomassa {
-  MUITO_ALTA
-  ALTA
-  MEDIA
-  BAIXA
-  MUITO_BAIXA
+enum BiomassProduction {
+  VERY_HIGH
+  HIGH
+  MEDIUM
+  LOW
+  VERY_LOW
 }
 
-enum UsoPlanta {
-  ALIMENTACAO_HUMANA
-  ALIMENTACAO_ANIMAL
-  MADEIRA
+enum PlantUse {
+  HUMAN_FOOD
+  ANIMAL_FOOD
+  TIMBER
   MEDICINAL
   ORNAMENTAL
-  CERCA_VIVA
-  SOMBRA
-  QUEBRA_VENTO
-  COBERTURA_SOLO
-  MEL
-  FIBRA
-  OLEO
-  LENHA
-  ARTESANATO
+  HEDGING
+  SHADE
+  WINDBREAK
+  GROUND_COVER
+  HONEY
+  FIBER
+  OIL
+  FIREWOOD
+  HANDICRAFT
 }
 
 // Models
@@ -134,52 +131,52 @@ model Species {
   id             String           @id @default(cuid())
   slug           String           @unique
 
-  // Nomenclatura
-  nomeCientifico String           @map("nome_cientifico")
-  genero         String?
-  especie        String?
-  autor          String?
-  nomesPopulares String[]         @map("nomes_populares")
-  sinonimos      String[]
-  familiaBotanica String?         @map("familia_botanica")
-  variedade      String?
+  // Nomenclature
+  scientificName String           @map("scientific_name")
+  genus          String?
+  species        String?
+  author         String?
+  commonNames    String[]         @map("common_names")
+  synonyms       String[]
+  botanicalFamily String?         @map("botanical_family")
+  variety        String?
 
-  // Dados Base
-  estrato              Estrato
-  estagioSucessional   EstagioSucessional @map("estagio_sucessional")
-  cicloVida            CicloVida?         @map("ciclo_vida")
-  cicloVidaAnos        String?            @map("ciclo_vida_anos")
-  alturaMetros         Decimal?           @map("altura_metros") @db.Decimal(5, 2)
-  larguraCopaMetros    Decimal?           @map("largura_copa_metros") @db.Decimal(5, 2)
-  formatoCopa          FormatoCopa?       @map("formato_copa")
+  // Base Data
+  stratum              Stratum
+  successionalStage    SuccessionalStage @map("successional_stage")
+  lifeCycle            LifeCycle?        @map("life_cycle")
+  lifeCycleYears       String?           @map("life_cycle_years")
+  heightMeters         Decimal?          @map("height_meters") @db.Decimal(5, 2)
+  canopyWidthMeters    Decimal?          @map("canopy_width_meters") @db.Decimal(5, 2)
+  canopyShape          CanopyShape?      @map("canopy_shape")
 
-  // Complementares
-  centroOrigem         String?            @map("centro_origem")
-  biomaGlobal          String?            @map("bioma_global")
-  biomaRegional        String[]           @map("bioma_regional")
-  tipoFolhagem         TipoFolhagem?      @map("tipo_folhagem")
-  epocaQuedaFolhas     String?            @map("epoca_queda_folhas")
-  velocidadeCrescimento VelocidadeCrescimento? @map("velocidade_crescimento")
-  sistemaRadicular     SistemaRadicular?  @map("sistema_radicular")
-  fixadoraNitrogenio   Boolean            @default(false) @map("fixadora_nitrogenio")
-  producaoBiomassa     ProducaoBiomassa?  @map("producao_biomassa")
-  temFruto             Boolean            @default(false) @map("tem_fruto")
-  frutoComestivel      Boolean            @default(false) @map("fruto_comestivel")
-  frutificacaoInicio   Int?               @map("frutificacao_inicio")
-  frutificacaoFim      Int?               @map("frutificacao_fim")
+  // Additional Data
+  originCenter         String?           @map("origin_center")
+  globalBiome          String?           @map("global_biome")
+  regionalBiome        String[]          @map("regional_biome")
+  foliageType          FoliageType?      @map("foliage_type")
+  leafDropSeason       String?           @map("leaf_drop_season")
+  growthRate           GrowthRate?       @map("growth_rate")
+  rootSystem           RootSystem?       @map("root_system")
+  nitrogenFixer        Boolean           @default(false) @map("nitrogen_fixer")
+  biomassProduction    BiomassProduction? @map("biomass_production")
+  hasFruit             Boolean           @default(false) @map("has_fruit")
+  edibleFruit          Boolean           @default(false) @map("edible_fruit")
+  fruitingStart        Int?              @map("fruiting_start")
+  fruitingEnd          Int?              @map("fruiting_end")
 
-  // Usos
-  usos                 UsoPlanta[]
+  // Uses
+  uses                 PlantUse[]
 
-  // Propagação
-  metodosPropagacao    String[]           @map("metodos_propagacao")
+  // Propagation
+  propagationMethods   String[]          @map("propagation_methods")
 
-  // Outros
-  observacoes          String?            @db.Text
-  status               SpeciesStatus      @default(RASCUNHO)
-  discourseTopicUrl    String?            @map("discourse_topic_url")
+  // Other
+  observations         String?           @db.Text
+  status               SpeciesStatus     @default(DRAFT)
+  discourseTopicUrl    String?           @map("discourse_topic_url")
 
-  // Metadados
+  // Metadata
   createdById    String   @map("created_by_id")
   createdBy      User     @relation("SpeciesCreator", fields: [createdById], references: [id])
   updatedById    String?  @map("updated_by_id")
@@ -193,20 +190,20 @@ model Species {
 
   @@map("species")
   @@index([slug])
-  @@index([estrato])
-  @@index([estagioSucessional])
+  @@index([stratum])
+  @@index([successionalStage])
   @@index([status])
-  @@index([nomeCientifico])
+  @@index([scientificName])
 }
 
 model Photo {
   id          String   @id @default(cuid())
   url         String
-  legenda     String?
+  caption     String?
   tags        String[]
-  localizacao String?
-  aprovada    Boolean  @default(false)
-  principal   Boolean  @default(false)
+  location    String?
+  approved    Boolean  @default(false)
+  primary     Boolean  @default(false)
 
   speciesId   String   @map("species_id")
   species     Species  @relation(fields: [speciesId], references: [id], onDelete: Cascade)
@@ -217,24 +214,24 @@ model Photo {
 
   @@map("photos")
   @@index([speciesId])
-  @@index([aprovada])
+  @@index([approved])
 }
 
 model ChangeHistory {
-  id               String   @id @default(cuid())
-  camposAlterados  String   @map("campos_alterados")
-  valorAnterior    Json     @map("valor_anterior")
-  valorNovo        Json     @map("valor_novo")
-  motivoAlteracao  String?  @map("motivo_alteracao")
+  id              String   @id @default(cuid())
+  changedFields   String   @map("changed_fields")
+  previousValue   Json     @map("previous_value")
+  newValue        Json     @map("new_value")
+  changeReason    String?  @map("change_reason")
 
-  speciesId        String   @map("species_id")
-  species          Species  @relation(fields: [speciesId], references: [id], onDelete: Cascade)
+  speciesId       String   @map("species_id")
+  species         Species  @relation(fields: [speciesId], references: [id], onDelete: Cascade)
 
-  alteradoPorId    String   @map("alterado_por_id")
-  alteradoPor      User     @relation(fields: [alteradoPorId], references: [id])
-  alteradoEm       DateTime @default(now()) @map("alterado_em")
+  changedById     String   @map("changed_by_id")
+  changedBy       User     @relation(fields: [changedById], references: [id])
+  changedAt       DateTime @default(now()) @map("changed_at")
 
   @@map("change_history")
   @@index([speciesId])
-  @@index([alteradoEm])
+  @@index([changedAt])
 }

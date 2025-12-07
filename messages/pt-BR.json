@@ -1,0 +1,96 @@
+{
+  "common": {
+    "species": "Espécies",
+    "catalog": "Catálogo",
+    "home": "Início",
+    "about": "Sobre",
+    "contribute": "Contribuir",
+    "login": "Entrar"
+  },
+  "stratum": {
+    "EMERGENT": "Emergente",
+    "CANOPY": "Alto",
+    "SUBCANOPY": "Médio",
+    "UNDERSTORY": "Baixo",
+    "GROUND_COVER": "Rasteiro"
+  },
+  "successionalStage": {
+    "PIONEER": "Pioneira",
+    "EARLY_SECONDARY": "Secundária Inicial",
+    "LATE_SECONDARY": "Secundária Tardia",
+    "CLIMAX": "Clímax"
+  },
+  "lifeCycle": {
+    "ANNUAL": "Anual",
+    "BIENNIAL": "Bienal",
+    "PERENNIAL": "Perene"
+  },
+  "catalog": {
+    "title": "Catálogo de Espécies",
+    "description": "Explore {count} espécies catalogadas. Use os filtros para refinar sua busca.",
+    "filters": "Filtros",
+    "clearFilters": "Limpar ({count})",
+    "stratum": "Estrato",
+    "successionalStage": "Estágio Sucessional",
+    "lifeCycle": "Ciclo de Vida",
+    "noSpeciesFound": "Nenhuma espécie encontrada",
+    "tryAdjustingFilters": "Tente ajustar os filtros para ver mais resultados",
+    "image": "Imagem",
+    "scientificName": "Nome Científico",
+    "stage": "Estágio"
+  },
+  "home": {
+    "hero": {
+      "title": "Syntropedia",
+      "subtitle": "Enciclopédia de Conhecimento Aberto sobre Agricultura Sintrópica",
+      "description": "Descubra, compartilhe e aprenda sobre espécies vegetais para sistemas agroflorestais regenerativos",
+      "exploreCatalog": "Explorar Catálogo",
+      "learnMore": "Saiba Mais"
+    },
+    "featured": {
+      "title": "Espécies em Destaque",
+      "description": "Conheça algumas das espécies catalogadas em nossa base de dados"
+    },
+    "about": {
+      "title": "O que é Syntropedia?",
+      "p1": "A Syntropedia é uma plataforma open-source que reúne conhecimento sobre espécies vegetais para sistemas agroflorestais e agricultura sintrópica.",
+      "p2": "Nossa comunidade documenta, compartilha e aprende sobre plantas que transformam a agricultura, promovendo práticas regenerativas e sustentáveis.",
+      "p3": "Todos os dados são licenciados sob Creative Commons, garantindo acesso livre ao conhecimento para agricultores, pesquisadores e entusiastas.",
+      "learnMore": "Saiba mais sobre o projeto →"
+    },
+    "contribute": {
+      "title": "Como Contribuir?",
+      "step1": {
+        "title": "Faça login",
+        "description": "Conecte-se via fórum Discourse para começar a contribuir"
+      },
+      "step2": {
+        "title": "Adicione fotos",
+        "description": "Contribua com imagens das espécies que você conhece"
+      },
+      "step3": {
+        "title": "Participe",
+        "description": "Discuta, compartilhe experiências e aprenda com a comunidade"
+      },
+      "cta": "Começar a Contribuir →"
+    },
+    "statistics": {
+      "species": "Espécies Catalogadas",
+      "photos": "Fotos Contribuídas",
+      "contributors": "Contribuidores Ativos"
+    }
+  },
+  "footer": {
+    "description": "Enciclopédia open source de espécies vegetais para agricultura sintrópica",
+    "quickLinks": "Links Rápidos",
+    "community": "Comunidade",
+    "forum": "Fórum",
+    "discord": "Discord",
+    "github": "GitHub",
+    "legal": "Legal",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Serviço",
+    "license": "Licença",
+    "rights": "Todos os dados são licenciados sob Creative Commons BY-SA 4.0"
+  }
+}
