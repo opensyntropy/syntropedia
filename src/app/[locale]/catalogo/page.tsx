@@ -18,7 +18,10 @@ const mockSpecies = [
     stratum: 'EMERGENT' as const,
     successionalStage: 'CLIMAX' as const,
     lifeCycle: 'PERENNIAL' as const,
+    lifeCycleYears: { min: 100, max: 300 },
     specieType: 'TREE' as const,
+    regionalBiome: ['AMAZON' as const, 'ATLANTIC_FOREST' as const, 'CERRADO' as const],
+    globalBiome: ['TROPICAL_RAINFOREST' as const, 'TROPICAL_DRY_FOREST' as const],
     foliageType: 'SEMI_DECIDUOUS' as const,
     growthRate: 'SLOW' as const,
     uses: ['TIMBER' as const, 'MEDICINAL' as const, 'HONEY' as const],
@@ -37,7 +40,10 @@ const mockSpecies = [
     stratum: 'SUBCANOPY' as const,
     successionalStage: 'PIONEER' as const,
     lifeCycle: 'PERENNIAL' as const,
+    lifeCycleYears: { min: 5, max: 15 },
     specieType: 'HERB' as const,
+    regionalBiome: ['ATLANTIC_FOREST' as const],
+    globalBiome: ['TROPICAL_RAINFOREST' as const, 'SUBTROPICAL_FOREST' as const],
     foliageType: 'EVERGREEN' as const,
     growthRate: 'VERY_FAST' as const,
     uses: ['HUMAN_FOOD' as const, 'ANIMAL_FOOD' as const],
@@ -56,7 +62,10 @@ const mockSpecies = [
     stratum: 'CANOPY' as const,
     successionalStage: 'LATE_SECONDARY' as const,
     lifeCycle: 'PERENNIAL' as const,
+    lifeCycleYears: { min: 50, max: 100 },
     specieType: 'PALM' as const,
+    regionalBiome: ['ATLANTIC_FOREST' as const],
+    globalBiome: ['TROPICAL_RAINFOREST' as const, 'SUBTROPICAL_FOREST' as const],
     foliageType: 'EVERGREEN' as const,
     growthRate: 'MEDIUM' as const,
     uses: ['HUMAN_FOOD' as const, 'ANIMAL_FOOD' as const, 'ORNAMENTAL' as const],
@@ -75,7 +84,10 @@ const mockSpecies = [
     stratum: 'UNDERSTORY' as const,
     successionalStage: 'EARLY_SECONDARY' as const,
     lifeCycle: 'PERENNIAL' as const,
+    lifeCycleYears: { min: 20, max: 50 },
     specieType: 'SHRUB' as const,
+    regionalBiome: ['ATLANTIC_FOREST' as const, 'CERRADO' as const],
+    globalBiome: ['TROPICAL_RAINFOREST' as const, 'SUBTROPICAL_FOREST' as const],
     foliageType: 'EVERGREEN' as const,
     growthRate: 'FAST' as const,
     uses: ['HUMAN_FOOD' as const],
@@ -94,7 +106,10 @@ const mockSpecies = [
     stratum: 'UNDERSTORY' as const,
     successionalStage: 'PIONEER' as const,
     lifeCycle: 'PERENNIAL' as const,
+    lifeCycleYears: { min: 15, max: 25 },
     specieType: 'SHRUB' as const,
+    regionalBiome: ['ATLANTIC_FOREST' as const, 'CAATINGA' as const],
+    globalBiome: ['TROPICAL_DRY_FOREST' as const, 'TROPICAL_SAVANNA' as const],
     foliageType: 'EVERGREEN' as const,
     growthRate: 'FAST' as const,
     uses: ['HUMAN_FOOD' as const, 'MEDICINAL' as const],
@@ -113,7 +128,10 @@ const mockSpecies = [
     stratum: 'SUBCANOPY' as const,
     successionalStage: 'PIONEER' as const,
     lifeCycle: 'PERENNIAL' as const,
+    lifeCycleYears: { min: 30, max: 80 },
     specieType: 'TREE' as const,
+    regionalBiome: ['AMAZON' as const, 'ATLANTIC_FOREST' as const],
+    globalBiome: ['TROPICAL_RAINFOREST' as const],
     foliageType: 'EVERGREEN' as const,
     growthRate: 'VERY_FAST' as const,
     uses: ['HUMAN_FOOD' as const, 'ANIMAL_FOOD' as const, 'SHADE' as const],
@@ -160,6 +178,18 @@ export default function CatalogoPage() {
 
     if (newFilters.specieType && newFilters.specieType.length > 0) {
       filtered = filtered.filter(s => newFilters.specieType!.includes(s.specieType))
+    }
+
+    if (newFilters.regionalBiome && newFilters.regionalBiome.length > 0) {
+      filtered = filtered.filter(s =>
+        s.regionalBiome && s.regionalBiome.some(biome => newFilters.regionalBiome!.includes(biome))
+      )
+    }
+
+    if (newFilters.globalBiome && newFilters.globalBiome.length > 0) {
+      filtered = filtered.filter(s =>
+        s.globalBiome && s.globalBiome.some(biome => newFilters.globalBiome!.includes(biome))
+      )
     }
 
     if (newFilters.foliageType && newFilters.foliageType.length > 0) {

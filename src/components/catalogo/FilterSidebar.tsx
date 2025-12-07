@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
-import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle, type SpecieType, type FoliageType, type GrowthRate, type PlantUse } from '@/types/species'
+import { MultiSelect } from '@/components/ui/multi-select'
+import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle, type SpecieType, type RegionalBiome, type GlobalBiome, type FoliageType, type GrowthRate, type PlantUse } from '@/types/species'
 import { useTranslations } from '@/lib/IntlProvider'
 
 interface FilterSidebarProps {
@@ -44,6 +45,49 @@ const specieTypeOptions: { value: SpecieType; color: string }[] = [
   { value: 'FERN', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
 ]
 
+const regionalBiomeOptions: { value: RegionalBiome; color: string }[] = [
+  // Tropical
+  { value: 'AMAZON', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
+  { value: 'ATLANTIC_FOREST', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
+  { value: 'TROPICAL_RAINFOREST', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
+  { value: 'TROPICAL_DRY_FOREST', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
+  { value: 'TROPICAL_SAVANNA', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'CERRADO', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'CAATINGA', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+  { value: 'PANTANAL', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
+  { value: 'MANGROVE', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
+  // Subtropical
+  { value: 'SUBTROPICAL_FOREST', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
+  { value: 'SUBTROPICAL_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  // Temperate
+  { value: 'TEMPERATE_FOREST', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
+  { value: 'TEMPERATE_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  { value: 'PAMPA', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  { value: 'MEDITERRANEAN', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+  { value: 'CHAPARRAL', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
+  // Boreal
+  { value: 'BOREAL_FOREST', color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' },
+  { value: 'TAIGA', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
+  // Cold
+  { value: 'TUNDRA', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200' },
+  { value: 'ALPINE', color: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
+  // Arid
+  { value: 'DESERT', color: 'bg-red-100 text-red-700 hover:bg-red-200' },
+  { value: 'SEMI_ARID', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+]
+
+const globalBiomeOptions: { value: GlobalBiome; color: string }[] = [
+  { value: 'TROPICAL_RAINFOREST', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
+  { value: 'TROPICAL_DRY_FOREST', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
+  { value: 'TROPICAL_SAVANNA', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'SUBTROPICAL_FOREST', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
+  { value: 'TEMPERATE_FOREST', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
+  { value: 'TEMPERATE_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  { value: 'MEDITERRANEAN', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+  { value: 'DESERT', color: 'bg-red-100 text-red-700 hover:bg-red-200' },
+  { value: 'MANGROVE', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
+]
+
 const foliageTypeOptions: { value: FoliageType; color: string }[] = [
   { value: 'EVERGREEN', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
   { value: 'SEMI_EVERGREEN', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
@@ -76,6 +120,8 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   const tStage = useTranslations('successionalStage')
   const tLifeCycle = useTranslations('lifeCycle')
   const tSpecieType = useTranslations('specieType')
+  const tRegionalBiome = useTranslations('regionalBiome')
+  const tGlobalBiome = useTranslations('globalBiome')
   const tFoliage = useTranslations('foliageType')
   const tGrowth = useTranslations('growthRate')
   const tUse = useTranslations('plantUse')
@@ -112,6 +158,8 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
     (filters.successionalStage?.length || 0) +
     (filters.lifeCycle?.length || 0) +
     (filters.specieType?.length || 0) +
+    (filters.regionalBiome?.length || 0) +
+    (filters.globalBiome?.length || 0) +
     (filters.foliageType?.length || 0) +
     (filters.growthRate?.length || 0) +
     (filters.uses?.length || 0) +
@@ -230,6 +278,44 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                 </Badge>
               ))}
             </div>
+          </div>
+
+          {/* Regional Biome Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('regionalBiome')}</h3>
+            <MultiSelect
+              options={regionalBiomeOptions.map(option => ({
+                value: option.value,
+                label: tRegionalBiome(option.value)
+              }))}
+              value={filters.regionalBiome || []}
+              onChange={(value) => {
+                onFilterChange({
+                  ...filters,
+                  regionalBiome: value.length > 0 ? value as RegionalBiome[] : undefined
+                })
+              }}
+              placeholder={tCatalog('searchPlaceholder')}
+            />
+          </div>
+
+          {/* Global Biome Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('globalBiome')}</h3>
+            <MultiSelect
+              options={globalBiomeOptions.map(option => ({
+                value: option.value,
+                label: tGlobalBiome(option.value)
+              }))}
+              value={filters.globalBiome || []}
+              onChange={(value) => {
+                onFilterChange({
+                  ...filters,
+                  globalBiome: value.length > 0 ? value as GlobalBiome[] : undefined
+                })
+              }}
+              placeholder={tCatalog('searchPlaceholder')}
+            />
           </div>
 
           {/* Foliage Type Filter */}

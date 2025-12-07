@@ -16,6 +16,37 @@ export type GrowthRate = 'VERY_FAST' | 'FAST' | 'MEDIUM' | 'SLOW' | 'VERY_SLOW'
 // Specie type
 export type SpecieType = 'TREE' | 'SHRUB' | 'VINE' | 'PALM' | 'GRASS' | 'HERB' | 'FERN'
 
+// Regional biomes (major global and regional biomes)
+export type RegionalBiome =
+  // Tropical
+  | 'AMAZON'
+  | 'ATLANTIC_FOREST'
+  | 'TROPICAL_RAINFOREST'
+  | 'TROPICAL_DRY_FOREST'
+  | 'TROPICAL_SAVANNA'
+  | 'CERRADO'
+  | 'CAATINGA'
+  | 'PANTANAL'
+  | 'MANGROVE'
+  // Subtropical
+  | 'SUBTROPICAL_FOREST'
+  | 'SUBTROPICAL_GRASSLAND'
+  // Temperate
+  | 'TEMPERATE_FOREST'
+  | 'TEMPERATE_GRASSLAND'
+  | 'PAMPA'
+  | 'MEDITERRANEAN'
+  | 'CHAPARRAL'
+  // Boreal
+  | 'BOREAL_FOREST'
+  | 'TAIGA'
+  // Cold
+  | 'TUNDRA'
+  | 'ALPINE'
+  // Arid
+  | 'DESERT'
+  | 'SEMI_ARID'
+
 // Plant uses
 export type PlantUse =
   | 'HUMAN_FOOD'
@@ -39,6 +70,8 @@ export interface SpeciesFilters {
   successionalStage?: SuccessionalStage[]
   lifeCycle?: LifeCycle[]
   specieType?: SpecieType[]
+  regionalBiome?: RegionalBiome[]
+  globalBiome?: GlobalBiome[]
   foliageType?: FoliageType[]
   growthRate?: GrowthRate[]
   uses?: PlantUse[]
@@ -55,7 +88,10 @@ export interface SpeciesListItem {
   stratum: Stratum
   successionalStage: SuccessionalStage
   lifeCycle: LifeCycle
+  lifeCycleYears?: { min: number; max: number }
   specieType: SpecieType
+  regionalBiome?: RegionalBiome[]
+  globalBiome?: GlobalBiome[]
   foliageType?: FoliageType
   growthRate?: GrowthRate
   uses?: PlantUse[]

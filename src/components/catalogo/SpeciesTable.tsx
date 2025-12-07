@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
-import { TreeDeciduous } from 'lucide-react'
+import { TreeDeciduous, Clock } from 'lucide-react'
 import { type SpeciesListItem } from '@/types/species'
 import { useTranslations } from '@/lib/IntlProvider'
 
@@ -111,6 +111,14 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
                           </span>
                         )}
                       </div>
+                    </div>
+                  )}
+                  {specie.lifeCycleYears && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>
+                        {specie.lifeCycleYears.min}-{specie.lifeCycleYears.max} years
+                      </span>
                     </div>
                   )}
                 </div>
