@@ -25,19 +25,69 @@
     "BIENNIAL": "Bienal",
     "PERENNIAL": "Perenne"
   },
+  "specieType": {
+    "TREE": "Árbol",
+    "SHRUB": "Arbusto",
+    "VINE": "Enredadera",
+    "PALM": "Palmera",
+    "GRASS": "Gramínea",
+    "HERB": "Herbácea",
+    "FERN": "Helecho"
+  },
+  "foliageType": {
+    "EVERGREEN": "Perenne",
+    "SEMI_EVERGREEN": "Semi-Perenne",
+    "DECIDUOUS": "Caduca",
+    "SEMI_DECIDUOUS": "Semi-Caduca"
+  },
+  "growthRate": {
+    "VERY_FAST": "Muy Rápido",
+    "FAST": "Rápido",
+    "MEDIUM": "Medio",
+    "SLOW": "Lento",
+    "VERY_SLOW": "Muy Lento"
+  },
+  "plantUse": {
+    "HUMAN_FOOD": "Alimentación Humana",
+    "ANIMAL_FOOD": "Alimentación Animal",
+    "TIMBER": "Madera",
+    "MEDICINAL": "Medicinal",
+    "ORNAMENTAL": "Ornamental",
+    "HEDGING": "Seto Vivo",
+    "SHADE": "Sombra",
+    "WINDBREAK": "Cortaviento",
+    "GROUND_COVER": "Cobertura del Suelo",
+    "HONEY": "Miel",
+    "FIBER": "Fibra",
+    "OIL": "Aceite",
+    "FIREWOOD": "Leña",
+    "HANDICRAFT": "Artesanía"
+  },
   "catalog": {
     "title": "Catálogo de Especies",
     "description": "Explore {count} especies catalogadas. Use los filtros para refinar su búsqueda.",
     "filters": "Filtros",
     "clearFilters": "Limpiar ({count})",
+    "search": "Buscar",
+    "searchPlaceholder": "Nombre científico o común...",
     "stratum": "Estrato",
     "successionalStage": "Etapa Sucesional",
     "lifeCycle": "Ciclo de Vida",
+    "specieType": "Tipo de Planta",
+    "foliageType": "Tipo de Follaje",
+    "growthRate": "Tasa de Crecimiento",
+    "uses": "Usos",
+    "characteristics": "Características",
+    "nitrogenFixer": "Fija Nitrógeno",
+    "edibleFruit": "Fruto Comestible",
+    "service": "Planta de Servicio",
     "noSpeciesFound": "No se encontraron especies",
     "tryAdjustingFilters": "Intente ajustar los filtros para ver más resultados",
     "image": "Imagen",
     "scientificName": "Nombre Científico",
-    "stage": "Etapa"
+    "stage": "Etapa",
+    "heightLabel": "A",
+    "widthLabel": "An"
   },
   "home": {
     "hero": {

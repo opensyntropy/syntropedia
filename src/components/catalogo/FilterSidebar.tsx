@@ -1,9 +1,11 @@
 'use client'
 
-import { X } from 'lucide-react'
+import { X, Search } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle } from '@/types/species'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle, type SpecieType, type FoliageType, type GrowthRate, type PlantUse } from '@/types/species'
 import { useTranslations } from '@/lib/IntlProvider'
 
 interface FilterSidebarProps {
@@ -32,11 +34,51 @@ const lifeCycleOptions: { value: LifeCycle; color: string }[] = [
   { value: 'PERENNIAL', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
 ]
 
+const specieTypeOptions: { value: SpecieType; color: string }[] = [
+  { value: 'TREE', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
+  { value: 'SHRUB', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  { value: 'VINE', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
+  { value: 'PALM', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
+  { value: 'GRASS', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'HERB', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
+  { value: 'FERN', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
+]
+
+const foliageTypeOptions: { value: FoliageType; color: string }[] = [
+  { value: 'EVERGREEN', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
+  { value: 'SEMI_EVERGREEN', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
+  { value: 'DECIDUOUS', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'SEMI_DECIDUOUS', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
+]
+
+const growthRateOptions: { value: GrowthRate; color: string }[] = [
+  { value: 'VERY_FAST', color: 'bg-red-100 text-red-700 hover:bg-red-200' },
+  { value: 'FAST', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+  { value: 'MEDIUM', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'SLOW', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
+  { value: 'VERY_SLOW', color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' },
+]
+
+const plantUseOptions: { value: PlantUse; color: string }[] = [
+  { value: 'HUMAN_FOOD', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
+  { value: 'ANIMAL_FOOD', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  { value: 'TIMBER', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
+  { value: 'MEDICINAL', color: 'bg-rose-100 text-rose-700 hover:bg-rose-200' },
+  { value: 'ORNAMENTAL', color: 'bg-pink-100 text-pink-700 hover:bg-pink-200' },
+  { value: 'SHADE', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200' },
+  { value: 'HONEY', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'FIREWOOD', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+]
+
 export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   const tCatalog = useTranslations('catalog')
   const tStratum = useTranslations('stratum')
   const tStage = useTranslations('successionalStage')
   const tLifeCycle = useTranslations('lifeCycle')
+  const tSpecieType = useTranslations('specieType')
+  const tFoliage = useTranslations('foliageType')
+  const tGrowth = useTranslations('growthRate')
+  const tUse = useTranslations('plantUse')
 
   const toggleFilter = <T extends string>(
     filterKey: keyof SpeciesFilters,
@@ -53,14 +95,29 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
     })
   }
 
+  const handleSearchChange = (value: string) => {
+    onFilterChange({
+      ...filters,
+      search: value.trim() || undefined,
+    })
+  }
+
   const clearAllFilters = () => {
     onFilterChange({})
   }
 
   const activeFiltersCount =
+    (filters.search ? 1 : 0) +
     (filters.stratum?.length || 0) +
     (filters.successionalStage?.length || 0) +
-    (filters.lifeCycle?.length || 0)
+    (filters.lifeCycle?.length || 0) +
+    (filters.specieType?.length || 0) +
+    (filters.foliageType?.length || 0) +
+    (filters.growthRate?.length || 0) +
+    (filters.uses?.length || 0) +
+    (filters.nitrogenFixer ? 1 : 0) +
+    (filters.edibleFruit ? 1 : 0) +
+    (filters.service ? 1 : 0)
 
   return (
     <div className="lg:sticky lg:top-24 lg:h-fit">
@@ -78,6 +135,21 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
           )}
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Search Input */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('search')}</h3>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Input
+                type="text"
+                placeholder={tCatalog('searchPlaceholder')}
+                value={filters.search || ''}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
+
           {/* Stratum Filter */}
           <div>
             <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('stratum')}</h3>
@@ -137,6 +209,120 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                   {tLifeCycle(option.value)}
                 </Badge>
               ))}
+            </div>
+          </div>
+
+          {/* Specie Type Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('specieType')}</h3>
+            <div className="flex flex-wrap gap-2">
+              {specieTypeOptions.map(option => (
+                <Badge
+                  key={option.value}
+                  className={`cursor-pointer rounded-full border-2 transition-all ${
+                    filters.specieType?.includes(option.value)
+                      ? option.color + ' border-current'
+                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  onClick={() => toggleFilter('specieType', option.value)}
+                >
+                  {tSpecieType(option.value)}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Foliage Type Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('foliageType')}</h3>
+            <div className="flex flex-wrap gap-2">
+              {foliageTypeOptions.map(option => (
+                <Badge
+                  key={option.value}
+                  className={`cursor-pointer rounded-full border-2 transition-all ${
+                    filters.foliageType?.includes(option.value)
+                      ? option.color + ' border-current'
+                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  onClick={() => toggleFilter('foliageType', option.value)}
+                >
+                  {tFoliage(option.value)}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Growth Rate Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('growthRate')}</h3>
+            <div className="flex flex-wrap gap-2">
+              {growthRateOptions.map(option => (
+                <Badge
+                  key={option.value}
+                  className={`cursor-pointer rounded-full border-2 transition-all ${
+                    filters.growthRate?.includes(option.value)
+                      ? option.color + ' border-current'
+                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  onClick={() => toggleFilter('growthRate', option.value)}
+                >
+                  {tGrowth(option.value)}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Plant Uses Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('uses')}</h3>
+            <div className="flex flex-wrap gap-2">
+              {plantUseOptions.map(option => (
+                <Badge
+                  key={option.value}
+                  className={`cursor-pointer rounded-full border-2 transition-all ${
+                    filters.uses?.includes(option.value)
+                      ? option.color + ' border-current'
+                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  onClick={() => toggleFilter('uses', option.value)}
+                >
+                  {tUse(option.value)}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Boolean Characteristics */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('characteristics')}</h3>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={filters.nitrogenFixer || false}
+                  onCheckedChange={(checked) =>
+                    onFilterChange({ ...filters, nitrogenFixer: checked === true ? true : undefined })
+                  }
+                />
+                <span className="text-sm text-gray-700">{tCatalog('nitrogenFixer')}</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={filters.edibleFruit || false}
+                  onCheckedChange={(checked) =>
+                    onFilterChange({ ...filters, edibleFruit: checked === true ? true : undefined })
+                  }
+                />
+                <span className="text-sm text-gray-700">{tCatalog('edibleFruit')}</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={filters.service || false}
+                  onCheckedChange={(checked) =>
+                    onFilterChange({ ...filters, service: checked === true ? true : undefined })
+                  }
+                />
+                <span className="text-sm text-gray-700">{tCatalog('service')}</span>
+              </label>
             </div>
           </div>
         </CardContent>

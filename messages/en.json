@@ -25,19 +25,69 @@
     "BIENNIAL": "Biennial",
     "PERENNIAL": "Perennial"
   },
+  "specieType": {
+    "TREE": "Tree",
+    "SHRUB": "Shrub",
+    "VINE": "Vine",
+    "PALM": "Palm",
+    "GRASS": "Grass",
+    "HERB": "Herb",
+    "FERN": "Fern"
+  },
+  "foliageType": {
+    "EVERGREEN": "Evergreen",
+    "SEMI_EVERGREEN": "Semi-Evergreen",
+    "DECIDUOUS": "Deciduous",
+    "SEMI_DECIDUOUS": "Semi-Deciduous"
+  },
+  "growthRate": {
+    "VERY_FAST": "Very Fast",
+    "FAST": "Fast",
+    "MEDIUM": "Medium",
+    "SLOW": "Slow",
+    "VERY_SLOW": "Very Slow"
+  },
+  "plantUse": {
+    "HUMAN_FOOD": "Human Food",
+    "ANIMAL_FOOD": "Animal Food",
+    "TIMBER": "Timber",
+    "MEDICINAL": "Medicinal",
+    "ORNAMENTAL": "Ornamental",
+    "HEDGING": "Hedging",
+    "SHADE": "Shade",
+    "WINDBREAK": "Windbreak",
+    "GROUND_COVER": "Ground Cover",
+    "HONEY": "Honey",
+    "FIBER": "Fiber",
+    "OIL": "Oil",
+    "FIREWOOD": "Firewood",
+    "HANDICRAFT": "Handicraft"
+  },
   "catalog": {
     "title": "Species Catalog",
     "description": "Explore {count} cataloged species. Use filters to refine your search.",
     "filters": "Filters",
     "clearFilters": "Clear ({count})",
+    "search": "Search",
+    "searchPlaceholder": "Scientific or common name...",
     "stratum": "Stratum",
     "successionalStage": "Successional Stage",
     "lifeCycle": "Life Cycle",
+    "specieType": "Plant Type",
+    "foliageType": "Foliage Type",
+    "growthRate": "Growth Rate",
+    "uses": "Uses",
+    "characteristics": "Characteristics",
+    "nitrogenFixer": "Nitrogen Fixer",
+    "edibleFruit": "Edible Fruit",
+    "service": "Service Plant",
     "noSpeciesFound": "No species found",
     "tryAdjustingFilters": "Try adjusting the filters to see more results",
     "image": "Image",
     "scientificName": "Scientific Name",
-    "stage": "Stage"
+    "stage": "Stage",
+    "heightLabel": "H",
+    "widthLabel": "W"
   },
   "home": {
     "hero": {

@@ -4,18 +4,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import { TreeDeciduous } from 'lucide-react'
 import { type SpeciesListItem } from '@/types/species'
+import { useTranslations } from '@/lib/IntlProvider'
 
 interface SpeciesTableProps {
   species: SpeciesListItem[]
-}
-
-const stratumLabels: Record<string, string> = {
-  EMERGENT: 'Emergent',
-  CANOPY: 'Canopy',
-  SUBCANOPY: 'Subcanopy',
-  UNDERSTORY: 'Understory',
-  GROUND_COVER: 'Ground Cover',
 }
 
 const stratumColors: Record<string, string> = {
@@ -26,24 +20,11 @@ const stratumColors: Record<string, string> = {
   GROUND_COVER: 'bg-yellow-100 text-yellow-700',
 }
 
-const successionalStageLabels: Record<string, string> = {
-  PIONEER: 'Pioneer',
-  EARLY_SECONDARY: 'Early Sec.',
-  LATE_SECONDARY: 'Late Sec.',
-  CLIMAX: 'Climax',
-}
-
 const successionalStageColors: Record<string, string> = {
   PIONEER: 'bg-blue-100 text-blue-700',
   EARLY_SECONDARY: 'bg-indigo-100 text-indigo-700',
   LATE_SECONDARY: 'bg-purple-100 text-purple-700',
   CLIMAX: 'bg-violet-100 text-violet-700',
-}
-
-const lifeCycleLabels: Record<string, string> = {
-  ANNUAL: 'Annual',
-  BIENNIAL: 'Biennial',
-  PERENNIAL: 'Perennial',
 }
 
 const lifeCycleColors: Record<string, string> = {
@@ -53,15 +34,20 @@ const lifeCycleColors: Record<string, string> = {
 }
 
 export function SpeciesTable({ species }: SpeciesTableProps) {
+  const t = useTranslations('catalog')
+  const tStratum = useTranslations('stratum')
+  const tStage = useTranslations('successionalStage')
+  const tLifeCycle = useTranslations('lifeCycle')
+
   if (species.length === 0) {
     return (
       <Card className="flex h-64 items-center justify-center border-gray-200">
         <div className="text-center">
           <p className="text-lg font-medium text-gray-900">
-            No species found
+            {t('noSpeciesFound')}
           </p>
           <p className="mt-1 text-sm text-gray-600">
-            Try adjusting the filters to see more results
+            {t('tryAdjustingFilters')}
           </p>
         </div>
       </Card>
@@ -73,11 +59,11 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
       {/* Table Header (Desktop) */}
       <div className="hidden rounded-lg bg-white px-6 py-4 shadow-sm lg:block">
         <div className="grid grid-cols-[120px_1fr_140px_140px_120px] gap-4 text-sm font-semibold text-gray-700">
-          <div>Image</div>
-          <div>Scientific Name</div>
-          <div>Stratum</div>
-          <div>Stage</div>
-          <div>Life Cycle</div>
+          <div></div>
+          <div></div>
+          <div>{t('stratum')}</div>
+          <div>{t('successionalStage')}</div>
+          <div>{t('lifeCycle')}</div>
         </div>
       </div>
 
@@ -110,33 +96,50 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
                   <p className="text-sm text-gray-600">
                     {specie.commonNames.slice(0, 3).join(', ')}
                   </p>
+                  {(specie.heightMeters || specie.canopyWidthMeters) && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <TreeDeciduous className="h-3.5 w-3.5" />
+                      <div className="flex gap-3">
+                        {specie.heightMeters && (
+                          <span>
+                            {t('heightLabel')}: {specie.heightMeters}m
+                          </span>
+                        )}
+                        {specie.canopyWidthMeters && (
+                          <span>
+                            {t('widthLabel')}: {specie.canopyWidthMeters}m
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Badges - Mobile stacked, Desktop grid */}
                 <div className="flex flex-wrap gap-2 lg:block lg:space-y-1">
                   <div className="lg:hidden">
-                    <span className="text-xs font-medium text-gray-500">Stratum:</span>
+                    <span className="text-xs font-medium text-gray-500">{t('stratum')}:</span>
                   </div>
                   <Badge className={`rounded-full ${stratumColors[specie.stratum]}`}>
-                    {stratumLabels[specie.stratum]}
+                    {tStratum(specie.stratum)}
                   </Badge>
                 </div>
 
                 <div className="flex flex-wrap gap-2 lg:block lg:space-y-1">
                   <div className="lg:hidden">
-                    <span className="text-xs font-medium text-gray-500">Stage:</span>
+                    <span className="text-xs font-medium text-gray-500">{t('stage')}:</span>
                   </div>
                   <Badge className={`rounded-full ${successionalStageColors[specie.successionalStage]}`}>
-                    {successionalStageLabels[specie.successionalStage]}
+                    {tStage(specie.successionalStage)}
                   </Badge>
                 </div>
 
                 <div className="flex flex-wrap gap-2 lg:block lg:space-y-1">
                   <div className="lg:hidden">
-                    <span className="text-xs font-medium text-gray-500">Life Cycle:</span>
+                    <span className="text-xs font-medium text-gray-500">{t('lifeCycle')}:</span>
                   </div>
                   <Badge className={`rounded-full ${lifeCycleColors[specie.lifeCycle]}`}>
-                    {lifeCycleLabels[specie.lifeCycle]}
+                    {tLifeCycle(specie.lifeCycle)}
                   </Badge>
                 </div>
               </div>

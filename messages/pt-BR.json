@@ -25,19 +25,69 @@
     "BIENNIAL": "Bienal",
     "PERENNIAL": "Perene"
   },
+  "specieType": {
+    "TREE": "Árvore",
+    "SHRUB": "Arbusto",
+    "VINE": "Trepadeira",
+    "PALM": "Palmeira",
+    "GRASS": "Gramínea",
+    "HERB": "Herbácea",
+    "FERN": "Samambaia"
+  },
+  "foliageType": {
+    "EVERGREEN": "Perene",
+    "SEMI_EVERGREEN": "Semi-Perene",
+    "DECIDUOUS": "Decídua",
+    "SEMI_DECIDUOUS": "Semi-Decídua"
+  },
+  "growthRate": {
+    "VERY_FAST": "Muito Rápido",
+    "FAST": "Rápido",
+    "MEDIUM": "Médio",
+    "SLOW": "Lento",
+    "VERY_SLOW": "Muito Lento"
+  },
+  "plantUse": {
+    "HUMAN_FOOD": "Alimentação Humana",
+    "ANIMAL_FOOD": "Alimentação Animal",
+    "TIMBER": "Madeira",
+    "MEDICINAL": "Medicinal",
+    "ORNAMENTAL": "Ornamental",
+    "HEDGING": "Cerca Viva",
+    "SHADE": "Sombra",
+    "WINDBREAK": "Quebra-Vento",
+    "GROUND_COVER": "Cobertura de Solo",
+    "HONEY": "Mel",
+    "FIBER": "Fibra",
+    "OIL": "Óleo",
+    "FIREWOOD": "Lenha",
+    "HANDICRAFT": "Artesanato"
+  },
   "catalog": {
     "title": "Catálogo de Espécies",
     "description": "Explore {count} espécies catalogadas. Use os filtros para refinar sua busca.",
     "filters": "Filtros",
     "clearFilters": "Limpar ({count})",
+    "search": "Buscar",
+    "searchPlaceholder": "Nome científico ou popular...",
     "stratum": "Estrato",
     "successionalStage": "Estágio Sucessional",
     "lifeCycle": "Ciclo de Vida",
+    "specieType": "Tipo de Planta",
+    "foliageType": "Tipo de Folhagem",
+    "growthRate": "Taxa de Crescimento",
+    "uses": "Usos",
+    "characteristics": "Características",
+    "nitrogenFixer": "Fixa Nitrogênio",
+    "edibleFruit": "Fruto Comestível",
+    "service": "Planta de Serviço",
     "noSpeciesFound": "Nenhuma espécie encontrada",
     "tryAdjustingFilters": "Tente ajustar os filtros para ver mais resultados",
     "image": "Imagem",
     "scientificName": "Nome Científico",
-    "stage": "Estágio"
+    "stage": "Estágio",
+    "heightLabel": "A",
+    "widthLabel": "L"
   },
   "home": {
     "hero": {
