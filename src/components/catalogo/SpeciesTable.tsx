@@ -59,17 +59,6 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
 
   return (
     <div className="space-y-4">
-      {/* Table Header (Desktop) */}
-      <div className="hidden rounded-lg bg-white px-6 py-4 shadow-sm lg:block">
-        <div className="grid grid-cols-[120px_1fr_140px_140px_120px] gap-4 text-sm font-semibold text-gray-700">
-          <div></div>
-          <div></div>
-          <div>{t('stratum')}</div>
-          <div>{t('successionalStage')}</div>
-          <div>{t('lifeCycle')}</div>
-        </div>
-      </div>
-
       {/* Table Rows */}
       <div className="space-y-3">
         {species.map(specie => (

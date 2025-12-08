@@ -1,28 +1,79 @@
+import { Suspense } from 'react'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { CatalogoClient } from '@/components/catalogo/CatalogoClient'
+import { CatalogSkeleton } from '@/components/catalogo/CatalogSkeleton'
 import { prisma } from '@/lib/prisma'
-import { type SpeciesListItem } from '@/types/species'
+import { type SpeciesListItem, type SpeciesFilters } from '@/types/species'
+import { parseArrayParam, parseBooleanParam, parseNumberParam } from '@/lib/filterParams'
+import { Prisma } from '@prisma/client'
 
-async function getAllSpecies(): Promise<SpeciesListItem[]> {
-  const dbSpecies = await prisma.species.findMany({
-    where: {
-      status: 'PUBLISHED'
-    },
-    include: {
-      photos: {
-        where: { approved: true },
-        orderBy: { primary: 'desc' },
-        take: 1,
-        select: { url: true }
-      }
-    },
-    orderBy: {
-      scientificName: 'asc'
-    }
-  })
+interface CatalogoPageProps {
+  params: { locale: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
 
-  return dbSpecies.map(sp => {
+async function getFilteredSpecies(
+  filters: SpeciesFilters,
+  page: number,
+  pageSize: number
+): Promise<{ species: SpeciesListItem[]; totalCount: number }> {
+  // Build dynamic where clause based on filters
+  const where: Prisma.SpeciesWhereInput = {
+    status: 'PUBLISHED',
+
+    // Text search - match against scientific name and common names
+    ...(filters.search && {
+      OR: [
+        { scientificName: { contains: filters.search, mode: 'insensitive' } },
+        { commonNames: { hasSome: [filters.search] } }
+      ]
+    }),
+
+    // Categorical filters
+    ...(filters.stratum?.length && { stratum: { in: filters.stratum } }),
+    ...(filters.successionalStage?.length && { successionalStage: { in: filters.successionalStage } }),
+    ...(filters.lifeCycle?.length && { lifeCycle: { in: filters.lifeCycle } }),
+    ...(filters.foliageType?.length && { foliageType: { in: filters.foliageType } }),
+    ...(filters.growthRate?.length && { growthRate: { in: filters.growthRate } }),
+
+    // Array filters (regional/global biome, uses)
+    ...(filters.regionalBiome?.length && {
+      regionalBiome: { hasSome: filters.regionalBiome }
+    }),
+    ...(filters.globalBiome?.length && {
+      globalBiome: { in: filters.globalBiome }
+    }),
+    ...(filters.uses?.length && {
+      uses: { hasSome: filters.uses }
+    }),
+
+    // Boolean filters
+    ...(filters.nitrogenFixer && { nitrogenFixer: true }),
+    ...(filters.edibleFruit && { edibleFruit: true }),
+  }
+
+  // Fetch species and total count in parallel for optimal performance
+  const [dbSpecies, totalCount] = await Promise.all([
+    prisma.species.findMany({
+      where,
+      include: {
+        photos: {
+          where: { approved: true },
+          orderBy: { primary: 'desc' },
+          take: 1,
+          select: { url: true }
+        }
+      },
+      orderBy: { scientificName: 'asc' },
+      take: pageSize,
+      skip: (page - 1) * pageSize
+    }),
+    prisma.species.count({ where })
+  ])
+
+  // Transform database results to SpeciesListItem format
+  const species: SpeciesListItem[] = dbSpecies.map(sp => {
     const primaryPhoto = sp.photos.find((_, index) => index === 0)
     // SVG placeholder - no external network call needed
     const placeholderSvg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='800' height='600' fill='%234ade80'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ENo Image%3C/text%3E%3C/svg%3E`
@@ -49,17 +100,42 @@ async function getAllSpecies(): Promise<SpeciesListItem[]> {
       uses: sp.uses || undefined,
       nitrogenFixer: sp.nitrogenFixer || undefined,
       edibleFruit: sp.edibleFruit || undefined,
-      service: sp.nitrogenFixer || false, // Using nitrogenFixer as a proxy for "service"
+      service: sp.nitrogenFixer || false,
       heightMeters,
       canopyWidthMeters,
       fruitingAge: sp.fruitingAge ? { min: 0, max: 20 } : undefined,
       imageUrl
     }
   })
+
+  return { species, totalCount }
 }
 
-export default async function CatalogoPage() {
-  const species = await getAllSpecies()
+export default async function CatalogoPage({ params, searchParams }: CatalogoPageProps) {
+  // Parse filters from URL parameters
+  const filters: SpeciesFilters = {
+    search: searchParams.search as string | undefined,
+    stratum: parseArrayParam(searchParams.stratum),
+    successionalStage: parseArrayParam(searchParams.successionalStage),
+    lifeCycle: parseArrayParam(searchParams.lifeCycle),
+    specieType: parseArrayParam(searchParams.specieType),
+    regionalBiome: parseArrayParam(searchParams.regionalBiome),
+    globalBiome: parseArrayParam(searchParams.globalBiome),
+    foliageType: parseArrayParam(searchParams.foliageType),
+    growthRate: parseArrayParam(searchParams.growthRate),
+    uses: parseArrayParam(searchParams.uses),
+    nitrogenFixer: parseBooleanParam(searchParams.nitrogenFixer),
+    edibleFruit: parseBooleanParam(searchParams.edibleFruit),
+    service: parseBooleanParam(searchParams.service),
+  }
+
+  // Parse pagination
+  const page = parseNumberParam(searchParams.page, 1)
+  const pageSize = 50
+
+  // Fetch filtered species with pagination
+  const { species, totalCount } = await getFilteredSpecies(filters, page, pageSize)
+  const totalPages = Math.ceil(totalCount / pageSize)
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -67,7 +143,15 @@ export default async function CatalogoPage() {
 
       <main className="flex-1 bg-gray-50">
         <div className="container mx-auto px-6 py-8 lg:px-12">
-          <CatalogoClient initialSpecies={species} />
+          <Suspense fallback={<CatalogSkeleton />}>
+            <CatalogoClient
+              species={species}
+              currentFilters={filters}
+              totalCount={totalCount}
+              currentPage={page}
+              totalPages={totalPages}
+            />
+          </Suspense>
         </div>
       </main>
 

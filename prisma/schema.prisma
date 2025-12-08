@@ -193,6 +193,12 @@ model Species {
   @@index([successionalStage])
   @@index([status])
   @@index([scientificName])
+  @@index([lifeCycle])
+  @@index([foliageType])
+  @@index([growthRate])
+  @@index([edibleFruit])
+  @@index([nitrogenFixer])
+  @@index([status, scientificName])
 }
 
 model Photo {
