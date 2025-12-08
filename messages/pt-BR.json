@@ -103,6 +103,8 @@
     "description": "Explore {count} espécies catalogadas. Use os filtros para refinar sua busca.",
     "filters": "Filtros",
     "clearFilters": "Limpar ({count})",
+    "expandAll": "Expandir Tudo",
+    "collapseAll": "Recolher Tudo",
     "search": "Buscar",
     "searchPlaceholder": "Nome científico ou popular...",
     "stratum": "Estrato",
@@ -124,7 +126,9 @@
     "scientificName": "Nome Científico",
     "stage": "Estágio",
     "heightLabel": "A",
-    "widthLabel": "L"
+    "widthLabel": "L",
+    "fruitsAt": "Frutifica aos",
+    "years": "anos"
   },
   "home": {
     "hero": {
@@ -179,5 +183,71 @@
     "terms": "Termos de Serviço",
     "license": "Licença",
     "rights": "Todos os dados são licenciados sob Creative Commons BY-SA 4.0"
+  },
+  "canopyShape": {
+    "CONICAL": "Cônica",
+    "PYRAMIDAL": "Piramidal",
+    "COLUMNAR": "Colunar",
+    "ROUNDED": "Arredondada",
+    "GLOBOSE": "Globosa",
+    "OVAL": "Oval",
+    "IRREGULAR": "Irregular",
+    "WEEPING": "Pendente",
+    "UMBRELLA": "Guarda-chuva",
+    "PALM": "Palmeira"
+  },
+  "rootSystem": {
+    "TAPROOT": "Pivotante",
+    "FIBROUS": "Fibrosa",
+    "TUBEROUS": "Tuberosa",
+    "ADVENTITIOUS": "Adventícia",
+    "PNEUMATOPHORE": "Pneumatóforo",
+    "PROP": "Raízes Escora",
+    "MIXED": "Mista"
+  },
+  "biomassProduction": {
+    "VERY_HIGH": "Muito Alta",
+    "HIGH": "Alta",
+    "MEDIUM": "Média",
+    "LOW": "Baixa",
+    "VERY_LOW": "Muito Baixa"
+  },
+  "speciesDetail": {
+    "backToCatalog": "Voltar ao Catálogo",
+    "nomenclature": "Nomenclatura",
+    "genus": "Gênero",
+    "species": "Espécie",
+    "author": "Autor",
+    "family": "Família Botânica",
+    "variety": "Variedade",
+    "synonyms": "Sinônimos",
+    "forestEcology": "Ecologia Florestal",
+    "stratum": "Estrato",
+    "successionalStage": "Estágio Sucessional",
+    "growthRate": "Taxa de Crescimento",
+    "biomassProduction": "Produção de Biomassa",
+    "nitrogenFixer": "Fixa Nitrogênio",
+    "yes": "Sim",
+    "no": "Não",
+    "physicalCharacteristics": "Características Físicas",
+    "height": "Altura",
+    "canopyWidth": "Largura da Copa",
+    "canopyShape": "Forma da Copa",
+    "rootSystem": "Sistema Radicular",
+    "foliageType": "Tipo de Folhagem",
+    "leafDropSeason": "Época de Queda de Folhas",
+    "observations": "Observações",
+    "habitat": "Habitat e Distribuição",
+    "originCenter": "Origem",
+    "globalBiome": "Bioma Global",
+    "regionalBiomes": "Biomas Regionais",
+    "uses": "Usos e Aplicações",
+    "lifeCycle": "Ciclo de Vida",
+    "type": "Tipo",
+    "lifespan": "Tempo de Vida",
+    "fruitingAge": "Idade de Frutificação",
+    "years": "anos",
+    "fruitsAt": "Frutifica aos",
+    "propagation": "Propagação"
   }
 }

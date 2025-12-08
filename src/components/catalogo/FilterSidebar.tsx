@@ -1,13 +1,16 @@
 'use client'
 
-import { X, Search } from 'lucide-react'
+import { useState } from 'react'
+import { X, Search, ChevronDown } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { MultiSelect } from '@/components/ui/multi-select'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle, type SpecieType, type RegionalBiome, type GlobalBiome, type FoliageType, type GrowthRate, type PlantUse } from '@/types/species'
 import { useTranslations } from '@/lib/IntlProvider'
+import { cn } from '@/lib/utils'
 
 interface FilterSidebarProps {
   filters: SpeciesFilters
@@ -126,6 +129,30 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   const tGrowth = useTranslations('growthRate')
   const tUse = useTranslations('plantUse')
 
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(['stratum', 'successionalStage', 'specieType'])
+  )
+
+  const toggleSection = (section: string, open: boolean) => {
+    setExpandedSections(prev => {
+      const next = new Set(prev)
+      open ? next.add(section) : next.delete(section)
+      return next
+    })
+  }
+
+  const allSections = ['stratum', 'successionalStage', 'lifeCycle', 'specieType',
+                       'regionalBiome', 'globalBiome', 'foliageType', 'growthRate',
+                       'uses', 'characteristics']
+
+  const toggleAll = () => {
+    if (expandedSections.size >= allSections.length) {
+      setExpandedSections(new Set(['stratum']))
+    } else {
+      setExpandedSections(new Set(allSections))
+    }
+  }
+
   const toggleFilter = <T extends string>(
     filterKey: keyof SpeciesFilters,
     value: T
@@ -168,7 +195,7 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
     (filters.service ? 1 : 0)
 
   return (
-    <div className="lg:sticky lg:top-24 lg:h-fit">
+    <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
       <Card className="border-gray-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-lg font-semibold">{tCatalog('filters')}</CardTitle>
@@ -182,6 +209,14 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
             </button>
           )}
         </CardHeader>
+        <div className="px-6 pb-2">
+          <button
+            onClick={toggleAll}
+            className="text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            {expandedSections.size >= allSections.length ? tCatalog('collapseAll') : tCatalog('expandAll')}
+          </button>
+        </div>
         <CardContent className="space-y-6">
           {/* Search Input */}
           <div>
@@ -199,218 +234,368 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
           </div>
 
           {/* Stratum Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('stratum')}</h3>
-            <div className="flex flex-wrap gap-2">
-              {stratumOptions.map(option => (
-                <Badge
-                  key={option.value}
-                  className={`cursor-pointer rounded-full border-2 transition-all ${
-                    filters.stratum?.includes(option.value)
-                      ? option.color + ' border-current'
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => toggleFilter('stratum', option.value)}
-                >
-                  {tStratum(option.value)}
-                </Badge>
-              ))}
+          <Collapsible
+            open={expandedSections.has('stratum')}
+            onOpenChange={(open) => toggleSection('stratum', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('stratum')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('stratum') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {stratumOptions.map(option => (
+                    <Badge
+                      key={option.value}
+                      className={`cursor-pointer rounded-full border-2 transition-all ${
+                        filters.stratum?.includes(option.value)
+                          ? option.color + ' border-current'
+                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={() => toggleFilter('stratum', option.value)}
+                    >
+                      {tStratum(option.value)}
+                    </Badge>
+                  ))}
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
 
           {/* Successional Stage Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">
-              {tCatalog('successionalStage')}
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {successionalStageOptions.map(option => (
-                <Badge
-                  key={option.value}
-                  className={`cursor-pointer rounded-full border-2 transition-all ${
-                    filters.successionalStage?.includes(option.value)
-                      ? option.color + ' border-current'
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => toggleFilter('successionalStage', option.value)}
-                >
-                  {tStage(option.value)}
-                </Badge>
-              ))}
+          <Collapsible
+            open={expandedSections.has('successionalStage')}
+            onOpenChange={(open) => toggleSection('successionalStage', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    {tCatalog('successionalStage')}
+                  </h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('successionalStage') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {successionalStageOptions.map(option => (
+                    <Badge
+                      key={option.value}
+                      className={`cursor-pointer rounded-full border-2 transition-all ${
+                        filters.successionalStage?.includes(option.value)
+                          ? option.color + ' border-current'
+                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={() => toggleFilter('successionalStage', option.value)}
+                    >
+                      {tStage(option.value)}
+                    </Badge>
+                  ))}
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
 
           {/* Life Cycle Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('lifeCycle')}</h3>
-            <div className="flex flex-wrap gap-2">
-              {lifeCycleOptions.map(option => (
-                <Badge
-                  key={option.value}
-                  className={`cursor-pointer rounded-full border-2 transition-all ${
-                    filters.lifeCycle?.includes(option.value)
-                      ? option.color + ' border-current'
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => toggleFilter('lifeCycle', option.value)}
-                >
-                  {tLifeCycle(option.value)}
-                </Badge>
-              ))}
+          <Collapsible
+            open={expandedSections.has('lifeCycle')}
+            onOpenChange={(open) => toggleSection('lifeCycle', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('lifeCycle')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('lifeCycle') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {lifeCycleOptions.map(option => (
+                    <Badge
+                      key={option.value}
+                      className={`cursor-pointer rounded-full border-2 transition-all ${
+                        filters.lifeCycle?.includes(option.value)
+                          ? option.color + ' border-current'
+                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={() => toggleFilter('lifeCycle', option.value)}
+                    >
+                      {tLifeCycle(option.value)}
+                    </Badge>
+                  ))}
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
 
           {/* Specie Type Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('specieType')}</h3>
-            <div className="flex flex-wrap gap-2">
-              {specieTypeOptions.map(option => (
-                <Badge
-                  key={option.value}
-                  className={`cursor-pointer rounded-full border-2 transition-all ${
-                    filters.specieType?.includes(option.value)
-                      ? option.color + ' border-current'
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => toggleFilter('specieType', option.value)}
-                >
-                  {tSpecieType(option.value)}
-                </Badge>
-              ))}
+          <Collapsible
+            open={expandedSections.has('specieType')}
+            onOpenChange={(open) => toggleSection('specieType', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('specieType')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('specieType') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {specieTypeOptions.map(option => (
+                    <Badge
+                      key={option.value}
+                      className={`cursor-pointer rounded-full border-2 transition-all ${
+                        filters.specieType?.includes(option.value)
+                          ? option.color + ' border-current'
+                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={() => toggleFilter('specieType', option.value)}
+                    >
+                      {tSpecieType(option.value)}
+                    </Badge>
+                  ))}
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
 
           {/* Regional Biome Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('regionalBiome')}</h3>
-            <MultiSelect
-              options={regionalBiomeOptions.map(option => ({
-                value: option.value,
-                label: tRegionalBiome(option.value)
-              }))}
-              value={filters.regionalBiome || []}
-              onChange={(value) => {
-                onFilterChange({
-                  ...filters,
-                  regionalBiome: value.length > 0 ? value as RegionalBiome[] : undefined
-                })
-              }}
-              placeholder={tCatalog('searchPlaceholder')}
-            />
-          </div>
+          <Collapsible
+            open={expandedSections.has('regionalBiome')}
+            onOpenChange={(open) => toggleSection('regionalBiome', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('regionalBiome')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('regionalBiome') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <MultiSelect
+                  options={regionalBiomeOptions.map(option => ({
+                    value: option.value,
+                    label: tRegionalBiome(option.value)
+                  }))}
+                  value={filters.regionalBiome || []}
+                  onChange={(value) => {
+                    onFilterChange({
+                      ...filters,
+                      regionalBiome: value.length > 0 ? value as RegionalBiome[] : undefined
+                    })
+                  }}
+                  placeholder={tCatalog('searchPlaceholder')}
+                />
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
 
           {/* Global Biome Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('globalBiome')}</h3>
-            <MultiSelect
-              options={globalBiomeOptions.map(option => ({
-                value: option.value,
-                label: tGlobalBiome(option.value)
-              }))}
-              value={filters.globalBiome || []}
-              onChange={(value) => {
-                onFilterChange({
-                  ...filters,
-                  globalBiome: value.length > 0 ? value as GlobalBiome[] : undefined
-                })
-              }}
-              placeholder={tCatalog('searchPlaceholder')}
-            />
-          </div>
+          <Collapsible
+            open={expandedSections.has('globalBiome')}
+            onOpenChange={(open) => toggleSection('globalBiome', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('globalBiome')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('globalBiome') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <MultiSelect
+                  options={globalBiomeOptions.map(option => ({
+                    value: option.value,
+                    label: tGlobalBiome(option.value)
+                  }))}
+                  value={filters.globalBiome || []}
+                  onChange={(value) => {
+                    onFilterChange({
+                      ...filters,
+                      globalBiome: value.length > 0 ? value as GlobalBiome[] : undefined
+                    })
+                  }}
+                  placeholder={tCatalog('searchPlaceholder')}
+                />
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
 
           {/* Foliage Type Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('foliageType')}</h3>
-            <div className="flex flex-wrap gap-2">
-              {foliageTypeOptions.map(option => (
-                <Badge
-                  key={option.value}
-                  className={`cursor-pointer rounded-full border-2 transition-all ${
-                    filters.foliageType?.includes(option.value)
-                      ? option.color + ' border-current'
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => toggleFilter('foliageType', option.value)}
-                >
-                  {tFoliage(option.value)}
-                </Badge>
-              ))}
+          <Collapsible
+            open={expandedSections.has('foliageType')}
+            onOpenChange={(open) => toggleSection('foliageType', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('foliageType')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('foliageType') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {foliageTypeOptions.map(option => (
+                    <Badge
+                      key={option.value}
+                      className={`cursor-pointer rounded-full border-2 transition-all ${
+                        filters.foliageType?.includes(option.value)
+                          ? option.color + ' border-current'
+                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={() => toggleFilter('foliageType', option.value)}
+                    >
+                      {tFoliage(option.value)}
+                    </Badge>
+                  ))}
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
 
           {/* Growth Rate Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('growthRate')}</h3>
-            <div className="flex flex-wrap gap-2">
-              {growthRateOptions.map(option => (
-                <Badge
-                  key={option.value}
-                  className={`cursor-pointer rounded-full border-2 transition-all ${
-                    filters.growthRate?.includes(option.value)
-                      ? option.color + ' border-current'
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => toggleFilter('growthRate', option.value)}
-                >
-                  {tGrowth(option.value)}
-                </Badge>
-              ))}
+          <Collapsible
+            open={expandedSections.has('growthRate')}
+            onOpenChange={(open) => toggleSection('growthRate', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('growthRate')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('growthRate') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {growthRateOptions.map(option => (
+                    <Badge
+                      key={option.value}
+                      className={`cursor-pointer rounded-full border-2 transition-all ${
+                        filters.growthRate?.includes(option.value)
+                          ? option.color + ' border-current'
+                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={() => toggleFilter('growthRate', option.value)}
+                    >
+                      {tGrowth(option.value)}
+                    </Badge>
+                  ))}
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
 
           {/* Plant Uses Filter */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('uses')}</h3>
-            <div className="flex flex-wrap gap-2">
-              {plantUseOptions.map(option => (
-                <Badge
-                  key={option.value}
-                  className={`cursor-pointer rounded-full border-2 transition-all ${
-                    filters.uses?.includes(option.value)
-                      ? option.color + ' border-current'
-                      : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => toggleFilter('uses', option.value)}
-                >
-                  {tUse(option.value)}
-                </Badge>
-              ))}
+          <Collapsible
+            open={expandedSections.has('uses')}
+            onOpenChange={(open) => toggleSection('uses', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('uses')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('uses') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {plantUseOptions.map(option => (
+                    <Badge
+                      key={option.value}
+                      className={`cursor-pointer rounded-full border-2 transition-all ${
+                        filters.uses?.includes(option.value)
+                          ? option.color + ' border-current'
+                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                      onClick={() => toggleFilter('uses', option.value)}
+                    >
+                      {tUse(option.value)}
+                    </Badge>
+                  ))}
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
 
           {/* Boolean Characteristics */}
-          <div>
-            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('characteristics')}</h3>
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox
-                  checked={filters.nitrogenFixer || false}
-                  onCheckedChange={(checked) =>
-                    onFilterChange({ ...filters, nitrogenFixer: checked === true ? true : undefined })
-                  }
-                />
-                <span className="text-sm text-gray-700">{tCatalog('nitrogenFixer')}</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox
-                  checked={filters.edibleFruit || false}
-                  onCheckedChange={(checked) =>
-                    onFilterChange({ ...filters, edibleFruit: checked === true ? true : undefined })
-                  }
-                />
-                <span className="text-sm text-gray-700">{tCatalog('edibleFruit')}</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox
-                  checked={filters.service || false}
-                  onCheckedChange={(checked) =>
-                    onFilterChange({ ...filters, service: checked === true ? true : undefined })
-                  }
-                />
-                <span className="text-sm text-gray-700">{tCatalog('service')}</span>
-              </label>
+          <Collapsible
+            open={expandedSections.has('characteristics')}
+            onOpenChange={(open) => toggleSection('characteristics', open)}
+          >
+            <div className="space-y-3">
+              <CollapsibleTrigger asChild>
+                <button className="flex w-full items-center justify-between text-left group">
+                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('characteristics')}</h3>
+                  <ChevronDown className={cn(
+                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
+                    expandedSections.has('characteristics') && "rotate-180"
+                  )} />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2">
+                <div className="flex flex-col gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      checked={filters.nitrogenFixer || false}
+                      onCheckedChange={(checked) =>
+                        onFilterChange({ ...filters, nitrogenFixer: checked === true ? true : undefined })
+                      }
+                    />
+                    <span className="text-sm text-gray-700">{tCatalog('nitrogenFixer')}</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      checked={filters.edibleFruit || false}
+                      onCheckedChange={(checked) =>
+                        onFilterChange({ ...filters, edibleFruit: checked === true ? true : undefined })
+                      }
+                    />
+                    <span className="text-sm text-gray-700">{tCatalog('edibleFruit')}</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      checked={filters.service || false}
+                      onCheckedChange={(checked) =>
+                        onFilterChange({ ...filters, service: checked === true ? true : undefined })
+                      }
+                    />
+                    <span className="text-sm text-gray-700">{tCatalog('service')}</span>
+                  </label>
+                </div>
+              </CollapsibleContent>
             </div>
-          </div>
+          </Collapsible>
         </CardContent>
       </Card>
     </div>

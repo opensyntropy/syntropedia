@@ -103,6 +103,8 @@
     "description": "Explore {count} cataloged species. Use filters to refine your search.",
     "filters": "Filters",
     "clearFilters": "Clear ({count})",
+    "expandAll": "Expand All",
+    "collapseAll": "Collapse All",
     "search": "Search",
     "searchPlaceholder": "Scientific or common name...",
     "stratum": "Stratum",
@@ -124,7 +126,9 @@
     "scientificName": "Scientific Name",
     "stage": "Stage",
     "heightLabel": "H",
-    "widthLabel": "W"
+    "widthLabel": "W",
+    "fruitsAt": "Fruits at",
+    "years": "years"
   },
   "home": {
     "hero": {
@@ -179,5 +183,71 @@
     "terms": "Terms of Service",
     "license": "License",
     "rights": "All data is licensed under Creative Commons BY-SA 4.0"
+  },
+  "canopyShape": {
+    "CONICAL": "Conical",
+    "PYRAMIDAL": "Pyramidal",
+    "COLUMNAR": "Columnar",
+    "ROUNDED": "Rounded",
+    "GLOBOSE": "Globose",
+    "OVAL": "Oval",
+    "IRREGULAR": "Irregular",
+    "WEEPING": "Weeping",
+    "UMBRELLA": "Umbrella",
+    "PALM": "Palm"
+  },
+  "rootSystem": {
+    "TAPROOT": "Taproot",
+    "FIBROUS": "Fibrous",
+    "TUBEROUS": "Tuberous",
+    "ADVENTITIOUS": "Adventitious",
+    "PNEUMATOPHORE": "Pneumatophore",
+    "PROP": "Prop Roots",
+    "MIXED": "Mixed"
+  },
+  "biomassProduction": {
+    "VERY_HIGH": "Very High",
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low",
+    "VERY_LOW": "Very Low"
+  },
+  "speciesDetail": {
+    "backToCatalog": "Back to Catalog",
+    "nomenclature": "Nomenclature",
+    "genus": "Genus",
+    "species": "Species",
+    "author": "Author",
+    "family": "Botanical Family",
+    "variety": "Variety",
+    "synonyms": "Synonyms",
+    "forestEcology": "Forest Ecology",
+    "stratum": "Stratum",
+    "successionalStage": "Successional Stage",
+    "growthRate": "Growth Rate",
+    "biomassProduction": "Biomass Production",
+    "nitrogenFixer": "Nitrogen Fixer",
+    "yes": "Yes",
+    "no": "No",
+    "physicalCharacteristics": "Physical Characteristics",
+    "height": "Height",
+    "canopyWidth": "Canopy Width",
+    "canopyShape": "Canopy Shape",
+    "rootSystem": "Root System",
+    "foliageType": "Foliage Type",
+    "leafDropSeason": "Leaf Drop Season",
+    "observations": "Observations",
+    "habitat": "Habitat & Distribution",
+    "originCenter": "Origin",
+    "globalBiome": "Global Biome",
+    "regionalBiomes": "Regional Biomes",
+    "uses": "Uses & Applications",
+    "lifeCycle": "Life Cycle",
+    "type": "Type",
+    "lifespan": "Lifespan",
+    "fruitingAge": "Fruiting Age",
+    "years": "years",
+    "fruitsAt": "Fruits at",
+    "propagation": "Propagation"
   }
 }
