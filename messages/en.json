@@ -98,6 +98,15 @@
     "FIREWOOD": "Firewood",
     "HANDICRAFT": "Handicraft"
   },
+  "search": {
+    "placeholder": "Search species by name...",
+    "searching": "Searching...",
+    "noResults": "No species found for \"{query}\"",
+    "noResultsHint": "Try a different search term or browse the catalog",
+    "viewAllResults": "View all {count} results in catalog",
+    "errorLoading": "Failed to load search results",
+    "minCharacters": "Type at least 2 characters to search"
+  },
   "catalog": {
     "title": "Species Catalog",
     "description": "Explore {count} cataloged species. Use filters to refine your search.",

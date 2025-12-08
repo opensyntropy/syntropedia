@@ -98,6 +98,15 @@
     "FIREWOOD": "Lenha",
     "HANDICRAFT": "Artesanato"
   },
+  "search": {
+    "placeholder": "Buscar espécies por nome...",
+    "searching": "Buscando...",
+    "noResults": "Nenhuma espécie encontrada para \"{query}\"",
+    "noResultsHint": "Tente um termo diferente ou explore o catálogo",
+    "viewAllResults": "Ver todos os {count} resultados no catálogo",
+    "errorLoading": "Falha ao carregar resultados",
+    "minCharacters": "Digite pelo menos 2 caracteres para buscar"
+  },
   "catalog": {
     "title": "Catálogo de Espécies",
     "description": "Explore {count} espécies catalogadas. Use os filtros para refinar sua busca.",

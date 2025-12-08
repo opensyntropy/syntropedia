@@ -143,7 +143,7 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
 
   const allSections = ['stratum', 'successionalStage', 'lifeCycle', 'specieType',
                        'regionalBiome', 'globalBiome', 'foliageType', 'growthRate',
-                       'uses', 'characteristics']
+                       'uses']
 
   const toggleAll = () => {
     if (expandedSections.size >= allSections.length) {
@@ -179,6 +179,89 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
     onFilterChange({})
   }
 
+  const removeFilter = (filterKey: keyof SpeciesFilters, value?: string) => {
+    if (value) {
+      // For array filters (stratum, successionalStage, etc.)
+      const currentValues = filters[filterKey] as string[] | undefined
+      if (currentValues && Array.isArray(currentValues)) {
+        const newValues = currentValues.filter(v => v !== value)
+        onFilterChange({
+          ...filters,
+          [filterKey]: newValues.length > 0 ? newValues : undefined
+        })
+      }
+    } else {
+      // For boolean/string filters (search, service, nitrogenFixer)
+      onFilterChange({ ...filters, [filterKey]: undefined })
+    }
+  }
+
+  const getActiveFiltersList = () => {
+    const activeFilters: Array<{ key: keyof SpeciesFilters; value?: string; label: string }> = []
+
+    // Search
+    if (filters.search) {
+      activeFilters.push({ key: 'search', label: `${tCatalog('search')}: "${filters.search}"` })
+    }
+
+    // Stratum
+    filters.stratum?.forEach(value => {
+      activeFilters.push({ key: 'stratum', value, label: `${tCatalog('stratum')}: ${tStratum(value)}` })
+    })
+
+    // Successional Stage
+    filters.successionalStage?.forEach(value => {
+      activeFilters.push({ key: 'successionalStage', value, label: `${tCatalog('successionalStage')}: ${tStage(value)}` })
+    })
+
+    // Life Cycle
+    filters.lifeCycle?.forEach(value => {
+      activeFilters.push({ key: 'lifeCycle', value, label: `${tCatalog('lifeCycle')}: ${tLifeCycle(value)}` })
+    })
+
+    // Specie Type
+    filters.specieType?.forEach(value => {
+      activeFilters.push({ key: 'specieType', value, label: `${tCatalog('specieType')}: ${tSpecieType(value)}` })
+    })
+
+    // Regional Biome
+    filters.regionalBiome?.forEach(value => {
+      activeFilters.push({ key: 'regionalBiome', value, label: `${tCatalog('regionalBiome')}: ${tRegionalBiome(value)}` })
+    })
+
+    // Global Biome
+    filters.globalBiome?.forEach(value => {
+      activeFilters.push({ key: 'globalBiome', value, label: `${tCatalog('globalBiome')}: ${tGlobalBiome(value)}` })
+    })
+
+    // Foliage Type
+    filters.foliageType?.forEach(value => {
+      activeFilters.push({ key: 'foliageType', value, label: `${tCatalog('foliageType')}: ${tFoliage(value)}` })
+    })
+
+    // Growth Rate
+    filters.growthRate?.forEach(value => {
+      activeFilters.push({ key: 'growthRate', value, label: `${tCatalog('growthRate')}: ${tGrowth(value)}` })
+    })
+
+    // Uses
+    filters.uses?.forEach(value => {
+      activeFilters.push({ key: 'uses', value, label: `${tCatalog('uses')}: ${tUse(value)}` })
+    })
+
+    // Service Plant
+    if (filters.service) {
+      activeFilters.push({ key: 'service', label: tCatalog('service') })
+    }
+
+    // Nitrogen Fixer
+    if (filters.nitrogenFixer) {
+      activeFilters.push({ key: 'nitrogenFixer', label: tCatalog('nitrogenFixer') })
+    }
+
+    return activeFilters
+  }
+
   const activeFiltersCount =
     (filters.search ? 1 : 0) +
     (filters.stratum?.length || 0) +
@@ -191,7 +274,6 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
     (filters.growthRate?.length || 0) +
     (filters.uses?.length || 0) +
     (filters.nitrogenFixer ? 1 : 0) +
-    (filters.edibleFruit ? 1 : 0) +
     (filters.service ? 1 : 0)
 
   return (
@@ -209,7 +291,27 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
             </button>
           )}
         </CardHeader>
-        <div className="px-6 pb-2">
+
+        {/* Active Filters Section */}
+        {activeFiltersCount > 0 && (
+          <div className="px-6 pb-4 border-b border-gray-200">
+            <div className="flex flex-wrap gap-2">
+              {getActiveFiltersList().map((filter, index) => (
+                <Badge
+                  key={`${filter.key}-${filter.value || 'boolean'}-${index}`}
+                  variant="secondary"
+                  className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 pr-1 transition-colors"
+                  onClick={() => removeFilter(filter.key, filter.value)}
+                >
+                  <span className="mr-1">{filter.label}</span>
+                  <X className="h-3 w-3" />
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="px-6 pb-2 pt-4">
           <button
             onClick={toggleAll}
             className="text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors"
@@ -304,6 +406,34 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
               </CollapsibleContent>
             </div>
           </Collapsible>
+
+          {/* Service Plant Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('service')}</h3>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={filters.service || false}
+                onCheckedChange={(checked) =>
+                  onFilterChange({ ...filters, service: checked === true ? true : undefined })
+                }
+              />
+              <span className="text-sm text-gray-700">{tCatalog('service')}</span>
+            </label>
+          </div>
+
+          {/* Nitrogen Fixer Filter */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('nitrogenFixer')}</h3>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={filters.nitrogenFixer || false}
+                onCheckedChange={(checked) =>
+                  onFilterChange({ ...filters, nitrogenFixer: checked === true ? true : undefined })
+                }
+              />
+              <span className="text-sm text-gray-700">{tCatalog('nitrogenFixer')}</span>
+            </label>
+          </div>
 
           {/* Life Cycle Filter */}
           <Collapsible
@@ -548,54 +678,6 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
             </div>
           </Collapsible>
 
-          {/* Boolean Characteristics */}
-          <Collapsible
-            open={expandedSections.has('characteristics')}
-            onOpenChange={(open) => toggleSection('characteristics', open)}
-          >
-            <div className="space-y-3">
-              <CollapsibleTrigger asChild>
-                <button className="flex w-full items-center justify-between text-left group">
-                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('characteristics')}</h3>
-                  <ChevronDown className={cn(
-                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
-                    expandedSections.has('characteristics') && "rotate-180"
-                  )} />
-                </button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2">
-                <div className="flex flex-col gap-3">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      checked={filters.nitrogenFixer || false}
-                      onCheckedChange={(checked) =>
-                        onFilterChange({ ...filters, nitrogenFixer: checked === true ? true : undefined })
-                      }
-                    />
-                    <span className="text-sm text-gray-700">{tCatalog('nitrogenFixer')}</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      checked={filters.edibleFruit || false}
-                      onCheckedChange={(checked) =>
-                        onFilterChange({ ...filters, edibleFruit: checked === true ? true : undefined })
-                      }
-                    />
-                    <span className="text-sm text-gray-700">{tCatalog('edibleFruit')}</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      checked={filters.service || false}
-                      onCheckedChange={(checked) =>
-                        onFilterChange({ ...filters, service: checked === true ? true : undefined })
-                      }
-                    />
-                    <span className="text-sm text-gray-700">{tCatalog('service')}</span>
-                  </label>
-                </div>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
         </CardContent>
       </Card>
     </div>

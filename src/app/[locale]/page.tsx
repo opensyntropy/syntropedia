@@ -3,6 +3,7 @@ import { Hero } from '@/components/layout/Hero'
 import { Statistics } from '@/components/layout/Statistics'
 import { Footer } from '@/components/layout/Footer'
 import { SpeciesCard, type SpeciesCardProps } from '@/components/especies/SpeciesCard'
+import { getTranslations } from '@/lib/getTranslations'
 
 // Mock data for featured species (will be replaced with actual database queries)
 const featuredSpecies: SpeciesCardProps[] = [
@@ -56,7 +57,7 @@ const featuredSpecies: SpeciesCardProps[] = [
   },
 ]
 
-export default function HomePage() {
+export default async function HomePage({ params }: { params: { locale: string } }) {
   // Mock statistics (will be replaced with actual database queries)
   const stats = {
     speciesCount: 6,
@@ -64,22 +65,54 @@ export default function HomePage() {
     contributorsCount: 12,
   }
 
+  // Get translations
+  const tHome = await getTranslations(params.locale, 'home')
+  const tSearch = await getTranslations(params.locale, 'search')
+  const tCatalog = await getTranslations(params.locale, 'catalog')
+  const tStratum = await getTranslations(params.locale, 'stratum')
+
+  // Get all stratum translations
+  const stratumTranslations: Record<string, string> = {
+    EMERGENT: tStratum('EMERGENT'),
+    CANOPY: tStratum('CANOPY'),
+    SUBCANOPY: tStratum('SUBCANOPY'),
+    UNDERSTORY: tStratum('UNDERSTORY'),
+    GROUND_COVER: tStratum('GROUND_COVER'),
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
 
       <main className="flex-1">
-        <Hero />
+        <Hero
+          locale={params.locale}
+          translations={{
+            title: tHome('hero.title'),
+            subtitle: tHome('hero.subtitle'),
+            searchPlaceholder: tSearch('placeholder'),
+            exploreCatalog: tHome('hero.exploreCatalog'),
+            learnMore: tHome('hero.learnMore'),
+          }}
+          searchTranslations={{
+            noResults: tSearch('noResults'),
+            noResultsHint: tSearch('noResultsHint'),
+            viewAllResults: tSearch('viewAllResults'),
+            catalog: tCatalog('title'),
+            edibleFruit: tCatalog('edibleFruit'),
+            stratum: stratumTranslations,
+          }}
+        />
 
         {/* Featured Species Section */}
         <section className="py-16 sm:py-20">
           <div className="container mx-auto px-6 lg:px-12">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
-                Espécies em Destaque
+                {tHome('featured.title')}
               </h2>
               <p className="mx-auto max-w-2xl text-gray-600">
-                Conheça algumas das espécies catalogadas em nossa base de dados
+                {tHome('featured.description')}
               </p>
             </div>
 
@@ -100,34 +133,25 @@ export default function HomePage() {
               {/* About */}
               <div>
                 <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                  O que é Syntropedia?
+                  {tHome('about.title')}
                 </h2>
                 <div className="space-y-4 text-gray-600">
-                  <p>
-                    A Syntropedia é uma plataforma open-source que reúne conhecimento sobre
-                    espécies vegetais para sistemas agroflorestais e agricultura sintrópica.
-                  </p>
-                  <p>
-                    Nossa comunidade documenta, compartilha e aprende sobre plantas que transformam
-                    a agricultura, promovendo práticas regenerativas e sustentáveis.
-                  </p>
-                  <p>
-                    Todos os dados são licenciados sob Creative Commons, garantindo acesso livre
-                    ao conhecimento para agricultores, pesquisadores e entusiastas.
-                  </p>
+                  <p>{tHome('about.p1')}</p>
+                  <p>{tHome('about.p2')}</p>
+                  <p>{tHome('about.p3')}</p>
                 </div>
                 <a
-                  href="/sobre"
+                  href={`/${params.locale}/sobre`}
                   className="mt-6 inline-flex items-center text-primary-600 transition-colors hover:text-primary-700 hover:underline"
                 >
-                  Saiba mais sobre o projeto →
+                  {tHome('about.learnMore')}
                 </a>
               </div>
 
               {/* How to Contribute */}
               <div className="rounded-xl bg-gradient-to-br from-primary-50 to-emerald-50 p-8 shadow-sm sm:p-10">
                 <h2 className="mb-6 text-2xl font-bold text-gray-900">
-                  Como Contribuir?
+                  {tHome('contribute.title')}
                 </h2>
                 <div className="space-y-6">
                   <div className="flex gap-4">
@@ -135,9 +159,11 @@ export default function HomePage() {
                       1
                     </div>
                     <div>
-                      <h3 className="mb-1 font-semibold text-gray-900">Faça login</h3>
+                      <h3 className="mb-1 font-semibold text-gray-900">
+                        {tHome('contribute.step1.title')}
+                      </h3>
                       <p className="text-sm text-gray-700">
-                        Conecte-se via fórum Discourse para começar a contribuir
+                        {tHome('contribute.step1.description')}
                       </p>
                     </div>
                   </div>
@@ -147,9 +173,11 @@ export default function HomePage() {
                       2
                     </div>
                     <div>
-                      <h3 className="mb-1 font-semibold text-gray-900">Adicione fotos</h3>
+                      <h3 className="mb-1 font-semibold text-gray-900">
+                        {tHome('contribute.step2.title')}
+                      </h3>
                       <p className="text-sm text-gray-700">
-                        Contribua com imagens das espécies que você conhece
+                        {tHome('contribute.step2.description')}
                       </p>
                     </div>
                   </div>
@@ -159,19 +187,21 @@ export default function HomePage() {
                       3
                     </div>
                     <div>
-                      <h3 className="mb-1 font-semibold text-gray-900">Participe</h3>
+                      <h3 className="mb-1 font-semibold text-gray-900">
+                        {tHome('contribute.step3.title')}
+                      </h3>
                       <p className="text-sm text-gray-700">
-                        Discuta, compartilhe experiências e aprenda com a comunidade
+                        {tHome('contribute.step3.description')}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <a
-                  href="/login"
+                  href={`/${params.locale}/login`}
                   className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-primary-600 px-6 py-3 font-semibold text-white shadow-md transition-all hover:bg-primary-700 hover:shadow-lg sm:w-auto"
                 >
-                  Começar a Contribuir →
+                  {tHome('contribute.cta')}
                 </a>
               </div>
             </div>

@@ -1,10 +1,11 @@
 'use client'
 
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
-import { TreeDeciduous, Clock } from 'lucide-react'
+import { TreeDeciduous, Clock, Apple } from 'lucide-react'
 import { type SpeciesListItem } from '@/types/species'
 import { useTranslations } from '@/lib/IntlProvider'
 
@@ -34,6 +35,8 @@ const lifeCycleColors: Record<string, string> = {
 }
 
 export function SpeciesTable({ species }: SpeciesTableProps) {
+  const params = useParams()
+  const locale = params.locale as string
   const t = useTranslations('catalog')
   const tStratum = useTranslations('stratum')
   const tStage = useTranslations('successionalStage')
@@ -72,7 +75,7 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
         {species.map(specie => (
           <Link
             key={specie.id}
-            href={`/especies/${specie.slug}`}
+            href={`/${locale}/especies/${specie.slug}`}
             className="block transition-transform hover:scale-[1.01]"
           >
             <Card className="overflow-hidden border-gray-200 transition-shadow hover:shadow-md">
@@ -117,7 +120,15 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Clock className="h-3.5 w-3.5" />
                       <span>
-                        {specie.lifeCycleYears.min}-{specie.lifeCycleYears.max} years
+                        {specie.lifeCycleYears.min}-{specie.lifeCycleYears.max} {t('years')}
+                      </span>
+                    </div>
+                  )}
+                  {specie.fruitingAge && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <Apple className="h-3.5 w-3.5" />
+                      <span>
+                        {t('fruitsAt')}: {specie.fruitingAge.min}-{specie.fruitingAge.max} {t('years')}
                       </span>
                     </div>
                   )}

@@ -162,8 +162,7 @@ model Species {
   biomassProduction    BiomassProduction? @map("biomass_production")
   hasFruit             Boolean           @default(false) @map("has_fruit")
   edibleFruit          Boolean           @default(false) @map("edible_fruit")
-  fruitingStart        Int?              @map("fruiting_start")
-  fruitingEnd          Int?              @map("fruiting_end")
+  fruitingAge          String?           @map("fruiting_age")
 
   // Uses
   uses                 PlantUse[]
