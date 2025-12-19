@@ -18,16 +18,29 @@ async function getFilteredSpecies(
   page: number,
   pageSize: number
 ): Promise<{ species: SpeciesListItem[]; totalCount: number }> {
+  // If there's a search term, first find matching IDs using raw SQL for partial matching
+  let searchMatchingIds: string[] | null = null
+  if (filters.search) {
+    const searchPattern = `%${filters.search.trim()}%`
+    const searchResults = await prisma.$queryRaw<{ id: string }[]>`
+      SELECT id FROM species
+      WHERE status = 'PUBLISHED'
+      AND (
+        scientific_name ILIKE ${searchPattern}
+        OR genus ILIKE ${searchPattern}
+        OR array_to_string(common_names, ' ') ILIKE ${searchPattern}
+      )
+    `
+    searchMatchingIds = searchResults.map(r => r.id)
+  }
+
   // Build dynamic where clause based on filters
   const where: Prisma.SpeciesWhereInput = {
     status: 'PUBLISHED',
 
-    // Text search - match against scientific name and common names
-    ...(filters.search && {
-      OR: [
-        { scientificName: { contains: filters.search, mode: 'insensitive' } },
-        { commonNames: { hasSome: [filters.search] } }
-      ]
+    // Text search - use IDs from raw SQL search
+    ...(searchMatchingIds !== null && {
+      id: { in: searchMatchingIds }
     }),
 
     // Categorical filters
@@ -141,8 +154,8 @@ export default async function CatalogoPage({ params, searchParams }: CatalogoPag
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="flex-1 bg-gray-50">
-        <div className="container mx-auto px-6 py-8 lg:px-12">
+      <main className="flex-1 bg-gray-50 overflow-x-hidden">
+        <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 max-w-[1600px]">
           <Suspense fallback={<CatalogSkeleton />}>
             <CatalogoClient
               species={species}

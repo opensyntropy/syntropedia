@@ -198,7 +198,7 @@ export default async function HomePage({ params }: { params: { locale: string } 
                 </div>
 
                 <a
-                  href={`/${params.locale}/login`}
+                  href="/auth/signin"
                   className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-primary-600 px-6 py-3 font-semibold text-white shadow-md transition-all hover:bg-primary-700 hover:shadow-lg sm:w-auto"
                 >
                   {tHome('contribute.cta')}

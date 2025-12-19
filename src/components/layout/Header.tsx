@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { Sprout, Menu, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { UserMenu } from './UserMenu'
 import { useState } from 'react'
 
 export function Header() {
@@ -44,16 +44,10 @@ export function Header() {
           </Link>
         </nav>
 
-        {/* Desktop Login Button & Language Switcher */}
-        <div className="hidden items-center gap-2 md:flex">
+        {/* Desktop User Menu & Language Switcher */}
+        <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
-          <Button
-            variant="outline"
-            className="rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-50"
-            asChild
-          >
-            <Link href="/login">Login</Link>
-          </Button>
+          <UserMenu />
         </div>
 
         {/* Mobile Menu Button */}
@@ -97,15 +91,9 @@ export function Header() {
             >
               Fórum ↗
             </Link>
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-4 flex items-center justify-between gap-2">
               <LanguageSwitcher />
-              <Button
-                variant="outline"
-                className="flex-1 rounded-full border-2 border-primary-600 text-primary-600"
-                asChild
-              >
-                <Link href="/login">Login</Link>
-              </Button>
+              <UserMenu />
             </div>
           </nav>
         </div>

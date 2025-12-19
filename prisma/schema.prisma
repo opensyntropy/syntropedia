@@ -13,7 +13,7 @@ datasource db {
 // Enums
 enum UserRole {
   USER
-  MODERATOR
+  REVIEWER
   ADMIN
 }
 
@@ -25,10 +25,10 @@ enum SpeciesStatus {
 
 enum Stratum {
   EMERGENT
-  CANOPY
-  SUBCANOPY
-  UNDERSTORY
-  GROUND_COVER
+  HIGH
+  MEDIUM
+  LOW
+  GROUND
 }
 
 enum SuccessionalStage {
@@ -107,22 +107,44 @@ enum PlantUse {
   HANDICRAFT
 }
 
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+}
+
+enum ActivityAction {
+  SPECIES_CREATED
+  SPECIES_UPDATED
+  SPECIES_SUBMITTED
+  REVIEW_APPROVED
+  REVIEW_REJECTED
+  REVIEW_CHANGES_REQUESTED
+  SPECIES_PUBLISHED
+}
+
 // Models
 model User {
-  id         String   @id @default(cuid())
-  name       String
-  email      String   @unique
-  avatar     String?
-  role       UserRole @default(USER)
-  discourseId String? @unique @map("discourse_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  avatar        String?
+  role          UserRole  @default(USER)
+  discourseId   String?   @unique @map("discourse_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   // Relations
   speciesCreated Species[]  @relation("SpeciesCreator")
   speciesUpdated Species[]  @relation("SpeciesUpdater")
   photos         Photo[]
   changeHistory  ChangeHistory[]
+  accounts       Account[]
+  sessions       Session[]
+  reviewsGiven   SpeciesReview[] @relation("ReviewerReviews")
+  activityLogs   ActivityLog[]
 
   @@map("users")
 }
@@ -174,6 +196,7 @@ model Species {
   observations         String?           @db.Text
   status               SpeciesStatus     @default(DRAFT)
   discourseTopicUrl    String?           @map("discourse_topic_url")
+  submittedAt          DateTime?         @map("submitted_at")
 
   // Metadata
   createdById    String   @map("created_by_id")
@@ -186,6 +209,8 @@ model Species {
   // Relations
   photos         Photo[]
   changeHistory  ChangeHistory[]
+  reviews        SpeciesReview[]
+  activityLogs   ActivityLog[]
 
   @@map("species")
   @@index([slug])
@@ -239,4 +264,78 @@ model ChangeHistory {
   @@map("change_history")
   @@index([speciesId])
   @@index([changedAt])
+}
+
+model SpeciesReview {
+  id          String          @id @default(cuid())
+  speciesId   String          @map("species_id")
+  species     Species         @relation(fields: [speciesId], references: [id], onDelete: Cascade)
+  reviewerId  String          @map("reviewer_id")
+  reviewer    User            @relation("ReviewerReviews", fields: [reviewerId], references: [id])
+  decision    ReviewDecision
+  comments    String?         @db.Text
+  reviewedAt  DateTime        @default(now()) @map("reviewed_at")
+
+  @@unique([speciesId, reviewerId])
+  @@map("species_reviews")
+  @@index([speciesId])
+  @@index([reviewerId])
+  @@index([decision])
+}
+
+model ActivityLog {
+  id          String          @id @default(cuid())
+  action      ActivityAction
+  details     Json?
+  speciesId   String?         @map("species_id")
+  species     Species?        @relation(fields: [speciesId], references: [id], onDelete: SetNull)
+  userId      String          @map("user_id")
+  user        User            @relation(fields: [userId], references: [id])
+  createdAt   DateTime        @default(now()) @map("created_at")
+
+  @@map("activity_logs")
+  @@index([speciesId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// NextAuth Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }

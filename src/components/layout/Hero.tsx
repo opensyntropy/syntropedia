@@ -57,7 +57,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
   const debouncedSearch = useMemo(
     () =>
       debounce(async (query: string) => {
-        if (query.length < 2) {
+        if (query.length < 3) {
           setSearchResults([])
           setShowResults(false)
           setTotalCount(0)
@@ -94,7 +94,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
         } finally {
           setIsSearching(false)
         }
-      }, 300),
+      }, 1500),
     []
   )
 
@@ -156,7 +156,6 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
   const handleSelectResult = (slug: string) => {
     // Simply close the dropdown - Link component handles navigation
     setShowResults(false)
-    setSearchQuery('')
   }
 
   const handleViewAll = () => {
@@ -205,7 +204,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               onFocus={() => {
-                if (searchResults.length > 0 && searchQuery.length >= 2) {
+                if (searchResults.length > 0 && searchQuery.length >= 3) {
                   setShowResults(true)
                 }
               }}

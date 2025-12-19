@@ -4,6 +4,7 @@ import { locales } from '@/config/locales';
 import "../globals.css";
 import { notFound } from 'next/navigation';
 import { IntlProvider } from '@/lib/IntlProvider';
+import { SessionProvider } from '@/components/providers/SessionProvider';
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -57,9 +58,11 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <IntlProvider messages={messages} locale={locale}>
-          {children}
-        </IntlProvider>
+        <SessionProvider>
+          <IntlProvider messages={messages} locale={locale}>
+            {children}
+          </IntlProvider>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,12 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { X, Search, ChevronDown } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { useState, useEffect, useRef } from 'react'
+import { Search, ChevronDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { MultiSelect } from '@/components/ui/multi-select'
+import { Badge } from '@/components/ui/badge'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle, type SpecieType, type RegionalBiome, type GlobalBiome, type FoliageType, type GrowthRate, type PlantUse } from '@/types/species'
 import { useTranslations } from '@/lib/IntlProvider'
@@ -133,6 +132,24 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
     new Set(['stratum', 'successionalStage', 'specieType'])
   )
 
+  // Local state for search input (shows what user types immediately)
+  const [searchInput, setSearchInput] = useState(filters.search || '')
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Sync local search input when filters.search changes externally (e.g., clear filters)
+  useEffect(() => {
+    setSearchInput(filters.search || '')
+  }, [filters.search])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [])
+
   const toggleSection = (section: string, open: boolean) => {
     setExpandedSections(prev => {
       const next = new Set(prev)
@@ -169,28 +186,38 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   }
 
   const handleSearchChange = (value: string) => {
-    onFilterChange({
-      ...filters,
-      search: value.trim() || undefined,
-    })
+    // Update local state immediately so user sees what they're typing
+    setSearchInput(value)
+
+    // Clear any existing timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    // Set new timeout to trigger filter after 1.5s
+    searchTimeoutRef.current = setTimeout(() => {
+      const trimmed = value.trim()
+      onFilterChange({
+        ...filters,
+        // Only set search if at least 3 characters, otherwise clear it
+        search: trimmed.length >= 3 ? trimmed : undefined,
+      })
+    }, 1500)
   }
 
   return (
-    <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
-      <Card className="border-gray-200">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg font-semibold">{tCatalog('filters')}</CardTitle>
-        </CardHeader>
-
-        <div className="px-6 pb-2 pt-4">
+    <aside className="hidden lg:block fixed left-0 top-16 bottom-0 w-[300px] bg-white border-r border-gray-200 overflow-y-auto z-40">
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">{tCatalog('filters')}</h2>
           <button
             onClick={toggleAll}
-            className="text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors"
+            className="text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
           >
             {expandedSections.size >= allSections.length ? tCatalog('collapseAll') : tCatalog('expandAll')}
           </button>
         </div>
-        <CardContent className="space-y-6">
+        <div className="space-y-6">
           {/* Search Input */}
           <div>
             <h3 className="mb-3 text-sm font-semibold text-gray-900">{tCatalog('search')}</h3>
@@ -199,7 +226,7 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
               <Input
                 type="text"
                 placeholder={tCatalog('searchPlaceholder')}
-                value={filters.search || ''}
+                value={searchInput}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-9"
               />
@@ -549,8 +576,8 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
             </div>
           </Collapsible>
 
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </div>
+    </aside>
   )
 }

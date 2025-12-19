@@ -205,95 +205,164 @@ export function CatalogoClient({
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
-      {/* Left Column - Filters (static, no loading overlay) */}
+    <>
+      {/* Fixed Left Sidebar - Filters */}
       <FilterSidebar
         filters={currentFilters}
         onFilterChange={handleFilterChange}
       />
 
-      {/* Right Column - Species Table and Pagination (with loading overlay) */}
-      <div className="relative">
-        {/* Filters and Result Count Card */}
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-6 p-4">
-          {/* Header with result count and clear filters button */}
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {totalCount > 0 ? (
-                <>
-                  {t('showingResults').replace('{showing}', String(species.length)).replace('{total}', String(totalCount))}
-                </>
-              ) : (
-                t('noSpeciesFound')
-              )}
-            </h2>
+      {/* Main Content Area - offset by sidebar width on lg+ */}
+      <div className="lg:ml-[300px]">
+        <div className="grid gap-6 xl:grid-cols-[1fr_240px] overflow-hidden">
+          {/* Center Column - Species Table and Pagination (with loading overlay) */}
+          <div className="relative min-w-0">
+            {/* Filters and Result Count Card */}
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm mb-6 p-4">
+              {/* Header with result count and clear filters button */}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {totalCount > 0 ? (
+                    <>
+                      {t('showingResults').replace('{showing}', String(species.length)).replace('{total}', String(totalCount))}
+                    </>
+                  ) : (
+                    t('noSpeciesFound')
+                  )}
+                </h2>
 
-            {hasActiveFilters && (
-              <button
-                onClick={clearAllFilters}
-                className="text-sm text-primary-600 hover:text-primary-700 hover:underline transition-colors font-medium"
-              >
-                {t('clearAllFilters')}
-              </button>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-sm text-primary-600 hover:text-primary-700 hover:underline transition-colors font-medium"
+                  >
+                    {t('clearAllFilters')}
+                  </button>
+                )}
+              </div>
+
+              {/* Active Filters */}
+              {hasActiveFilters && (
+                <div>
+                  <div className="flex flex-wrap gap-2">
+                    {activeFilterTags.map((tag, index) => (
+                      <button
+                        key={`${tag.filterKey}-${tag.arrayValue || 'single'}-${index}`}
+                        onClick={() => removeFilter(tag.filterKey, tag.arrayValue)}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 text-sm rounded-full hover:bg-primary-100 transition-colors"
+                      >
+                        <span className="font-medium">{tag.label}:</span>
+                        <span>{tag.value}</span>
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Loading overlay (only on the table/results area) */}
+            {isPending && (
+              <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-start justify-center pt-20">
+                <div className="flex items-center gap-3 px-4 py-2 bg-white rounded-lg shadow-lg border border-gray-200">
+                  <svg className="animate-spin h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-sm font-medium text-gray-700">{t('loading')}</span>
+                </div>
+              </div>
+            )}
+
+            <SpeciesTable species={species} />
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             )}
           </div>
 
-          {/* Active Filters */}
-          {hasActiveFilters && (
-            <div>
-              <div className="flex flex-wrap gap-2">
-                {activeFilterTags.map((tag, index) => (
-                  <button
-                    key={`${tag.filterKey}-${tag.arrayValue || 'single'}-${index}`}
-                    onClick={() => removeFilter(tag.filterKey, tag.arrayValue)}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 text-sm rounded-full hover:bg-primary-100 transition-colors"
-                  >
-                    <span className="font-medium">{tag.label}:</span>
-                    <span>{tag.value}</span>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
+          {/* Right Column - CTAs (only on xl screens) */}
+          <div className="hidden xl:block space-y-6">
+            <div className="sticky top-24 space-y-6">
+              {/* Community Stats */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="font-semibold text-gray-900 mb-4">{t('communityTitle')}</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">{t('totalSpecies')}</span>
+                    <span className="font-semibold text-primary-600">{totalCount.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">{t('contributors')}</span>
+                    <span className="font-semibold text-primary-600">42</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contribute CTA */}
+              <div className="bg-gradient-to-br from-primary-50 to-emerald-50 border border-primary-200 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                  </button>
-                ))}
+                  </div>
+                  <h3 className="font-semibold text-gray-900">{t('contributeTitle')}</h3>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  {t('contributeDescription')}
+                </p>
+                <a
+                  href="/submissions/new"
+                  className="inline-flex items-center justify-center w-full px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
+                >
+                  {t('contributeButton')}
+                </a>
+              </div>
+
+              {/* Become Reviewer CTA */}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="font-semibold text-gray-900">{t('reviewerTitle')}</h3>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  {t('reviewerDescription')}
+                </p>
+                <a
+                  href={`${process.env.NEXT_PUBLIC_OASIS_URL || 'http://localhost:3001'}/become-reviewer`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors"
+                >
+                  {t('reviewerButton')}
+                </a>
               </div>
             </div>
-          )}
-        </div>
-
-        {/* Loading overlay (only on the table/results area) */}
-        {isPending && (
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-start justify-center pt-20">
-            <div className="flex items-center gap-3 px-4 py-2 bg-white rounded-lg shadow-lg border border-gray-200">
-              <svg className="animate-spin h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span className="text-sm font-medium text-gray-700">{t('loading')}</span>
-            </div>
           </div>
-        )}
-
-        <SpeciesTable species={species} />
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

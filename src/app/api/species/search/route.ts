@@ -8,84 +8,67 @@ export async function GET(request: NextRequest) {
     const limitParam = searchParams.get('limit')
 
     // Validation
-    if (!query || query.trim().length < 2) {
+    if (!query || query.trim().length < 3) {
       return NextResponse.json(
-        { error: 'Query must be at least 2 characters' },
+        { error: 'Query must be at least 3 characters' },
         { status: 400 }
       )
     }
 
     const limit = Math.min(parseInt(limitParam || '8'), 50)
     const sanitizedQuery = query.trim()
+    const searchPattern = `%${sanitizedQuery}%`
 
-    // Execute queries in parallel for better performance
-    const [species, totalCount] = await Promise.all([
-      prisma.species.findMany({
-        where: {
-          status: 'PUBLISHED',
-          OR: [
-            {
-              scientificName: {
-                contains: sanitizedQuery,
-                mode: 'insensitive'
-              }
-            },
-            {
-              commonNames: {
-                hasSome: [sanitizedQuery]
-              }
-            },
-            {
-              genus: {
-                contains: sanitizedQuery,
-                mode: 'insensitive'
-              }
-            }
-          ]
-        },
-        select: {
-          id: true,
-          slug: true,
-          scientificName: true,
-          commonNames: true,
-          stratum: true,
-          successionalStage: true,
-          heightMeters: true,
-          edibleFruit: true,
-          photos: {
-            where: { primary: true },
-            take: 1,
-            select: { url: true }
-          }
-        },
-        take: limit,
-        orderBy: [{ scientificName: 'asc' }]
-      }),
-      prisma.species.count({
-        where: {
-          status: 'PUBLISHED',
-          OR: [
-            {
-              scientificName: {
-                contains: sanitizedQuery,
-                mode: 'insensitive'
-              }
-            },
-            {
-              commonNames: {
-                hasSome: [sanitizedQuery]
-              }
-            },
-            {
-              genus: {
-                contains: sanitizedQuery,
-                mode: 'insensitive'
-              }
-            }
-          ]
+    // Use raw query to enable partial matching on common_names array
+    // This searches: scientific_name, genus, and common_names (converted to string)
+    // Using array_to_string instead of EXISTS subquery for better performance
+    const speciesRows = await prisma.$queryRaw<{ id: string; scientific_name: string }[]>`
+      SELECT id, scientific_name FROM species
+      WHERE status = 'PUBLISHED'
+      AND (
+        scientific_name ILIKE ${searchPattern}
+        OR genus ILIKE ${searchPattern}
+        OR array_to_string(common_names, ' ') ILIKE ${searchPattern}
+      )
+      ORDER BY scientific_name ASC
+      LIMIT ${limit}
+    `
+
+    const totalCountResult = await prisma.$queryRaw<{ count: bigint }[]>`
+      SELECT COUNT(*) as count FROM species
+      WHERE status = 'PUBLISHED'
+      AND (
+        scientific_name ILIKE ${searchPattern}
+        OR genus ILIKE ${searchPattern}
+        OR array_to_string(common_names, ' ') ILIKE ${searchPattern}
+      )
+    `
+
+    const totalCount = Number(totalCountResult[0]?.count || 0)
+    const ids = speciesRows.map(s => s.id)
+
+    // Fetch full species data with photos
+    const species = ids.length > 0 ? await prisma.species.findMany({
+      where: {
+        id: { in: ids }
+      },
+      select: {
+        id: true,
+        slug: true,
+        scientificName: true,
+        commonNames: true,
+        stratum: true,
+        successionalStage: true,
+        heightMeters: true,
+        edibleFruit: true,
+        photos: {
+          where: { primary: true },
+          take: 1,
+          select: { url: true }
         }
-      })
-    ])
+      },
+      orderBy: [{ scientificName: 'asc' }]
+    }) : []
 
     // Transform results to match SearchResult interface
     const results = species.map((s) => ({
