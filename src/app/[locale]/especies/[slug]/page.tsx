@@ -1232,7 +1232,7 @@ export default async function SpeciesDetailPage({
   const species = await getSpeciesFromDb(params.slug)
 
   if (!species) {
-    redirect(`/${params.locale}/catalogo`)
+    redirect('/catalogo')
   }
 
   const t = await getTranslations(params.locale, 'speciesDetail')
@@ -1256,7 +1256,7 @@ export default async function SpeciesDetailPage({
       <div className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <Link
-            href={`/${params.locale}/catalogo`}
+            href="/catalogo"
             className="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900"
           >
             <ArrowLeft className="h-4 w-4" />

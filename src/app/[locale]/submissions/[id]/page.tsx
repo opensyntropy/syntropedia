@@ -38,7 +38,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
   }
 
   if (!canViewSubmission(session, submission)) {
-    redirect(`/${locale}/submissions`)
+    redirect('/submissions')
   }
 
   // Get translations
@@ -69,7 +69,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
 
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="mb-6">
-            <Link href={`/${locale}/submissions/${id}`}>
+            <Link href={`/submissions/${id}`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t('backToDetails')}
@@ -135,7 +135,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link href={`/${locale}/submissions`}>
+          <Link href="/submissions">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('backToSubmissions')}
@@ -169,7 +169,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
 
                   <div className="flex gap-2">
                     {canEdit && submission.status === SpeciesStatus.DRAFT && (
-                      <Link href={`/${locale}/submissions/${id}?edit=true`}>
+                      <Link href={`/submissions/${id}?edit=true`}>
                         <Button variant="outline" size="sm">
                           <Edit className="h-4 w-4 mr-2" />
                           {t('edit')}
@@ -179,7 +179,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                     {userIsReviewer &&
                       submission.status === SpeciesStatus.IN_REVIEW &&
                       submission.createdById !== session.user.id && (
-                        <Link href={`/${locale}/submissions/${id}/review`}>
+                        <Link href={`/submissions/${id}/review`}>
                           <Button size="sm">
                             {t('review')}
                           </Button>

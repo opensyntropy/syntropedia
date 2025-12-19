@@ -31,7 +31,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
   const { locale, id } = await params
 
   if (!isReviewer(session)) {
-    redirect(`/${locale}/submissions`)
+    redirect('/submissions')
   }
 
   const submission = await getSubmissionById(id)
@@ -41,7 +41,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
   }
 
   if (!canReview(session, submission)) {
-    redirect(`/${locale}/submissions/${id}`)
+    redirect(`/submissions/${id}`)
   }
 
   const reviewStatus = await getReviewStatus(id)
@@ -65,7 +65,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link href={`/${locale}/submissions/${id}`}>
+          <Link href={`/submissions/${id}`}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               {tSub('backToDetails')}

@@ -240,7 +240,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
             className="rounded-xl bg-primary-600 px-7 shadow-md transition-all hover:bg-primary-700 hover:shadow-lg"
             asChild
           >
-            <Link href={`/${locale}/catalogo`}>
+            <Link href="/catalogo">
               {translations.exploreCatalog}
             </Link>
           </Button>
@@ -250,7 +250,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
             className="rounded-xl border-2 border-primary-600 text-primary-600 transition-all hover:bg-primary-50"
             asChild
           >
-            <Link href={`/${locale}/sobre`}>
+            <Link href="/sobre">
               {translations.learnMore}
             </Link>
           </Button>

@@ -50,7 +50,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
               {userIsReviewer ? t('allSubmissions') : t('yourSubmissions')}
             </p>
           </div>
-          <Link href={`/${locale}/submissions/new`}>
+          <Link href="/submissions/new">
             <Button>
               <Plus className="h-4 w-4 mr-2" />
               {t('newSpecies')}
@@ -60,22 +60,22 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
 
         {/* Status Filter Tabs */}
         <div className="flex gap-2 mb-6">
-          <Link href={`/${locale}/submissions`}>
+          <Link href="/submissions">
             <Button variant={!status ? 'default' : 'outline'} size="sm">
               {t('all')}
             </Button>
           </Link>
-          <Link href={`/${locale}/submissions?status=DRAFT`}>
+          <Link href="/submissions?status=DRAFT">
             <Button variant={status === 'DRAFT' ? 'default' : 'outline'} size="sm">
               {t('draft')}
             </Button>
           </Link>
-          <Link href={`/${locale}/submissions?status=IN_REVIEW`}>
+          <Link href="/submissions?status=IN_REVIEW">
             <Button variant={status === 'IN_REVIEW' ? 'default' : 'outline'} size="sm">
               {t('inReview')}
             </Button>
           </Link>
-          <Link href={`/${locale}/submissions?status=PUBLISHED`}>
+          <Link href="/submissions?status=PUBLISHED">
             <Button variant={status === 'PUBLISHED' ? 'default' : 'outline'} size="sm">
               {t('published')}
             </Button>
@@ -87,7 +87,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground mb-4">{t('noSubmissions')}</p>
-              <Link href={`/${locale}/submissions/new`}>
+              <Link href="/submissions/new">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
                   {t('createFirst')}
@@ -130,14 +130,14 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Link href={`/${locale}/submissions/${submission.id}`}>
+                        <Link href={`/submissions/${submission.id}`}>
                           <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4 mr-1" />
                             {t('view')}
                           </Button>
                         </Link>
                         {submission.status === SpeciesStatus.DRAFT && (
-                          <Link href={`/${locale}/submissions/${submission.id}?edit=true`}>
+                          <Link href={`/submissions/${submission.id}?edit=true`}>
                             <Button variant="outline" size="sm">
                               <Edit className="h-4 w-4 mr-1" />
                               {t('edit')}
@@ -147,7 +147,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
                         {submission.status === SpeciesStatus.IN_REVIEW &&
                           userIsReviewer &&
                           submission.createdById !== session.user.id && (
-                            <Link href={`/${locale}/submissions/${submission.id}/review`}>
+                            <Link href={`/submissions/${submission.id}/review`}>
                               <Button size="sm">
                                 {t('review')}
                               </Button>
@@ -166,7 +166,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
         {result.totalPages > 1 && (
           <div className="flex justify-center gap-2 mt-8">
             {result.page > 1 && (
-              <Link href={`/${locale}/submissions?page=${result.page - 1}${status ? `&status=${status}` : ''}`}>
+              <Link href={`/submissions?page=${result.page - 1}${status ? `&status=${status}` : ''}`}>
                 <Button variant="outline">{t('previous')}</Button>
               </Link>
             )}
@@ -174,7 +174,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
               {t('pageOf').replace('{page}', String(result.page)).replace('{total}', String(result.totalPages))}
             </span>
             {result.page < result.totalPages && (
-              <Link href={`/${locale}/submissions?page=${result.page + 1}${status ? `&status=${status}` : ''}`}>
+              <Link href={`/submissions?page=${result.page + 1}${status ? `&status=${status}` : ''}`}>
                 <Button variant="outline">{t('next')}</Button>
               </Link>
             )}

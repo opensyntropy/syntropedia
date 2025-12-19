@@ -141,7 +141,7 @@ export default async function HomePage({ params }: { params: { locale: string } 
                   <p>{tHome('about.p3')}</p>
                 </div>
                 <a
-                  href={`/${params.locale}/sobre`}
+                  href="/sobre"
                   className="mt-6 inline-flex items-center text-primary-600 transition-colors hover:text-primary-700 hover:underline"
                 >
                   {tHome('about.learnMore')}

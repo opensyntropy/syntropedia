@@ -64,7 +64,7 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
         {species.map(specie => (
           <Link
             key={specie.id}
-            href={`/${locale}/especies/${specie.slug}`}
+            href={`/especies/${specie.slug}`}
             className="block transition-transform hover:scale-[1.01]"
           >
             <Card className="overflow-hidden border-gray-200 transition-shadow hover:shadow-md">

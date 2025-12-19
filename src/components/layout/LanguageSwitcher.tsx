@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Globe } from 'lucide-react'
 import {
   DropdownMenu,
@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import { useLocale } from '@/hooks/useLocale'
 
 const languages = [
   { code: 'pt-BR', name: 'Português (BR)', flag: '🇧🇷' },
@@ -16,22 +17,18 @@ const languages = [
   { code: 'es', name: 'Español', flag: '🇪🇸' },
 ]
 
-function useLocale() {
-  const pathname = usePathname()
-  const locale = pathname.split('/')[1]
-  return locale || 'pt-BR'
-}
+const COOKIE_NAME = 'NEXT_LOCALE'
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365 // 1 year
 
 export function LanguageSwitcher() {
   const locale = useLocale()
   const router = useRouter()
-  const pathname = usePathname()
 
   const handleLanguageChange = (newLocale: string) => {
-    // Remove the current locale from the pathname
-    const pathWithoutLocale = pathname.replace(`/${locale}`, '')
-    // Navigate to the new locale
-    router.push(`/${newLocale}${pathWithoutLocale}`)
+    // Set the locale cookie
+    document.cookie = `${COOKIE_NAME}=${newLocale}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax`
+    // Refresh the page to apply the new locale
+    router.refresh()
   }
 
   const currentLanguage = languages.find((lang) => lang.code === locale)
