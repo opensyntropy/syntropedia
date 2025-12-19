@@ -13,8 +13,9 @@ import { SpeciesForm } from '@/components/submissions/SpeciesForm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Edit, Send } from 'lucide-react'
+import { ArrowLeft, Edit, Send, Image as ImageIcon } from 'lucide-react'
 import { SpeciesStatus, ReviewDecision } from '@prisma/client'
+import { PHOTO_FRAGMENT_TAGS, type PhotoFragmentTag } from '@/lib/validations/species'
 
 interface SubmissionDetailPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -50,6 +51,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
   const tFoliage = await getTranslations(locale, 'foliageType')
   const tGrowth = await getTranslations(locale, 'growthRate')
   const tUse = await getTranslations(locale, 'plantUse')
+  const tPhotos = await getTranslations(locale, 'photoTags')
 
   const canEdit = canEditSubmission(session, submission)
   const userIsReviewer = isReviewer(session)
@@ -120,6 +122,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
               key: p.url.split('/').pop() || p.id,
               caption: p.caption || undefined,
               primary: p.primary,
+              tags: p.tags || [],
             }))}
           />
         </main>
@@ -301,6 +304,54 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                 </CardHeader>
                 <CardContent>
                   <p className="whitespace-pre-wrap">{submission.observations}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Photos */}
+            {submission.photos.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ImageIcon className="h-5 w-5" />
+                    {tPhotos('title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {submission.photos.map((photo, index) => (
+                      <div key={photo.id} className="border rounded-lg overflow-hidden">
+                        <div className="relative aspect-video bg-gray-100">
+                          <img
+                            src={photo.url}
+                            alt={photo.caption || `Photo ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          {photo.primary && (
+                            <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded">
+                              {tPhotos('primary')}
+                            </span>
+                          )}
+                        </div>
+                        {(photo.caption || (photo.tags && photo.tags.length > 0)) && (
+                          <div className="p-3 space-y-2">
+                            {photo.caption && (
+                              <p className="text-sm text-muted-foreground">{photo.caption}</p>
+                            )}
+                            {photo.tags && photo.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {photo.tags.map((tag) => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">
+                                    {tPhotos(tag as PhotoFragmentTag)}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             )}

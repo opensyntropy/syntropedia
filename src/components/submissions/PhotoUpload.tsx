@@ -4,7 +4,9 @@ import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react'
+import { PHOTO_FRAGMENT_TAGS, type PhotoFragmentTag } from '@/lib/validations/species'
 
 export interface UploadedPhoto {
   id?: string
@@ -12,6 +14,7 @@ export interface UploadedPhoto {
   key: string
   caption?: string
   primary?: boolean
+  tags?: string[]
 }
 
 interface PhotoUploadProps {
@@ -32,6 +35,8 @@ interface Translations {
   primary: string
   remove: string
   maxPhotosReached: string
+  plantParts: string
+  tags: Record<PhotoFragmentTag, string>
 }
 
 const translationsByLocale: Record<string, Translations> = {
@@ -45,6 +50,15 @@ const translationsByLocale: Record<string, Translations> = {
     primary: 'Primary',
     remove: 'Remove',
     maxPhotosReached: 'Maximum photos reached',
+    plantParts: 'Plant parts',
+    tags: {
+      whole: 'Whole',
+      leaf: 'Leaf',
+      trunk: 'Trunk',
+      fruit: 'Fruit',
+      seeds: 'Seeds',
+      flower: 'Flower',
+    },
   },
   'pt-BR': {
     title: 'Fotos',
@@ -56,6 +70,15 @@ const translationsByLocale: Record<string, Translations> = {
     primary: 'Principal',
     remove: 'Remover',
     maxPhotosReached: 'Número máximo de fotos atingido',
+    plantParts: 'Partes da planta',
+    tags: {
+      whole: 'Inteira',
+      leaf: 'Folha',
+      trunk: 'Tronco',
+      fruit: 'Fruto',
+      seeds: 'Sementes',
+      flower: 'Flor',
+    },
   },
   es: {
     title: 'Fotos',
@@ -67,6 +90,15 @@ const translationsByLocale: Record<string, Translations> = {
     primary: 'Principal',
     remove: 'Eliminar',
     maxPhotosReached: 'Número máximo de fotos alcanzado',
+    plantParts: 'Partes de la planta',
+    tags: {
+      whole: 'Entera',
+      leaf: 'Hoja',
+      trunk: 'Tronco',
+      fruit: 'Fruto',
+      seeds: 'Semillas',
+      flower: 'Flor',
+    },
   },
 }
 
@@ -189,6 +221,21 @@ export function PhotoUpload({
     onPhotosChange(newPhotos)
   }
 
+  const toggleTag = (index: number, tag: PhotoFragmentTag) => {
+    const newPhotos = photos.map((photo, i) => {
+      if (i !== index) return photo
+      const currentTags = photo.tags || []
+      const hasTag = currentTags.includes(tag)
+      return {
+        ...photo,
+        tags: hasTag
+          ? currentTags.filter(t => t !== tag)
+          : [...currentTags, tag],
+      }
+    })
+    onPhotosChange(newPhotos)
+  }
+
   return (
     <Card>
       <CardContent className="pt-6 space-y-4">
@@ -228,45 +275,72 @@ export function PhotoUpload({
 
         {/* Photo Grid */}
         {photos.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {photos.map((photo, index) => (
-              <div key={photo.key} className="relative group">
-                <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src={photo.url}
-                    alt={`Photo ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+              <div key={photo.key} className="border rounded-lg p-3 space-y-3">
+                {/* Photo with overlay */}
+                <div className="relative group">
+                  <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
+                    <img
+                      src={photo.url}
+                      alt={`Photo ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
-                {/* Primary Badge */}
-                {photo.primary && (
-                  <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded">
-                    {t.primary}
-                  </span>
-                )}
+                  {/* Primary Badge */}
+                  {photo.primary && (
+                    <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded">
+                      {t.primary}
+                    </span>
+                  )}
 
-                {/* Actions Overlay */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col items-center justify-center gap-2">
-                  {!photo.primary && (
+                  {/* Actions Overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex flex-col items-center justify-center gap-2">
+                    {!photo.primary && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => setPrimary(index)}
+                      >
+                        {t.setPrimary}
+                      </Button>
+                    )}
                     <Button
                       type="button"
                       size="sm"
-                      variant="secondary"
-                      onClick={() => setPrimary(index)}
+                      variant="destructive"
+                      onClick={() => removePhoto(index)}
                     >
-                      {t.setPrimary}
+                      <X className="h-4 w-4 mr-1" />
+                      {t.remove}
                     </Button>
-                  )}
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => removePhoto(index)}
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    {t.remove}
-                  </Button>
+                  </div>
+                </div>
+
+                {/* Tag Selection */}
+                <div className="space-y-1.5">
+                  <p className="text-xs text-muted-foreground">{t.plantParts}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {PHOTO_FRAGMENT_TAGS.map(tag => {
+                      const isSelected = (photo.tags || []).includes(tag)
+                      return (
+                        <Badge
+                          key={tag}
+                          variant={isSelected ? 'default' : 'outline'}
+                          className={`cursor-pointer text-xs ${
+                            isSelected
+                              ? 'bg-primary hover:bg-primary/80'
+                              : 'hover:bg-gray-100'
+                          }`}
+                          onClick={() => toggleTag(index, tag)}
+                        >
+                          {t.tags[tag]}
+                        </Badge>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             ))}

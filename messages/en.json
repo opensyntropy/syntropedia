@@ -343,6 +343,17 @@
     "changesRequested": "Requested changes",
     "published": "Published"
   },
+  "photoTags": {
+    "title": "Photos",
+    "primary": "Primary",
+    "plantParts": "Plant parts",
+    "whole": "Whole",
+    "leaf": "Leaf",
+    "trunk": "Trunk",
+    "fruit": "Fruit",
+    "seeds": "Seeds",
+    "flower": "Flower"
+  },
   "speciesDetail": {
     "backToCatalog": "Back to Catalog",
     "nomenclature": "Nomenclature",

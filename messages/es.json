@@ -380,5 +380,16 @@
     "rejected": "Rechazó",
     "changesRequested": "Solicitó cambios",
     "published": "Publicó"
+  },
+  "photoTags": {
+    "title": "Fotos",
+    "primary": "Principal",
+    "plantParts": "Partes de la planta",
+    "whole": "Entera",
+    "leaf": "Hoja",
+    "trunk": "Tronco",
+    "fruit": "Fruto",
+    "seeds": "Semillas",
+    "flower": "Flor"
   }
 }

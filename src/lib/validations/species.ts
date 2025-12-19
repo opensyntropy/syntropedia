@@ -1,5 +1,11 @@
 import { z } from 'zod'
 
+// Photo fragment tags for identifying plant parts in images
+export const PHOTO_FRAGMENT_TAGS = [
+  'whole', 'leaf', 'trunk', 'fruit', 'seeds', 'flower'
+] as const
+export type PhotoFragmentTag = typeof PHOTO_FRAGMENT_TAGS[number]
+
 // Helper to convert empty strings to undefined for optional enums
 const optionalEnum = <T extends readonly [string, ...string[]]>(values: T) =>
   z.union([z.enum(values), z.literal('')]).transform(val => val === '' ? undefined : val).optional()

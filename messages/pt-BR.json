@@ -343,6 +343,17 @@
     "changesRequested": "Solicitou alterações",
     "published": "Publicou"
   },
+  "photoTags": {
+    "title": "Fotos",
+    "primary": "Principal",
+    "plantParts": "Partes da planta",
+    "whole": "Inteira",
+    "leaf": "Folha",
+    "trunk": "Tronco",
+    "fruit": "Fruto",
+    "seeds": "Sementes",
+    "flower": "Flor"
+  },
   "speciesDetail": {
     "backToCatalog": "Voltar ao Catálogo",
     "nomenclature": "Nomenclatura",

@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { withAuth, AuthenticatedRequest } from '@/lib/auth/api'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { PHOTO_FRAGMENT_TAGS } from '@/lib/validations/species'
 
 const photoSchema = z.object({
   url: z.string().url(),
   key: z.string().min(1),
   caption: z.string().optional(),
   primary: z.boolean().optional().default(false),
+  tags: z.array(z.enum(PHOTO_FRAGMENT_TAGS)).optional().default([]),
 })
 
 const photosSchema = z.array(photoSchema)
@@ -84,6 +86,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest, { params }: { par
           url: photo.url,
           caption: photo.caption,
           primary: photo.primary,
+          tags: photo.tags,
           speciesId: id,
           uploadById: userId,
           approved: false, // Photos need approval
@@ -162,6 +165,7 @@ export const PUT = withAuth(async (req: AuthenticatedRequest, { params }: { para
           data: {
             caption: photo.caption,
             primary: photo.primary,
+            tags: photo.tags,
           },
         })
       } else {
@@ -170,6 +174,7 @@ export const PUT = withAuth(async (req: AuthenticatedRequest, { params }: { para
             url: photo.url,
             caption: photo.caption,
             primary: photo.primary,
+            tags: photo.tags,
             speciesId: id,
             uploadById: userId,
             approved: false,
