@@ -5,7 +5,13 @@
     "home": "Home",
     "about": "About",
     "contribute": "Contribute",
-    "login": "Login"
+    "login": "Login",
+    "createAccount": "Create Account",
+    "myContributions": "My Contributions",
+    "myAccount": "My Account",
+    "settings": "Settings",
+    "logOut": "Log out",
+    "forum": "Forum"
   },
   "stratum": {
     "EMERGENT": "Emergent",
@@ -233,14 +239,14 @@
     "LOW": "Low",
     "VERY_LOW": "Very Low"
   },
-  "submissions": {
-    "title": "My Submissions",
-    "allSubmissions": "All species submissions",
-    "yourSubmissions": "Your species submissions",
+  "contributions": {
+    "title": "My Contributions",
+    "allContributions": "All species contributions",
+    "yourContributions": "Your species contributions",
     "newSpecies": "New Species",
     "submitNewSpecies": "Submit New Species",
     "submitDescription": "Fill in the details below to submit a new species for review.",
-    "noSubmissions": "No submissions found.",
+    "noContributions": "No contributions found.",
     "createFirst": "Create your first species",
     "all": "All",
     "draft": "Draft",
@@ -250,6 +256,7 @@
     "edit": "Edit",
     "review": "Review",
     "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
     "submittedBy": "Submitted by",
     "createdBy": "Created by",
     "createdAt": "Created at",
@@ -258,9 +265,9 @@
     "submitForReview": "Submit for Review",
     "cancel": "Cancel",
     "backToDetails": "Back to details",
-    "backToSubmissions": "Back to submissions",
+    "backToContributions": "Back to contributions",
     "editSpecies": "Edit Species",
-    "submissionInfo": "Submission Info",
+    "contributionInfo": "Contribution Info",
     "previous": "Previous",
     "next": "Next",
     "pageOf": "Page {page} of {total}"
@@ -390,6 +397,22 @@
     "fruitingAge": "Fruiting Age",
     "years": "years",
     "fruitsAt": "Fruits at",
-    "propagation": "Propagation"
+    "propagation": "Propagation",
+    "propagationMethod": {
+      "SEED": "Seeds",
+      "CUTTING": "Stem Cuttings",
+      "GRAFTING": "Grafting",
+      "AIR_LAYERING": "Air Layering",
+      "DIVISION": "Division",
+      "TISSUE_CULTURE": "Tissue Culture",
+      "BULB": "Bulbs",
+      "TUBER": "Tubers",
+      "RHIZOME": "Rhizomes",
+      "STOLON": "Stolons/Runners",
+      "SUCKER": "Suckers",
+      "ROOT_CUTTING": "Root Cuttings",
+      "LAYERING": "Ground Layering",
+      "BUDDING": "Budding"
+    }
   }
 }

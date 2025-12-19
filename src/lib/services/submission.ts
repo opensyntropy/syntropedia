@@ -211,8 +211,14 @@ export async function getSubmissions(params: GetSubmissionsParams = {}) {
     prisma.species.count({ where }),
   ])
 
+  // Add primaryPhoto helper for easier access
+  const submissionsWithPrimaryPhoto = submissions.map(submission => ({
+    ...submission,
+    primaryPhoto: submission.photos[0] || null,
+  }))
+
   return {
-    submissions,
+    submissions: submissionsWithPrimaryPhoto,
     total,
     page,
     totalPages: Math.ceil(total / limit),

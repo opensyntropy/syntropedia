@@ -9,7 +9,7 @@ import { StatusBadge } from '@/components/submissions/StatusBadge'
 import { ReviewProgress } from '@/components/submissions/ReviewProgress'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Plus, Eye, Edit } from 'lucide-react'
+import { Plus, Edit } from 'lucide-react'
 import { SpeciesStatus, ReviewDecision } from '@prisma/client'
 
 interface SubmissionsPageProps {
@@ -21,7 +21,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
   const session = await getSession()
 
   if (!session?.user) {
-    redirect('/auth/signin?callbackUrl=/submissions')
+    redirect('/auth/signin?callbackUrl=/contributions')
   }
 
   const { locale } = await params
@@ -36,7 +36,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
     limit: 20,
   })
 
-  const t = await getTranslations(locale, 'submissions')
+  const t = await getTranslations(locale, 'contributions')
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -47,10 +47,10 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
           <div>
             <h1 className="text-3xl font-bold">{t('title')}</h1>
             <p className="text-muted-foreground mt-1">
-              {userIsReviewer ? t('allSubmissions') : t('yourSubmissions')}
+              {userIsReviewer ? t('allContributions') : t('yourContributions')}
             </p>
           </div>
-          <Link href="/submissions/new">
+          <Link href="/contributions/new">
             <Button>
               <Plus className="h-4 w-4 mr-2" />
               {t('newSpecies')}
@@ -60,22 +60,22 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
 
         {/* Status Filter Tabs */}
         <div className="flex gap-2 mb-6">
-          <Link href="/submissions">
+          <Link href="/contributions">
             <Button variant={!status ? 'default' : 'outline'} size="sm">
               {t('all')}
             </Button>
           </Link>
-          <Link href="/submissions?status=DRAFT">
+          <Link href="/contributions?status=DRAFT">
             <Button variant={status === 'DRAFT' ? 'default' : 'outline'} size="sm">
               {t('draft')}
             </Button>
           </Link>
-          <Link href="/submissions?status=IN_REVIEW">
+          <Link href="/contributions?status=IN_REVIEW">
             <Button variant={status === 'IN_REVIEW' ? 'default' : 'outline'} size="sm">
               {t('inReview')}
             </Button>
           </Link>
-          <Link href="/submissions?status=PUBLISHED">
+          <Link href="/contributions?status=PUBLISHED">
             <Button variant={status === 'PUBLISHED' ? 'default' : 'outline'} size="sm">
               {t('published')}
             </Button>
@@ -86,8 +86,8 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
         {result.submissions.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground mb-4">{t('noSubmissions')}</p>
-              <Link href="/submissions/new">
+              <p className="text-muted-foreground mb-4">{t('noContributions')}</p>
+              <Link href="/contributions/new">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
                   {t('createFirst')}
@@ -103,60 +103,71 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
               ).length
 
               return (
-                <Card key={submission.id}>
-                  <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3">
-                          <h3 className="font-semibold text-lg truncate">
-                            {submission.scientificName}
-                          </h3>
-                          <StatusBadge status={submission.status} locale={locale} />
+                <Link key={submission.id} href={`/contributions/${submission.id}`} className="block">
+                  <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+                    <CardContent className="py-4">
+                      <div className="flex items-start gap-4">
+                        {/* Thumbnail */}
+                        <div className="flex-shrink-0">
+                          {submission.primaryPhoto ? (
+                            <img
+                              src={submission.primaryPhoto.url}
+                              alt={submission.scientificName}
+                              className="w-16 h-16 rounded-lg object-cover bg-gray-100"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center">
+                              <span className="text-gray-400 text-2xl">🌱</span>
+                            </div>
+                          )}
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {submission.commonNames.slice(0, 3).join(', ')}
-                          {submission.commonNames.length > 3 && '...'}
-                        </p>
-                        {userIsReviewer && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {t('submittedBy')}: {submission.createdBy.name || submission.createdBy.email}
-                          </p>
-                        )}
-                        {submission.status === SpeciesStatus.IN_REVIEW && (
-                          <div className="mt-2">
-                            <ReviewProgress approvalCount={approvalCount} locale={locale} />
-                          </div>
-                        )}
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        <Link href={`/submissions/${submission.id}`}>
-                          <Button variant="outline" size="sm">
-                            <Eye className="h-4 w-4 mr-1" />
-                            {t('view')}
-                          </Button>
-                        </Link>
-                        {submission.status === SpeciesStatus.DRAFT && (
-                          <Link href={`/submissions/${submission.id}?edit=true`}>
-                            <Button variant="outline" size="sm">
-                              <Edit className="h-4 w-4 mr-1" />
-                              {t('edit')}
-                            </Button>
-                          </Link>
-                        )}
-                        {submission.status === SpeciesStatus.IN_REVIEW &&
-                          userIsReviewer &&
-                          submission.createdById !== session.user.id && (
-                            <Link href={`/submissions/${submission.id}/review`}>
-                              <Button size="sm">
-                                {t('review')}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3">
+                            <h3 className="font-semibold text-lg truncate">
+                              {submission.scientificName}
+                            </h3>
+                            <StatusBadge status={submission.status} locale={locale} />
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {submission.commonNames.slice(0, 3).join(', ')}
+                            {submission.commonNames.length > 3 && '...'}
+                          </p>
+                          {userIsReviewer && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {t('submittedBy')}: {submission.createdBy.name || submission.createdBy.email}
+                            </p>
+                          )}
+                          {submission.status === SpeciesStatus.IN_REVIEW && (
+                            <div className="mt-2">
+                              <ReviewProgress approvalCount={approvalCount} locale={locale} />
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                          {submission.status === SpeciesStatus.DRAFT && (
+                            <Link href={`/contributions/${submission.id}?edit=true`}>
+                              <Button variant="outline" size="sm">
+                                <Edit className="h-4 w-4 mr-1" />
+                                {t('edit')}
                               </Button>
                             </Link>
                           )}
+                          {submission.status === SpeciesStatus.IN_REVIEW &&
+                            userIsReviewer &&
+                            submission.createdById !== session.user.id && (
+                              <Link href={`/contributions/${submission.id}/review`}>
+                                <Button size="sm">
+                                  {t('review')}
+                                </Button>
+                              </Link>
+                            )}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Link>
               )
             })}
           </div>

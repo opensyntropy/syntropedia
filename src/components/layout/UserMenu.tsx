@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { User, Settings, LogOut, FileText, Plus } from 'lucide-react'
+import { User, Settings, LogOut, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,9 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useTranslations } from '@/lib/IntlProvider'
 
 export function UserMenu() {
   const { data: session, status } = useSession()
+  const t = useTranslations('common')
 
   if (status === 'loading') {
     return (
@@ -30,7 +32,7 @@ export function UserMenu() {
           className="rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-50"
           asChild
         >
-          <Link href="/auth/signin">Login</Link>
+          <Link href="/auth/signin">{t('login')}</Link>
         </Button>
         <Button
           className="rounded-full bg-primary-600 text-white hover:bg-primary-700"
@@ -41,7 +43,7 @@ export function UserMenu() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Create Account
+            {t('createAccount')}
           </a>
         </Button>
       </div>
@@ -88,28 +90,22 @@ export function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/submissions/new" className="flex cursor-pointer items-center">
-            <Plus className="mr-2 h-4 w-4" />
-            <span>Submit Species</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/submissions" className="flex cursor-pointer items-center">
+          <Link href="/contributions" className="flex cursor-pointer items-center">
             <FileText className="mr-2 h-4 w-4" />
-            <span>My Submissions</span>
+            <span>{t('myContributions')}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/account" className="flex cursor-pointer items-center">
             <User className="mr-2 h-4 w-4" />
-            <span>My Account</span>
+            <span>{t('myAccount')}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/account/settings" className="flex cursor-pointer items-center">
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>{t('settings')}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -118,7 +114,7 @@ export function UserMenu() {
           onClick={() => signOut({ callbackUrl: '/' })}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>{t('logOut')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -5,9 +5,11 @@ import { Sprout, Menu, X } from 'lucide-react'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { UserMenu } from './UserMenu'
 import { useState } from 'react'
+import { useTranslations } from '@/lib/IntlProvider'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const t = useTranslations('common')
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
@@ -26,13 +28,13 @@ export function Header() {
             href="/catalog"
             className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
-            Catálogo
+            {t('catalog')}
           </Link>
           <Link
-            href="/sobre"
+            href="/about"
             className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
-            Sobre
+            {t('about')}
           </Link>
           <Link
             href="https://placenta.opensyntropy.earth"
@@ -40,7 +42,7 @@ export function Header() {
             rel="noopener noreferrer"
             className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
-            Fórum ↗
+            {t('forum')} ↗
           </Link>
         </nav>
 
@@ -73,14 +75,14 @@ export function Header() {
               className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Catálogo
+              {t('catalog')}
             </Link>
             <Link
-              href="/sobre"
+              href="/about"
               className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Sobre
+              {t('about')}
             </Link>
             <Link
               href="https://placenta.opensyntropy.earth"
@@ -89,7 +91,7 @@ export function Header() {
               className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Fórum ↗
+              {t('forum')} ↗
             </Link>
             <div className="mt-4 flex items-center justify-between gap-2">
               <LanguageSwitcher />

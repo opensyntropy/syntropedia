@@ -17,6 +17,12 @@ export interface UploadedPhoto {
   tags?: string[]
 }
 
+// Validation helper - checks if all photos have at least one tag
+export function validatePhotoTags(photos: UploadedPhoto[]): boolean {
+  if (photos.length === 0) return true
+  return photos.every(photo => photo.tags && photo.tags.length > 0)
+}
+
 interface PhotoUploadProps {
   photos: UploadedPhoto[]
   onPhotosChange: (photos: UploadedPhoto[]) => void
@@ -36,6 +42,7 @@ interface Translations {
   remove: string
   maxPhotosReached: string
   plantParts: string
+  plantPartsRequired: string
   tags: Record<PhotoFragmentTag, string>
 }
 
@@ -51,6 +58,7 @@ const translationsByLocale: Record<string, Translations> = {
     remove: 'Remove',
     maxPhotosReached: 'Maximum photos reached',
     plantParts: 'Plant parts',
+    plantPartsRequired: 'Select at least one plant part',
     tags: {
       whole: 'Whole',
       leaf: 'Leaf',
@@ -71,6 +79,7 @@ const translationsByLocale: Record<string, Translations> = {
     remove: 'Remover',
     maxPhotosReached: 'Número máximo de fotos atingido',
     plantParts: 'Partes da planta',
+    plantPartsRequired: 'Selecione ao menos uma parte da planta',
     tags: {
       whole: 'Inteira',
       leaf: 'Folha',
@@ -91,6 +100,7 @@ const translationsByLocale: Record<string, Translations> = {
     remove: 'Eliminar',
     maxPhotosReached: 'Número máximo de fotos alcanzado',
     plantParts: 'Partes de la planta',
+    plantPartsRequired: 'Seleccione al menos una parte de la planta',
     tags: {
       whole: 'Entera',
       leaf: 'Hoja',
@@ -321,8 +331,12 @@ export function PhotoUpload({
 
                 {/* Tag Selection */}
                 <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground">{t.plantParts}</p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <p className="text-xs text-muted-foreground">
+                    {t.plantParts} <span className="text-red-500">*</span>
+                  </p>
+                  <div className={`flex flex-wrap gap-1.5 p-2 rounded-md ${
+                    (!photo.tags || photo.tags.length === 0) ? 'bg-red-50 border border-red-200' : ''
+                  }`}>
                     {PHOTO_FRAGMENT_TAGS.map(tag => {
                       const isSelected = (photo.tags || []).includes(tag)
                       return (
@@ -341,6 +355,9 @@ export function PhotoUpload({
                       )
                     })}
                   </div>
+                  {(!photo.tags || photo.tags.length === 0) && (
+                    <p className="text-xs text-red-500">{t.plantPartsRequired}</p>
+                  )}
                 </div>
               </div>
             ))}

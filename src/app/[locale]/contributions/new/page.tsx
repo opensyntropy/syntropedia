@@ -13,11 +13,11 @@ export default async function NewSubmissionPage({ params }: NewSubmissionPagePro
   const session = await getSession()
 
   if (!session?.user) {
-    redirect('/auth/signin?callbackUrl=/submissions/new')
+    redirect('/auth/signin?callbackUrl=/contributions/new')
   }
 
   const { locale } = await params
-  const t = await getTranslations(locale, 'submissions')
+  const t = await getTranslations(locale, 'contributions')
 
   return (
     <div className="min-h-screen flex flex-col">

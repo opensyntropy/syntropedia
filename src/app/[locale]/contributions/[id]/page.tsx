@@ -1,6 +1,6 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getSession, canViewSubmission, canEditSubmission, isReviewer } from '@/lib/auth/server'
+import { getSession, canViewSubmission, canEditSubmission, canDeleteSubmission, isReviewer } from '@/lib/auth/server'
 import { getSubmissionById } from '@/lib/services/submission'
 import { getSpeciesActivity } from '@/lib/services/activity'
 import { getTranslations } from '@/lib/getTranslations'
@@ -10,6 +10,7 @@ import { StatusBadge } from '@/components/submissions/StatusBadge'
 import { ReviewProgress } from '@/components/submissions/ReviewProgress'
 import { ActivityLog } from '@/components/activity/ActivityLog'
 import { SpeciesForm } from '@/components/submissions/SpeciesForm'
+import { DeleteSubmissionButton } from '@/components/submissions/DeleteSubmissionButton'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -39,11 +40,11 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
   }
 
   if (!canViewSubmission(session, submission)) {
-    redirect('/submissions')
+    redirect('/contributions')
   }
 
   // Get translations
-  const t = await getTranslations(locale, 'submissions')
+  const t = await getTranslations(locale, 'contributions')
   const tReview = await getTranslations(locale, 'review')
   const tStratum = await getTranslations(locale, 'stratum')
   const tStage = await getTranslations(locale, 'successionalStage')
@@ -52,8 +53,14 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
   const tGrowth = await getTranslations(locale, 'growthRate')
   const tUse = await getTranslations(locale, 'plantUse')
   const tPhotos = await getTranslations(locale, 'photoTags')
+  const tCanopyShape = await getTranslations(locale, 'canopyShape')
+  const tRootSystem = await getTranslations(locale, 'rootSystem')
+  const tBiomass = await getTranslations(locale, 'biomassProduction')
+  const tGlobalBiome = await getTranslations(locale, 'globalBiome')
+  const tDetail = await getTranslations(locale, 'speciesDetail')
 
   const canEdit = canEditSubmission(session, submission)
+  const canDelete = canDeleteSubmission(session, submission)
   const userIsReviewer = isReviewer(session)
   const isEditMode = edit === 'true' && canEdit
 
@@ -138,10 +145,10 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
 
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link href="/submissions">
+          <Link href="/contributions">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('backToSubmissions')}
+              {t('backToContributions')}
             </Button>
           </Link>
         </div>
@@ -168,6 +175,23 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                         {tReview('family')}: {submission.botanicalFamily}
                       </p>
                     )}
+                    {(submission.genus || submission.species || submission.author) && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {submission.genus && <span>{tDetail('genus')}: <em>{submission.genus}</em></span>}
+                        {submission.species && <span> | {tDetail('species')}: <em>{submission.species}</em></span>}
+                        {submission.author && <span> | {tDetail('author')}: {submission.author}</span>}
+                      </p>
+                    )}
+                    {submission.variety && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {tDetail('variety')}: {submission.variety}
+                      </p>
+                    )}
+                    {submission.synonyms && submission.synonyms.length > 0 && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {tDetail('synonyms')}: {submission.synonyms.join(', ')}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex gap-2">
@@ -178,6 +202,16 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                           {t('edit')}
                         </Button>
                       </Link>
+                    )}
+                    {canDelete && (
+                      <DeleteSubmissionButton
+                        submissionId={id}
+                        speciesName={submission.scientificName}
+                        translations={{
+                          delete: t('delete'),
+                          confirmMessage: t('deleteConfirm'),
+                        }}
+                      />
                     )}
                     {userIsReviewer &&
                       submission.status === SpeciesStatus.IN_REVIEW &&
@@ -237,6 +271,18 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                       <p className="font-medium">{Number(submission.canopyWidthMeters)} m</p>
                     </div>
                   )}
+                  {submission.canopyShape && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{tDetail('canopyShape')}</p>
+                      <Badge variant="outline">{tCanopyShape(submission.canopyShape)}</Badge>
+                    </div>
+                  )}
+                  {submission.lifeCycleYears && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{tDetail('lifespan')}</p>
+                      <p className="font-medium">{submission.lifeCycleYears} {tDetail('years')}</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -246,7 +292,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
               <CardHeader>
                 <CardTitle>{tReview('ecology')}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {submission.foliageType && (
                     <div>
@@ -258,6 +304,18 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                     <div>
                       <p className="text-sm text-muted-foreground">{tReview('growthRate')}</p>
                       <Badge variant="outline">{tGrowth(submission.growthRate)}</Badge>
+                    </div>
+                  )}
+                  {submission.rootSystem && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{tDetail('rootSystem')}</p>
+                      <Badge variant="outline">{tRootSystem(submission.rootSystem)}</Badge>
+                    </div>
+                  )}
+                  {submission.biomassProduction && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{tDetail('biomassProduction')}</p>
+                      <Badge variant="outline">{tBiomass(submission.biomassProduction)}</Badge>
                     </div>
                   )}
                   <div>
@@ -274,7 +332,41 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                       <p className="font-medium">{submission.edibleFruit ? tReview('yes') : tReview('no')}</p>
                     </div>
                   )}
+                  {submission.fruitingAge && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{tDetail('fruitingAge')}</p>
+                      <p className="font-medium">{submission.fruitingAge} {tDetail('years')}</p>
+                    </div>
+                  )}
                 </div>
+
+                {/* Origin & Biomes */}
+                {(submission.originCenter || submission.globalBiome || (submission.regionalBiome && submission.regionalBiome.length > 0)) && (
+                  <div className="pt-4 border-t space-y-3">
+                    {submission.originCenter && (
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">{tDetail('originCenter')}</p>
+                        <p className="font-medium">{submission.originCenter}</p>
+                      </div>
+                    )}
+                    {submission.globalBiome && (
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">{tDetail('globalBiome')}</p>
+                        <Badge variant="secondary">{tGlobalBiome(submission.globalBiome)}</Badge>
+                      </div>
+                    )}
+                    {submission.regionalBiome && submission.regionalBiome.length > 0 && (
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">{tDetail('regionalBiomes')}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {submission.regionalBiome.map((biome) => (
+                            <Badge key={biome} variant="outline">{biome}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -289,6 +381,24 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                     {submission.uses.map((use) => (
                       <Badge key={use} variant="secondary">
                         {tUse(use)}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Propagation Methods */}
+            {submission.propagationMethods && submission.propagationMethods.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{tDetail('propagation')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {submission.propagationMethods.map((method) => (
+                      <Badge key={method} variant="outline">
+                        {tDetail(`propagationMethod.${method}`)}
                       </Badge>
                     ))}
                   </div>
@@ -362,7 +472,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
             {/* Submission Info */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('submissionInfo')}</CardTitle>
+                <CardTitle>{t('contributionInfo')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
                 <div>

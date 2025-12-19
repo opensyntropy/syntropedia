@@ -5,7 +5,13 @@
     "home": "Início",
     "about": "Sobre",
     "contribute": "Contribuir",
-    "login": "Entrar"
+    "login": "Entrar",
+    "createAccount": "Criar Conta",
+    "myContributions": "Minhas Contribuições",
+    "myAccount": "Minha Conta",
+    "settings": "Configurações",
+    "logOut": "Sair",
+    "forum": "Fórum"
   },
   "stratum": {
     "EMERGENT": "Emergente",
@@ -233,14 +239,14 @@
     "LOW": "Baixa",
     "VERY_LOW": "Muito Baixa"
   },
-  "submissions": {
-    "title": "Minhas Submissões",
-    "allSubmissions": "Todas as submissões de espécies",
-    "yourSubmissions": "Suas submissões de espécies",
+  "contributions": {
+    "title": "Minhas Contribuições",
+    "allContributions": "Todas as contribuições de espécies",
+    "yourContributions": "Suas contribuições de espécies",
     "newSpecies": "Nova Espécie",
-    "submitNewSpecies": "Submeter Nova Espécie",
-    "submitDescription": "Preencha os detalhes abaixo para submeter uma nova espécie para revisão.",
-    "noSubmissions": "Nenhuma submissão encontrada.",
+    "submitNewSpecies": "Adicionar Nova Espécie",
+    "submitDescription": "Preencha os detalhes abaixo para adicionar uma nova espécie.",
+    "noContributions": "Nenhuma contribuição encontrada.",
     "createFirst": "Crie sua primeira espécie",
     "all": "Todas",
     "draft": "Rascunho",
@@ -250,17 +256,18 @@
     "edit": "Editar",
     "review": "Revisar",
     "delete": "Excluir",
-    "submittedBy": "Submetido por",
+    "deleteConfirm": "Tem certeza que deseja excluir \"{name}\"? Esta ação não pode ser desfeita.",
+    "submittedBy": "Contribuído por",
     "createdBy": "Criado por",
     "createdAt": "Criado em",
-    "submittedForReview": "Submetido para revisão",
+    "submittedForReview": "Enviado para revisão",
     "saveAsDraft": "Salvar como Rascunho",
-    "submitForReview": "Submeter para Revisão",
+    "submitForReview": "Enviar para Revisão",
     "cancel": "Cancelar",
     "backToDetails": "Voltar aos detalhes",
-    "backToSubmissions": "Voltar às submissões",
+    "backToContributions": "Voltar às contribuições",
     "editSpecies": "Editar Espécie",
-    "submissionInfo": "Informações da Submissão",
+    "contributionInfo": "Informações da Contribuição",
     "previous": "Anterior",
     "next": "Próxima",
     "pageOf": "Página {page} de {total}"
@@ -390,6 +397,22 @@
     "fruitingAge": "Idade de Frutificação",
     "years": "anos",
     "fruitsAt": "Frutifica aos",
-    "propagation": "Propagação"
+    "propagation": "Propagação",
+    "propagationMethod": {
+      "SEED": "Sementes",
+      "CUTTING": "Estacas",
+      "GRAFTING": "Enxertia",
+      "AIR_LAYERING": "Alporquia",
+      "DIVISION": "Divisão",
+      "TISSUE_CULTURE": "Cultura de Tecidos",
+      "BULB": "Bulbos",
+      "TUBER": "Tubérculos",
+      "RHIZOME": "Rizomas",
+      "STOLON": "Estolões",
+      "SUCKER": "Rebentos",
+      "ROOT_CUTTING": "Estacas de Raiz",
+      "LAYERING": "Mergulhia",
+      "BUDDING": "Borbulhia"
+    }
   }
 }

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { speciesFormSchema, type SpeciesFormData } from '@/lib/validations/species'
-import { PhotoUpload, type UploadedPhoto } from './PhotoUpload'
+import { PhotoUpload, type UploadedPhoto, validatePhotoTags } from './PhotoUpload'
 import { Loader2, Plus, X, Save, Send } from 'lucide-react'
 
 interface SpeciesFormProps {
@@ -780,6 +780,17 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
     setIsSubmitting(true)
     setError(null)
 
+    // Validate photo tags before submission
+    if (photos.length > 0 && !validatePhotoTags(photos)) {
+      setError(locale === 'pt-BR'
+        ? 'Todas as fotos precisam ter ao menos uma parte da planta selecionada'
+        : locale === 'es'
+        ? 'Todas las fotos deben tener al menos una parte de la planta seleccionada'
+        : 'All photos must have at least one plant part selected')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
       const url = mode === 'create'
         ? '/api/species/submissions'
@@ -823,7 +834,7 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
         }
       }
 
-      router.push('/submissions')
+      router.push('/contributions')
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')

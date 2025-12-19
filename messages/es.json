@@ -5,7 +5,13 @@
     "home": "Inicio",
     "about": "Acerca de",
     "contribute": "Contribuir",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "createAccount": "Crear Cuenta",
+    "myContributions": "Mis Contribuciones",
+    "myAccount": "Mi Cuenta",
+    "settings": "Configuración",
+    "logOut": "Cerrar sesión",
+    "forum": "Foro"
   },
   "stratum": {
     "EMERGENT": "Emergente",
@@ -269,16 +275,32 @@
     "fruitingAge": "Edad de Fructificación",
     "years": "años",
     "fruitsAt": "Fructifica a los",
-    "propagation": "Propagación"
+    "propagation": "Propagación",
+    "propagationMethod": {
+      "SEED": "Semillas",
+      "CUTTING": "Esquejes",
+      "GRAFTING": "Injerto",
+      "AIR_LAYERING": "Acodo Aéreo",
+      "DIVISION": "División",
+      "TISSUE_CULTURE": "Cultivo de Tejidos",
+      "BULB": "Bulbos",
+      "TUBER": "Tubérculos",
+      "RHIZOME": "Rizomas",
+      "STOLON": "Estolones",
+      "SUCKER": "Retoños",
+      "ROOT_CUTTING": "Esquejes de Raíz",
+      "LAYERING": "Acodo Terrestre",
+      "BUDDING": "Injerto de Yema"
+    }
   },
-  "submissions": {
-    "title": "Mis Envíos",
-    "allSubmissions": "Todos los envíos de especies",
-    "yourSubmissions": "Tus envíos de especies",
+  "contributions": {
+    "title": "Mis Contribuciones",
+    "allContributions": "Todas las contribuciones de especies",
+    "yourContributions": "Tus contribuciones de especies",
     "newSpecies": "Nueva Especie",
     "submitNewSpecies": "Enviar Nueva Especie",
     "submitDescription": "Complete los detalles a continuación para enviar una nueva especie para revisión.",
-    "noSubmissions": "No se encontraron envíos.",
+    "noContributions": "No se encontraron contribuciones.",
     "createFirst": "Crea tu primera especie",
     "all": "Todos",
     "draft": "Borrador",
@@ -288,6 +310,7 @@
     "edit": "Editar",
     "review": "Revisar",
     "delete": "Eliminar",
+    "deleteConfirm": "¿Está seguro que desea eliminar \"{name}\"? Esta acción no se puede deshacer.",
     "submittedBy": "Enviado por",
     "createdBy": "Creado por",
     "createdAt": "Creado el",
@@ -296,9 +319,9 @@
     "submitForReview": "Enviar para Revisión",
     "cancel": "Cancelar",
     "backToDetails": "Volver a los detalles",
-    "backToSubmissions": "Volver a los envíos",
+    "backToContributions": "Volver a las contribuciones",
     "editSpecies": "Editar Especie",
-    "submissionInfo": "Información del Envío",
+    "contributionInfo": "Información de la Contribución",
     "previous": "Anterior",
     "next": "Siguiente",
     "pageOf": "Página {page} de {total}"

@@ -31,7 +31,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
   const { locale, id } = await params
 
   if (!isReviewer(session)) {
-    redirect('/submissions')
+    redirect('/contributions')
   }
 
   const submission = await getSubmissionById(id)
@@ -41,7 +41,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
   }
 
   if (!canReview(session, submission)) {
-    redirect(`/submissions/${id}`)
+    redirect('/contributions/${id}`)
   }
 
   const reviewStatus = await getReviewStatus(id)
@@ -51,7 +51,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
   const hasAlreadyReviewed = !!userReview
 
   const t = await getTranslations(locale, 'review')
-  const tSub = await getTranslations(locale, 'submissions')
+  const tSub = await getTranslations(locale, 'contributions')
   const tStratum = await getTranslations(locale, 'stratum')
   const tStage = await getTranslations(locale, 'successionalStage')
   const tLifeCycle = await getTranslations(locale, 'lifeCycle')

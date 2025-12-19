@@ -330,7 +330,7 @@ export function CatalogoClient({
                   {t('contributeDescription')}
                 </p>
                 <a
-                  href="/submissions/new"
+                  href="/contributions/new"
                   className="inline-flex items-center justify-center w-full px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   {t('contributeButton')}
