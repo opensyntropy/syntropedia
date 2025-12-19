@@ -148,7 +148,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      router.push(`/${locale}/catalogo?q=${encodeURIComponent(searchQuery)}`)
+      router.push(`/catalog?q=${encodeURIComponent(searchQuery)}`)
       setShowResults(false)
     }
   }
@@ -170,7 +170,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         startTransition(() => {
-          router.push(`/${locale}/catalogo?q=${encodeURIComponent(searchQuery)}`)
+          router.push(`/catalog?q=${encodeURIComponent(searchQuery)}`)
         })
       })
     })
@@ -240,7 +240,7 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
             className="rounded-xl bg-primary-600 px-7 shadow-md transition-all hover:bg-primary-700 hover:shadow-lg"
             asChild
           >
-            <Link href="/catalogo">
+            <Link href="/catalog">
               {translations.exploreCatalog}
             </Link>
           </Button>

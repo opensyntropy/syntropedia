@@ -2,7 +2,7 @@ import { Header } from '@/components/layout/Header'
 import { Hero } from '@/components/layout/Hero'
 import { Statistics } from '@/components/layout/Statistics'
 import { Footer } from '@/components/layout/Footer'
-import { SpeciesCard, type SpeciesCardProps } from '@/components/especies/SpeciesCard'
+import { SpeciesCard, type SpeciesCardProps } from '@/components/species/SpeciesCard'
 import { getTranslations } from '@/lib/getTranslations'
 
 // Mock data for featured species (will be replaced with actual database queries)

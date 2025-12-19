@@ -23,7 +23,7 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-8 md:flex">
           <Link
-            href="/catalogo"
+            href="/catalog"
             className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
             Catálogo
@@ -69,7 +69,7 @@ export function Header() {
         <div className="border-t border-gray-100 bg-white md:hidden">
           <nav className="container mx-auto flex flex-col gap-4 px-6 py-6">
             <Link
-              href="/catalogo"
+              href="/catalog"
               className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
             >

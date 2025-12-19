@@ -111,7 +111,7 @@ export interface PublishedNotificationParams {
 export async function sendPublishedNotification(params: PublishedNotificationParams) {
   const { speciesName, speciesSlug, creatorEmail } = params
 
-  const speciesUrl = `${APP_URL}/especies/${speciesSlug}`
+  const speciesUrl = `${APP_URL}/species/${speciesSlug}`
 
   return sendEmail({
     to: creatorEmail,

@@ -73,7 +73,7 @@ export function SearchResults({
         <Button
           variant="outline"
           onClick={() => {
-            window.location.href = `/${locale}/catalogo`
+            window.location.href = '/catalog'
           }}
         >
           {translations.catalog}
@@ -94,7 +94,7 @@ export function SearchResults({
               key={result.id}
               onClick={() => {
                 onClose()
-                window.location.href = `/${locale}/especies/${result.slug}`
+                window.location.href = `/species/${result.slug}`
               }}
               className={`w-full flex items-center gap-3 p-3 text-left transition-colors cursor-pointer ${
                 isSelected

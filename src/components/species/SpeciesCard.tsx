@@ -51,7 +51,7 @@ export function SpeciesCard({
   imageUrl = '/placeholder-species.jpg',
 }: SpeciesCardProps) {
   return (
-    <Link href={`/especies/${slug}`}>
+    <Link href={`/species/${slug}`}>
       <Card className="group overflow-hidden rounded-lg border border-gray-100 transition-all hover:-translate-y-1 hover:shadow-lifted">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">

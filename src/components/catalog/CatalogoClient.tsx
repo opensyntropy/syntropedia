@@ -152,7 +152,7 @@ export function CatalogoClient({
     const url = buildFilterUrl(newFilters)
 
     startTransition(() => {
-      router.push(url || '/catalogo')
+      router.push(url || '/catalog')
     })
   }
 
@@ -163,7 +163,7 @@ export function CatalogoClient({
     const url = buildFilterUrl(currentFilters, page)
 
     startTransition(() => {
-      router.push(url || '/catalogo')
+      router.push(url || '/catalog')
     })
   }
 
@@ -172,7 +172,7 @@ export function CatalogoClient({
    */
   const clearAllFilters = () => {
     startTransition(() => {
-      router.push('/catalogo')
+      router.push('/catalog')
     })
   }
 
@@ -200,7 +200,7 @@ export function CatalogoClient({
 
     const url = buildFilterUrl(newFilters, currentPage)
     startTransition(() => {
-      router.push(url || '/catalogo')
+      router.push(url || '/catalog')
     })
   }
 
