@@ -142,6 +142,12 @@ export type RootSystem =
 // Biomass production
 export type BiomassProduction = 'VERY_HIGH' | 'HIGH' | 'MEDIUM' | 'LOW' | 'VERY_LOW'
 
+// Pruning sprout response
+export type PruningSprout = 'VERY_HIGH' | 'HIGH' | 'MEDIUM' | 'LOW' | 'VERY_LOW'
+
+// Seedling shade tolerance
+export type SeedlingShade = 'FULL_SHADE' | 'MUCH_SHADE' | 'PARTIAL_SHADE' | 'LIGHT_SHADE' | 'NO_SHADE'
+
 export interface SpeciesDetail {
   id: string
   slug: string
@@ -176,6 +182,8 @@ export interface SpeciesDetail {
   rootSystem?: RootSystem | null
   nitrogenFixer?: boolean
   serviceSpecies?: boolean
+  pruningSprout?: PruningSprout | null
+  seedlingShade?: SeedlingShade | null
   biomassProduction?: BiomassProduction | null
   hasFruit?: boolean
   edibleFruit?: boolean

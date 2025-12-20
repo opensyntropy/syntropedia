@@ -245,6 +245,20 @@
     "LOW": "Baixa",
     "VERY_LOW": "Muito Baixa"
   },
+  "pruningSprout": {
+    "VERY_HIGH": "Muito Alta",
+    "HIGH": "Alta",
+    "MEDIUM": "Média",
+    "LOW": "Baixa",
+    "VERY_LOW": "Muito Baixa"
+  },
+  "seedlingShade": {
+    "FULL_SHADE": "Sombra Total",
+    "MUCH_SHADE": "Muita Sombra",
+    "PARTIAL_SHADE": "Sombra Parcial",
+    "LIGHT_SHADE": "Pouca Sombra",
+    "NO_SHADE": "Sem Sombra (Sol Pleno)"
+  },
   "contributions": {
     "title": "Minhas Contribuições",
     "allContributions": "Todas as contribuições de espécies",
@@ -388,9 +402,14 @@
     "successionalStage": "Estágio Sucessional",
     "growthRate": "Taxa de Crescimento",
     "biomassProduction": "Produção de Biomassa",
+    "pruningSprout": "Resposta à Poda",
+    "seedlingShade": "Tolerância à Sombra (Muda)",
     "nitrogenFixer": "Fixa Nitrogênio",
+    "serviceSpecies": "Espécie de Serviço",
+    "hasFruit": "Produz Frutos",
     "yes": "Sim",
     "no": "Não",
+    "photos": "Fotos",
     "physicalCharacteristics": "Características Físicas",
     "height": "Altura",
     "canopyWidth": "Largura da Copa",

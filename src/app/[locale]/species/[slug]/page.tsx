@@ -15,7 +15,8 @@ import {
   ArrowLeft,
   Layers,
   TrendingUp,
-  FlaskConical
+  FlaskConical,
+  Camera
 } from 'lucide-react'
 import { type SpeciesDetail } from '@/types/species'
 import { getTranslations } from '@/lib/getTranslations'
@@ -1220,6 +1221,8 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus |
     rootSystem: dbSpecies.rootSystem,
     nitrogenFixer: dbSpecies.nitrogenFixer || undefined,
     serviceSpecies: dbSpecies.serviceSpecies || undefined,
+    pruningSprout: dbSpecies.pruningSprout,
+    seedlingShade: dbSpecies.seedlingShade,
     biomassProduction: dbSpecies.biomassProduction,
     hasFruit: dbSpecies.hasFruit || undefined,
     edibleFruit: dbSpecies.edibleFruit || undefined,
@@ -1263,6 +1266,8 @@ export default async function SpeciesDetailPage({
   const tCanopy = await getTranslations(params.locale, 'canopyShape')
   const tRoot = await getTranslations(params.locale, 'rootSystem')
   const tBiomass = await getTranslations(params.locale, 'biomassProduction')
+  const tPruningSprout = await getTranslations(params.locale, 'pruningSprout')
+  const tSeedlingShade = await getTranslations(params.locale, 'seedlingShade')
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1396,6 +1401,31 @@ export default async function SpeciesDetailPage({
           </Card>
         </div>
 
+        {/* Photo Gallery */}
+        {species.images && species.images.length > 1 && (
+          <div className="mb-8">
+            <Card className="p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-gray-900">
+                <Camera className="h-5 w-5 text-gray-400" />
+                {t('photos')} ({species.images.length})
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {species.images.map((imageUrl, index) => (
+                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                    <Image
+                      src={imageUrl}
+                      alt={`${species.scientificName} - Photo ${index + 1}`}
+                      fill
+                      className="object-cover hover:scale-105 transition-transform cursor-pointer"
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                    />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Left Column - Main Info */}
@@ -1493,10 +1523,42 @@ export default async function SpeciesDetailPage({
                     </dd>
                   </div>
                 )}
-                <div className="flex">
+                {species.pruningSprout && (
+                  <div className="flex border-b pb-3">
+                    <dt className="w-1/3 text-sm font-medium text-gray-600">{t('pruningSprout')}</dt>
+                    <dd className="w-2/3">
+                      <Badge className="bg-yellow-100 text-yellow-700">
+                        {tPruningSprout(species.pruningSprout)}
+                      </Badge>
+                    </dd>
+                  </div>
+                )}
+                {species.seedlingShade && (
+                  <div className="flex border-b pb-3">
+                    <dt className="w-1/3 text-sm font-medium text-gray-600">{t('seedlingShade')}</dt>
+                    <dd className="w-2/3">
+                      <Badge className="bg-indigo-100 text-indigo-700">
+                        {tSeedlingShade(species.seedlingShade)}
+                      </Badge>
+                    </dd>
+                  </div>
+                )}
+                <div className="flex border-b pb-3">
                   <dt className="w-1/3 text-sm font-medium text-gray-600">{t('nitrogenFixer')}</dt>
                   <dd className="w-2/3 text-sm text-gray-900">
                     {species.nitrogenFixer ? t('yes') : t('no')}
+                  </dd>
+                </div>
+                <div className="flex border-b pb-3">
+                  <dt className="w-1/3 text-sm font-medium text-gray-600">{t('serviceSpecies')}</dt>
+                  <dd className="w-2/3 text-sm text-gray-900">
+                    {species.serviceSpecies ? t('yes') : t('no')}
+                  </dd>
+                </div>
+                <div className="flex">
+                  <dt className="w-1/3 text-sm font-medium text-gray-600">{t('hasFruit')}</dt>
+                  <dd className="w-2/3 text-sm text-gray-900">
+                    {species.hasFruit ? t('yes') : t('no')}
                   </dd>
                 </div>
               </dl>

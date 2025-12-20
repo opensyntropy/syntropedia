@@ -245,6 +245,20 @@
     "LOW": "Baja",
     "VERY_LOW": "Muy Baja"
   },
+  "pruningSprout": {
+    "VERY_HIGH": "Muy Alta",
+    "HIGH": "Alta",
+    "MEDIUM": "Media",
+    "LOW": "Baja",
+    "VERY_LOW": "Muy Baja"
+  },
+  "seedlingShade": {
+    "FULL_SHADE": "Sombra Total",
+    "MUCH_SHADE": "Mucha Sombra",
+    "PARTIAL_SHADE": "Sombra Parcial",
+    "LIGHT_SHADE": "Poca Sombra",
+    "NO_SHADE": "Sin Sombra (Sol Pleno)"
+  },
   "speciesDetail": {
     "backToCatalog": "Volver al Catálogo",
     "nomenclature": "Nomenclatura",
@@ -259,9 +273,14 @@
     "successionalStage": "Etapa Sucesional",
     "growthRate": "Tasa de Crecimiento",
     "biomassProduction": "Producción de Biomasa",
+    "pruningSprout": "Respuesta a la Poda",
+    "seedlingShade": "Tolerancia a la Sombra (Plántula)",
     "nitrogenFixer": "Fija Nitrógeno",
+    "serviceSpecies": "Especie de Servicio",
+    "hasFruit": "Produce Frutos",
     "yes": "Sí",
     "no": "No",
+    "photos": "Fotos",
     "physicalCharacteristics": "Características Físicas",
     "height": "Altura",
     "canopyWidth": "Ancho de Copa",

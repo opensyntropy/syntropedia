@@ -245,6 +245,20 @@
     "LOW": "Low",
     "VERY_LOW": "Very Low"
   },
+  "pruningSprout": {
+    "VERY_HIGH": "Very High",
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low",
+    "VERY_LOW": "Very Low"
+  },
+  "seedlingShade": {
+    "FULL_SHADE": "Full Shade",
+    "MUCH_SHADE": "Much Shade",
+    "PARTIAL_SHADE": "Partial Shade",
+    "LIGHT_SHADE": "Light Shade",
+    "NO_SHADE": "No Shade (Full Sun)"
+  },
   "contributions": {
     "title": "My Contributions",
     "allContributions": "All species contributions",
@@ -388,9 +402,14 @@
     "successionalStage": "Successional Stage",
     "growthRate": "Growth Rate",
     "biomassProduction": "Biomass Production",
+    "pruningSprout": "Pruning Sprout Response",
+    "seedlingShade": "Seedling Shade Tolerance",
     "nitrogenFixer": "Nitrogen Fixer",
+    "serviceSpecies": "Service Species",
+    "hasFruit": "Has Fruit",
     "yes": "Yes",
     "no": "No",
+    "photos": "Photos",
     "physicalCharacteristics": "Physical Characteristics",
     "height": "Height",
     "canopyWidth": "Canopy Width",
