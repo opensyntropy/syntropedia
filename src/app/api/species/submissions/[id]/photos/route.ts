@@ -127,11 +127,25 @@ export const PUT = withAuth(async (req: NextRequest, { params, session }: Authen
   }
 
   const body = await req.json()
+  console.log('Photos PUT body:', JSON.stringify(body, null, 2))
   const parsed = photosSchema.safeParse(body)
 
   if (!parsed.success) {
+    console.error('Photos validation failed:', parsed.error.flatten())
+    const flatErrors = parsed.error.flatten()
+    // Build a user-friendly error message
+    const errorMessages: string[] = []
+    if (flatErrors.formErrors.length > 0) {
+      errorMessages.push(...flatErrors.formErrors)
+    }
+    Object.entries(flatErrors.fieldErrors).forEach(([key, errors]) => {
+      const photoIndex = parseInt(key)
+      if (!isNaN(photoIndex) && errors) {
+        errorMessages.push(`Photo ${photoIndex + 1}: ${errors.join(', ')}`)
+      }
+    })
     return NextResponse.json(
-      { error: 'Validation failed', details: parsed.error.flatten() },
+      { error: errorMessages.join('; ') || 'Validation failed', details: flatErrors },
       { status: 400 }
     )
   }

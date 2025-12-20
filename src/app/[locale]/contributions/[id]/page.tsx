@@ -164,7 +164,10 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                   key: p.url.split('/').pop() || p.id,
                   caption: p.caption || undefined,
                   primary: p.primary,
-                  tags: p.tags || [],
+                  // Filter to only valid photo fragment tags
+                  tags: (p.tags || []).filter(tag =>
+                    PHOTO_FRAGMENT_TAGS.includes(tag as PhotoFragmentTag)
+                  ),
                 }))}
               />
             </div>
