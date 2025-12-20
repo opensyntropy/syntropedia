@@ -16,8 +16,9 @@ interface SpeciesFormProps {
   defaultValues?: Partial<SpeciesFormData>
   defaultPhotos?: UploadedPhoto[]
   speciesId?: string
-  mode?: 'create' | 'edit'
+  mode?: 'create' | 'edit' | 'review'
   locale?: string
+  onSaveSuccess?: () => void
 }
 
 interface FormTranslations {
@@ -498,23 +499,67 @@ const ORIGIN_CENTER_OPTIONS = [
   { value: 'New Zealand', label: 'New Zealand' },
 ]
 
-// WWF 14 Global Biomes
-const GLOBAL_BIOME_OPTIONS = [
-  { value: 'TROPICAL_MOIST_BROADLEAF', label: 'Tropical & Subtropical Moist Broadleaf Forests' },
-  { value: 'TROPICAL_DRY_BROADLEAF', label: 'Tropical & Subtropical Dry Broadleaf Forests' },
-  { value: 'TROPICAL_CONIFEROUS', label: 'Tropical & Subtropical Coniferous Forests' },
-  { value: 'TEMPERATE_BROADLEAF', label: 'Temperate Broadleaf & Mixed Forests' },
-  { value: 'TEMPERATE_CONIFER', label: 'Temperate Conifer Forests' },
-  { value: 'BOREAL_TAIGA', label: 'Boreal Forests/Taiga' },
-  { value: 'TROPICAL_SAVANNA', label: 'Tropical & Subtropical Grasslands, Savannas & Shrublands' },
-  { value: 'TEMPERATE_GRASSLAND', label: 'Temperate Grasslands, Savannas & Shrublands' },
-  { value: 'FLOODED_GRASSLAND', label: 'Flooded Grasslands & Savannas' },
-  { value: 'MONTANE_GRASSLAND', label: 'Montane Grasslands & Shrublands' },
-  { value: 'TUNDRA', label: 'Tundra' },
-  { value: 'MEDITERRANEAN', label: 'Mediterranean Forests, Woodlands & Scrub' },
-  { value: 'DESERT_XERIC', label: 'Deserts & Xeric Shrublands' },
-  { value: 'MANGROVES', label: 'Mangroves' },
-]
+// Global Biomes (matching GlobalBiome type)
+const GLOBAL_BIOME_VALUES = [
+  'TROPICAL_RAINFOREST',
+  'TROPICAL_DRY_FOREST',
+  'TROPICAL_SAVANNA',
+  'SUBTROPICAL_FOREST',
+  'SUBTROPICAL_GRASSLAND',
+  'TEMPERATE_FOREST',
+  'TEMPERATE_GRASSLAND',
+  'MEDITERRANEAN',
+  'BOREAL_FOREST',
+  'TUNDRA',
+  'DESERT',
+  'MANGROVE',
+] as const
+
+// Labels by locale for global biomes
+const GLOBAL_BIOME_LABELS: Record<string, Record<string, string>> = {
+  en: {
+    TROPICAL_RAINFOREST: 'Tropical Rainforest',
+    TROPICAL_DRY_FOREST: 'Tropical Dry Forest',
+    TROPICAL_SAVANNA: 'Tropical Savanna',
+    SUBTROPICAL_FOREST: 'Subtropical Forest',
+    SUBTROPICAL_GRASSLAND: 'Subtropical Grassland',
+    TEMPERATE_FOREST: 'Temperate Forest',
+    TEMPERATE_GRASSLAND: 'Temperate Grassland',
+    MEDITERRANEAN: 'Mediterranean',
+    BOREAL_FOREST: 'Boreal Forest',
+    TUNDRA: 'Tundra',
+    DESERT: 'Desert',
+    MANGROVE: 'Mangrove',
+  },
+  'pt-BR': {
+    TROPICAL_RAINFOREST: 'Floresta Tropical Úmida',
+    TROPICAL_DRY_FOREST: 'Floresta Tropical Seca',
+    TROPICAL_SAVANNA: 'Savana Tropical',
+    SUBTROPICAL_FOREST: 'Floresta Subtropical',
+    SUBTROPICAL_GRASSLAND: 'Pradaria Subtropical',
+    TEMPERATE_FOREST: 'Floresta Temperada',
+    TEMPERATE_GRASSLAND: 'Pradaria Temperada',
+    MEDITERRANEAN: 'Mediterrâneo',
+    BOREAL_FOREST: 'Floresta Boreal',
+    TUNDRA: 'Tundra',
+    DESERT: 'Deserto',
+    MANGROVE: 'Manguezal',
+  },
+  es: {
+    TROPICAL_RAINFOREST: 'Bosque Tropical Húmedo',
+    TROPICAL_DRY_FOREST: 'Bosque Tropical Seco',
+    TROPICAL_SAVANNA: 'Sabana Tropical',
+    SUBTROPICAL_FOREST: 'Bosque Subtropical',
+    SUBTROPICAL_GRASSLAND: 'Pradera Subtropical',
+    TEMPERATE_FOREST: 'Bosque Templado',
+    TEMPERATE_GRASSLAND: 'Pradera Templada',
+    MEDITERRANEAN: 'Mediterráneo',
+    BOREAL_FOREST: 'Bosque Boreal',
+    TUNDRA: 'Tundra',
+    DESERT: 'Desierto',
+    MANGROVE: 'Manglar',
+  },
+}
 
 // Regional biomes grouped by country
 const REGIONAL_BIOME_OPTIONS: Record<string, string[]> = {
@@ -718,12 +763,14 @@ function ArrayFieldInput({
   )
 }
 
-export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode = 'create', locale = 'en' }: SpeciesFormProps) {
+export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode = 'create', locale = 'en', onSaveSuccess }: SpeciesFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitAction, setSubmitAction] = useState<'draft' | 'review'>('draft')
+  const [submitAction, setSubmitAction] = useState<'draft' | 'review' | 'save'>('draft')
   const [error, setError] = useState<string | null>(null)
   const [photos, setPhotos] = useState<UploadedPhoto[]>(defaultPhotos)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+  const [changeReason, setChangeReason] = useState('')
 
   // Get translations for current locale
   const t = formTranslationsByLocale[locale] || defaultFormTranslations
@@ -779,6 +826,7 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
   const onSubmit = async (data: SpeciesFormData) => {
     setIsSubmitting(true)
     setError(null)
+    setSaveSuccess(false)
 
     // Validate photo tags before submission
     if (photos.length > 0 && !validatePhotoTags(photos)) {
@@ -791,15 +839,29 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
       return
     }
 
+    // Validate change reason for reviewer edits
+    if (mode === 'review' && !changeReason.trim()) {
+      setError(locale === 'pt-BR'
+        ? 'É necessário informar o motivo das alterações'
+        : locale === 'es'
+        ? 'Es necesario informar el motivo de los cambios'
+        : 'Change reason is required for reviewer edits')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
-      const url = mode === 'create'
+      // In review mode, use the reviewer edit endpoint
+      const url = mode === 'review'
+        ? `/api/species/submissions/${speciesId}/reviewer-edit`
+        : mode === 'create'
         ? '/api/species/submissions'
         : `/api/species/submissions/${speciesId}`
 
       const response = await fetch(url, {
         method: mode === 'create' ? 'POST' : 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(mode === 'review' ? { ...data, changeReason: changeReason.trim() } : data),
       })
 
       if (!response.ok) {
@@ -820,6 +882,18 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
         if (!photosResponse.ok) {
           console.error('Failed to save photos')
         }
+      }
+
+      // In review mode, show success message and don't navigate
+      if (mode === 'review') {
+        setSaveSuccess(true)
+        setTimeout(() => setSaveSuccess(false), 3000)
+        if (onSaveSuccess) {
+          onSaveSuccess()
+        }
+        router.refresh()
+        setIsSubmitting(false)
+        return
       }
 
       // If submitting for review
@@ -1141,26 +1215,30 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
             <div>
               <label className="block text-sm font-semibold mb-2">{t.globalBiome}</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-3 border rounded-md bg-white">
-                {GLOBAL_BIOME_OPTIONS.map(opt => (
-                  <label key={opt.value} className="flex items-center gap-2">
-                    <Checkbox
-                      checked={globalBiome.includes(opt.value)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setValue('globalBiome', [...globalBiome, opt.value])
-                        } else {
-                          setValue('globalBiome', globalBiome.filter(b => b !== opt.value))
-                        }
-                      }}
-                    />
-                    <span className="text-xs">{opt.label}</span>
-                  </label>
-                ))}
+                {GLOBAL_BIOME_VALUES.map(value => {
+                  const biomeLabels = GLOBAL_BIOME_LABELS[locale] || GLOBAL_BIOME_LABELS.en
+                  return (
+                    <label key={value} className="flex items-center gap-2">
+                      <Checkbox
+                        checked={globalBiome.includes(value)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setValue('globalBiome', [...globalBiome, value])
+                          } else {
+                            setValue('globalBiome', globalBiome.filter(b => b !== value))
+                          }
+                        }}
+                      />
+                      <span className="text-xs">{biomeLabels[value] || value}</span>
+                    </label>
+                  )
+                })}
               </div>
               {globalBiome.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {globalBiome.map((biome, index) => {
-                    const biomeLabel = GLOBAL_BIOME_OPTIONS.find(o => o.value === biome)?.label || biome
+                    const biomeLabels = GLOBAL_BIOME_LABELS[locale] || GLOBAL_BIOME_LABELS.en
+                    const biomeLabel = biomeLabels[biome] || biome
                     return (
                       <span key={index} className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-md text-sm">
                         {biomeLabel}
@@ -1394,43 +1472,101 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
         locale={locale}
       />
 
+      {/* Change Reason - Required for Reviewers */}
+      {mode === 'review' && (
+        <Card className="border-amber-300 bg-amber-50">
+          <CardHeader>
+            <CardTitle className="text-amber-800">
+              {locale === 'pt-BR' ? 'Motivo das Alterações' : locale === 'es' ? 'Motivo de los Cambios' : 'Change Reason'}
+              <span className="text-red-500 ml-1">*</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <textarea
+              value={changeReason}
+              onChange={(e) => setChangeReason(e.target.value)}
+              className="w-full min-h-[100px] px-3 py-2 border border-amber-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+              placeholder={
+                locale === 'pt-BR'
+                  ? 'Descreva o motivo das alterações realizadas...'
+                  : locale === 'es'
+                  ? 'Describa el motivo de los cambios realizados...'
+                  : 'Describe the reason for the changes made...'
+              }
+              required
+            />
+            <p className="text-xs text-amber-600 mt-2">
+              {locale === 'pt-BR'
+                ? 'Este campo é obrigatório. Explique brevemente por que as alterações foram feitas.'
+                : locale === 'es'
+                ? 'Este campo es obligatorio. Explique brevemente por qué se hicieron los cambios.'
+                : 'This field is required. Briefly explain why the changes were made.'}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Form Actions */}
       <div className="flex justify-end gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-          disabled={isSubmitting}
-        >
-          {t.cancel}
-        </Button>
+        {mode === 'review' ? (
+          <>
+            {saveSuccess && (
+              <span className="text-green-600 text-sm flex items-center">
+                {locale === 'pt-BR' ? 'Alterações salvas!' : locale === 'es' ? 'Cambios guardados!' : 'Changes saved!'}
+              </span>
+            )}
+            <Button
+              type="submit"
+              disabled={isSubmitting || !changeReason.trim()}
+              onClick={() => setSubmitAction('save')}
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {locale === 'pt-BR' ? 'Salvar Alterações' : locale === 'es' ? 'Guardar Cambios' : 'Save Changes'}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+              disabled={isSubmitting}
+            >
+              {t.cancel}
+            </Button>
 
-        <Button
-          type="submit"
-          variant="outline"
-          disabled={isSubmitting}
-          onClick={() => setSubmitAction('draft')}
-        >
-          {isSubmitting && submitAction === 'draft' ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4 mr-2" />
-          )}
-          {t.saveAsDraft}
-        </Button>
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={isSubmitting}
+              onClick={() => setSubmitAction('draft')}
+            >
+              {isSubmitting && submitAction === 'draft' ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {t.saveAsDraft}
+            </Button>
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          onClick={() => setSubmitAction('review')}
-        >
-          {isSubmitting && submitAction === 'review' ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Send className="h-4 w-4 mr-2" />
-          )}
-          {t.submitForReview}
-        </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              onClick={() => setSubmitAction('review')}
+            >
+              {isSubmitting && submitAction === 'review' ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4 mr-2" />
+              )}
+              {t.submitForReview}
+            </Button>
+          </>
+        )}
       </div>
     </form>
   )

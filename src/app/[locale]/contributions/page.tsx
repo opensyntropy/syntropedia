@@ -1,20 +1,22 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getSession, isReviewer } from '@/lib/auth/server'
-import { getSubmissions } from '@/lib/services/submission'
+import { getSubmissions, type SubmissionType } from '@/lib/services/submission'
 import { getTranslations } from '@/lib/getTranslations'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { StatusBadge } from '@/components/submissions/StatusBadge'
 import { ReviewProgress } from '@/components/submissions/ReviewProgress'
+import { ResubmitButton } from '@/components/submissions/ResubmitButton'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Plus, Edit } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Plus, Edit, RefreshCw, Sparkles } from 'lucide-react'
 import { SpeciesStatus, ReviewDecision } from '@prisma/client'
 
 interface SubmissionsPageProps {
   params: Promise<{ locale: string }>
-  searchParams: Promise<{ status?: string; page?: string }>
+  searchParams: Promise<{ status?: string; page?: string; type?: string }>
 }
 
 export default async function SubmissionsPage({ params, searchParams }: SubmissionsPageProps) {
@@ -25,7 +27,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
   }
 
   const { locale } = await params
-  const { status, page } = await searchParams
+  const { status, page, type } = await searchParams
   const userIsReviewer = isReviewer(session)
 
   const result = await getSubmissions({
@@ -34,6 +36,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
     status: status as SpeciesStatus | undefined,
     page: page ? parseInt(page) : 1,
     limit: 20,
+    submissionType: type as SubmissionType | undefined,
   })
 
   const t = await getTranslations(locale, 'contributions')
@@ -59,7 +62,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
         </div>
 
         {/* Status Filter Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4">
           <Link href="/contributions">
             <Button variant={!status ? 'default' : 'outline'} size="sm">
               {t('all')}
@@ -75,12 +78,41 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
               {t('inReview')}
             </Button>
           </Link>
+          <Link href="/contributions?status=REJECTED">
+            <Button variant={status === 'REJECTED' ? 'default' : 'outline'} size="sm">
+              {t('rejected')}
+            </Button>
+          </Link>
           <Link href="/contributions?status=PUBLISHED">
             <Button variant={status === 'PUBLISHED' ? 'default' : 'outline'} size="sm">
               {t('published')}
             </Button>
           </Link>
         </div>
+
+        {/* Submission Type Filter - Show when IN_REVIEW is selected */}
+        {status === 'IN_REVIEW' && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            <span className="text-sm text-muted-foreground self-center mr-2">{t('filterType')}:</span>
+            <Link href="/contributions?status=IN_REVIEW">
+              <Button variant={!type ? 'secondary' : 'ghost'} size="sm">
+                {t('allTypes')}
+              </Button>
+            </Link>
+            <Link href="/contributions?status=IN_REVIEW&type=new">
+              <Button variant={type === 'new' ? 'secondary' : 'ghost'} size="sm" className="gap-1">
+                <Sparkles className="h-3 w-3" />
+                {t('newSubmissions')}
+              </Button>
+            </Link>
+            <Link href="/contributions?status=IN_REVIEW&type=revision">
+              <Button variant={type === 'revision' ? 'secondary' : 'ghost'} size="sm" className="gap-1">
+                <RefreshCw className="h-3 w-3" />
+                {t('revisionRequests')}
+              </Button>
+            </Link>
+          </div>
+        )}
 
         {/* Submissions List */}
         {result.submissions.length === 0 ? (
@@ -123,11 +155,24 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 flex-wrap">
                             <h3 className="font-semibold text-lg truncate">
                               {submission.scientificName}
                             </h3>
                             <StatusBadge status={submission.status} locale={locale} />
+                            {submission.status === SpeciesStatus.IN_REVIEW && (
+                              submission.revisionRequestedById ? (
+                                <Badge variant="outline" className="text-orange-600 border-orange-300 bg-orange-50 gap-1">
+                                  <RefreshCw className="h-3 w-3" />
+                                  {t('revision')}
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-emerald-600 border-emerald-300 bg-emerald-50 gap-1">
+                                  <Sparkles className="h-3 w-3" />
+                                  {t('new')}
+                                </Badge>
+                              )
+                            )}
                           </div>
                           <p className="text-sm text-muted-foreground mt-1">
                             {submission.commonNames.slice(0, 3).join(', ')}
@@ -145,7 +190,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
                           )}
                         </div>
 
-                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2">
                           {submission.status === SpeciesStatus.DRAFT && (
                             <Link href={`/contributions/${submission.id}?edit=true`}>
                               <Button variant="outline" size="sm">
@@ -154,6 +199,18 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
                               </Button>
                             </Link>
                           )}
+                          {submission.status === SpeciesStatus.REJECTED &&
+                            submission.createdById === session.user.id && (
+                              <>
+                                <Link href={`/contributions/${submission.id}?edit=true`}>
+                                  <Button variant="outline" size="sm">
+                                    <Edit className="h-4 w-4 mr-1" />
+                                    {t('edit')}
+                                  </Button>
+                                </Link>
+                                <ResubmitButton speciesId={submission.id} locale={locale} />
+                              </>
+                            )}
                           {submission.status === SpeciesStatus.IN_REVIEW &&
                             userIsReviewer &&
                             submission.createdById !== session.user.id && (

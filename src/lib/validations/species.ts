@@ -18,10 +18,12 @@ const optionalNumber = z.preprocess(
 
 export const speciesFormSchema = z.object({
   // Nomenclature
-  scientificName: z.string().optional(),
+  scientificName: z.string().min(1, 'Scientific name is required'),
   genus: z.string().optional(),
   species: z.string().optional(),
+  author: z.string().optional(),
   commonNames: z.array(z.string()).min(1, 'At least one common name is required'),
+  synonyms: z.array(z.string()).optional(),
   botanicalFamily: z.string().optional(),
   variety: z.string().optional(),
 
@@ -43,6 +45,7 @@ export const speciesFormSchema = z.object({
   globalBiome: z.array(z.string()).optional(),
   regionalBiome: z.array(z.string()).optional(),
   foliageType: optionalEnum(['EVERGREEN', 'SEMI_EVERGREEN', 'DECIDUOUS', 'SEMI_DECIDUOUS'] as const),
+  leafDropSeason: z.string().optional(),
   growthRate: optionalEnum(['VERY_FAST', 'FAST', 'MEDIUM', 'SLOW', 'VERY_SLOW'] as const),
   rootSystem: optionalEnum([
     'TAPROOT', 'FIBROUS', 'TUBEROUS', 'ADVENTITIOUS',
@@ -73,7 +76,7 @@ export const speciesFormSchema = z.object({
 })
 
 export const reviewFormSchema = z.object({
-  decision: z.enum(['APPROVED', 'REJECTED', 'CHANGES_REQUESTED']),
+  decision: z.enum(['APPROVED', 'REJECTED']),
   comments: z.string().optional(),
 })
 

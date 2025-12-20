@@ -8,17 +8,20 @@
     "login": "Iniciar sesión",
     "createAccount": "Crear Cuenta",
     "myContributions": "Mis Contribuciones",
+    "reviews": "Cola de Revisión",
     "myAccount": "Mi Cuenta",
     "settings": "Configuración",
     "logOut": "Cerrar sesión",
-    "forum": "Foro"
+    "forum": "Foro",
+    "becomeReviewer": "Ser Revisor",
+    "admin": "Admin"
   },
   "stratum": {
     "EMERGENT": "Emergente",
-    "CANOPY": "Dosel",
-    "SUBCANOPY": "Subdosel",
-    "UNDERSTORY": "Sotobosque",
-    "GROUND_COVER": "Cobertura del suelo"
+    "HIGH": "Alto (Dosel)",
+    "MEDIUM": "Medio (Subdosel)",
+    "LOW": "Bajo (Sotobosque)",
+    "GROUND": "Cobertura del suelo"
   },
   "successionalStage": {
     "PIONEER": "Pionera",
@@ -69,9 +72,12 @@
     "TROPICAL_DRY_FOREST": "Bosque Tropical Seco",
     "TROPICAL_SAVANNA": "Sabana Tropical",
     "SUBTROPICAL_FOREST": "Bosque Subtropical",
+    "SUBTROPICAL_GRASSLAND": "Pradera Subtropical",
     "TEMPERATE_FOREST": "Bosque Templado",
     "TEMPERATE_GRASSLAND": "Pradera Templada",
     "MEDITERRANEAN": "Mediterráneo",
+    "BOREAL_FOREST": "Bosque Boreal",
+    "TUNDRA": "Tundra",
     "DESERT": "Desierto",
     "MANGROVE": "Manglar"
   },
@@ -179,16 +185,16 @@
     "contribute": {
       "title": "¿Cómo Contribuir?",
       "step1": {
-        "title": "Iniciar sesión",
-        "description": "Conéctese a través del foro Discourse para comenzar a contribuir"
+        "title": "Crear una Cuenta",
+        "description": "Regístrese para comenzar a contribuir especies a nuestra base de datos"
       },
       "step2": {
-        "title": "Agregar fotos",
-        "description": "Contribuya con imágenes de las especies que conoce"
+        "title": "Agregar Especies",
+        "description": "Envíe nuevas plantas con fotos, características y usos. Sus contribuciones serán revisadas antes de la publicación."
       },
       "step3": {
-        "title": "Participar",
-        "description": "Discuta, comparta experiencias y aprenda de la comunidad"
+        "title": "Conviértete en Revisor",
+        "description": "Solicite ser revisor y ayude a validar contribuciones de especies de la comunidad."
       },
       "cta": "Comenzar a Contribuir →"
     },
@@ -305,6 +311,7 @@
     "all": "Todos",
     "draft": "Borrador",
     "inReview": "En Revisión",
+    "rejected": "Rechazada",
     "published": "Publicada",
     "view": "Ver",
     "edit": "Editar",
@@ -324,7 +331,13 @@
     "contributionInfo": "Información de la Contribución",
     "previous": "Anterior",
     "next": "Siguiente",
-    "pageOf": "Página {page} de {total}"
+    "pageOf": "Página {page} de {total}",
+    "filterType": "Tipo",
+    "allTypes": "Todos",
+    "newSubmissions": "Nuevas",
+    "revisionRequests": "Revisiones",
+    "new": "Nueva",
+    "revision": "Revisión"
   },
   "speciesForm": {
     "nomenclature": "Nomenclatura",
@@ -399,9 +412,9 @@
     "created": "Creó",
     "updated": "Actualizó",
     "submitted": "Envió para revisión",
+    "resubmitted": "Reenvió para revisión",
     "approved": "Aprobó",
     "rejected": "Rechazó",
-    "changesRequested": "Solicitó cambios",
     "published": "Publicó"
   },
   "photoTags": {
@@ -414,5 +427,93 @@
     "fruit": "Fruto",
     "seeds": "Semillas",
     "flower": "Flor"
+  },
+  "becomeReviewer": {
+    "title": "Conviértete en Revisor",
+    "description": "Ayuda a construir nuestra base de datos de plantas revisando contribuciones de la comunidad.",
+    "whatReviewersDo": "Qué Hacen los Revisores",
+    "benefit1": "Revisar y validar contribuciones de especies de los colaboradores",
+    "benefit2": "Ayudar a garantizar la precisión y calidad de la información sobre plantas",
+    "benefit3": "Contribuir a construir una base de datos integral de agricultura sintrópica",
+    "loginRequired": "Inicio de Sesión Requerido",
+    "loginRequiredDescription": "Necesitas iniciar sesión para solicitar ser revisor.",
+    "login": "Iniciar Sesión",
+    "alreadyReviewer": "Ya eres Revisor",
+    "alreadyReviewerDescription": "¡Gracias por contribuir a nuestra comunidad! Puedes revisar contribuciones de especies desde la página de contribuciones.",
+    "viewContributions": "Ver Contribuciones",
+    "statusPending": "Solicitud Pendiente",
+    "statusApproved": "Solicitud Aprobada",
+    "statusRejected": "Solicitud Rechazada",
+    "pendingDescription": "Tu solicitud está siendo revisada. Te notificaremos cuando se tome una decisión.",
+    "approvedDescription": "¡Felicitaciones! Ahora eres revisor. Puedes empezar a revisar contribuciones de especies.",
+    "rejectedDescription": "Lamentablemente, tu solicitud no fue aprobada en este momento.",
+    "adminNote": "Nota del administrador",
+    "applyTitle": "Solicitar ser Revisor",
+    "applyDescription": "Cuéntanos sobre ti y por qué te gustaría ser revisor.",
+    "motivationLabel": "Motivación",
+    "motivationPlaceholder": "Comparte por qué quieres contribuir a Syntropedia como revisor...",
+    "motivationHint": "Mínimo 50 caracteres. Cuéntanos qué motiva tu interés en la agricultura sintrópica.",
+    "addressSection": "Ubicación",
+    "fullAddress": "Dirección Completa",
+    "fullAddressPlaceholder": "Calle, número, barrio...",
+    "city": "Ciudad",
+    "state": "Estado/Provincia",
+    "country": "País",
+    "experienceSection": "Educación y Experiencia",
+    "education": "Educación",
+    "educationPlaceholder": "Describe tu formación educativa (títulos, cursos, certificaciones)...",
+    "yearsExperience": "Años de Experiencia con Agroforestería/Identificación de Plantas",
+    "experienceDetails": "Detalles de la Experiencia",
+    "experienceDetailsPlaceholder": "Describe tu experiencia práctica con agroforestería, agricultura sintrópica o identificación de plantas...",
+    "socialSection": "Redes Sociales y Enlaces",
+    "socialHint": "Opcional. Ayúdanos a conocer más sobre tu trabajo.",
+    "website": "Sitio Web/Portafolio",
+    "submitting": "Enviando...",
+    "submitApplication": "Enviar Solicitud"
+  },
+  "admin": {
+    "applicationsTitle": "Solicitudes de Revisores",
+    "applicationsDescription": "Gestiona solicitudes de revisores y revisores actuales.",
+    "tabApplications": "Solicitudes",
+    "tabReviewers": "Revisores",
+    "all": "Todos",
+    "pending": "Pendiente",
+    "approved": "Aprobado",
+    "rejected": "Rechazado",
+    "noApplications": "No se encontraron solicitudes.",
+    "noReviewers": "No se encontraron revisores.",
+    "motivation": "Motivación",
+    "adminNote": "Nota del administrador",
+    "notePlaceholder": "Agregar una nota para el solicitante (opcional)...",
+    "addNote": "Agregar Nota",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "revoke": "Revocar",
+    "appliedOn": "Solicitó el",
+    "memberSince": "Miembro desde",
+    "revokeConfirm": "¿Estás seguro de que quieres revocar el estado de revisor de {name}?",
+    "expand": "Detalles",
+    "collapse": "Ocultar",
+    "location": "Ubicación",
+    "education": "Educación",
+    "experience": "Experiencia",
+    "yearsExp": "años",
+    "socialLinks": "Redes Sociales",
+    "website": "Sitio Web",
+    "speciesReviewQueue": "Cola de Revisión de Especies",
+    "speciesReviewQueueHint": "Revisa especies esperando aprobación"
+  },
+  "reviewQueue": {
+    "title": "Cola de Revisión",
+    "description": "Especies esperando tu revisión",
+    "noSubmissions": "No hay especies para revisar",
+    "noSubmissionsHint": "Vuelve más tarde para nuevas solicitudes",
+    "submittedBy": "Enviado por",
+    "requestedBy": "Solicitado por",
+    "submittedOn": "Enviado el",
+    "approvals": "aprobaciones",
+    "review": "Revisar",
+    "newSubmissions": "Nuevas Especies",
+    "revisionRequests": "Solicitudes de Revisión"
   }
 }

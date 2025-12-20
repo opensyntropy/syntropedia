@@ -55,7 +55,8 @@ export async function createSubmission(params: CreateSubmissionParams) {
       stratum: data.stratum,
       successionalStage: data.successionalStage,
       lifeCycle: data.lifeCycle,
-      lifeCycleYears: data.lifeCycleYears,
+      lifeCycleYearsStart: data.lifeCycleYearsStart,
+      lifeCycleYearsEnd: data.lifeCycleYearsEnd,
       heightMeters: data.heightMeters,
       canopyWidthMeters: data.canopyWidthMeters,
       canopyShape: data.canopyShape,
@@ -67,10 +68,14 @@ export async function createSubmission(params: CreateSubmissionParams) {
       growthRate: data.growthRate,
       rootSystem: data.rootSystem,
       nitrogenFixer: data.nitrogenFixer || false,
+      serviceSpecies: data.serviceSpecies || false,
+      pruningSprout: data.pruningSprout,
+      seedlingShade: data.seedlingShade,
       biomassProduction: data.biomassProduction,
       hasFruit: data.hasFruit || false,
       edibleFruit: data.edibleFruit || false,
-      fruitingAge: data.fruitingAge,
+      fruitingAgeStart: data.fruitingAgeStart,
+      fruitingAgeEnd: data.fruitingAgeEnd,
       uses: data.uses || [],
       propagationMethods: data.propagationMethods || [],
       observations: data.observations,
@@ -97,6 +102,8 @@ export interface UpdateSubmissionParams {
 export async function updateSubmission(params: UpdateSubmissionParams) {
   const { id, data, userId } = params
 
+  // Regular users can only edit their own DRAFT submissions
+  // No change tracking needed for drafts - they're works in progress
   const species = await prisma.species.update({
     where: { id },
     data: {
@@ -160,6 +167,8 @@ export async function submitForReview(speciesId: string, userId: string) {
   return species
 }
 
+export type SubmissionType = 'new' | 'revision'
+
 export interface GetSubmissionsParams {
   userId?: string
   status?: SpeciesStatus | SpeciesStatus[]
@@ -167,10 +176,11 @@ export interface GetSubmissionsParams {
   limit?: number
   search?: string
   isReviewer?: boolean
+  submissionType?: SubmissionType
 }
 
 export async function getSubmissions(params: GetSubmissionsParams = {}) {
-  const { userId, status, page = 1, limit = 20, search, isReviewer = false } = params
+  const { userId, status, page = 1, limit = 20, search, isReviewer = false, submissionType } = params
 
   const where: Record<string, unknown> = {}
 
@@ -182,6 +192,15 @@ export async function getSubmissions(params: GetSubmissionsParams = {}) {
   // Status filter
   if (status) {
     where.status = Array.isArray(status) ? { in: status } : status
+  }
+
+  // Submission type filter (new vs revision request)
+  if (submissionType === 'new') {
+    // New submissions: never been published
+    where.publishedAt = null
+  } else if (submissionType === 'revision') {
+    // Revision requests: has a revision request
+    where.revisionRequestedById = { not: null }
   }
 
   // Search filter
@@ -238,6 +257,214 @@ export async function getSubmissionById(id: string) {
         },
         orderBy: { reviewedAt: 'desc' },
       },
+    },
+  })
+}
+
+export interface GetReviewQueueParams {
+  reviewerId: string
+  submissionType?: SubmissionType
+}
+
+export async function getReviewQueue(params: GetReviewQueueParams | string) {
+  // Support both old signature (string) and new signature (object)
+  const { reviewerId, submissionType } = typeof params === 'string'
+    ? { reviewerId: params, submissionType: undefined }
+    : params
+
+  // Build where clause
+  const where: Record<string, unknown> = {
+    status: SpeciesStatus.IN_REVIEW,
+    createdById: { not: reviewerId },
+    reviews: {
+      none: { reviewerId: reviewerId }
+    }
+  }
+
+  // Submission type filter (new vs revision request)
+  // Default to 'new' if not specified
+  const effectiveType = submissionType ?? 'new'
+  if (effectiveType === 'new') {
+    // New submissions: never been published
+    where.publishedAt = null
+  } else if (effectiveType === 'revision') {
+    // Revision requests: has a revision request
+    where.revisionRequestedById = { not: null }
+  }
+
+  // Get IN_REVIEW submissions where:
+  // - User is NOT the creator (can't self-review)
+  // - User has NOT already reviewed
+  const submissions = await prisma.species.findMany({
+    where,
+    include: {
+      createdBy: { select: { id: true, name: true, email: true, avatar: true } },
+      photos: { where: { primary: true }, take: 1 },
+      reviews: {
+        include: { reviewer: { select: { id: true, name: true } } }
+      },
+      revisionRequestedBy: { select: { id: true, name: true } }
+    },
+    orderBy: { submittedAt: 'asc' } // Oldest first (FIFO queue)
+  })
+
+  // Add primaryPhoto helper for easier access
+  return submissions.map(submission => ({
+    ...submission,
+    primaryPhoto: submission.photos[0] || null,
+  }))
+}
+
+export interface ReviewerEditParams {
+  id: string
+  data: Partial<SpeciesFormData>
+  reviewerId: string
+  changeReason: string
+}
+
+export async function reviewerEditSubmission(params: ReviewerEditParams) {
+  const { id, data, reviewerId, changeReason } = params
+
+  // Get current values for change tracking
+  const currentSpecies = await prisma.species.findUnique({
+    where: { id },
+  })
+
+  if (!currentSpecies) {
+    throw new Error('Species not found')
+  }
+
+  // Track changes for each modified field
+  const changes: Array<{
+    field: string
+    previousValue: unknown
+    newValue: unknown
+  }> = []
+
+  const transformedData = transformFormData(data)
+
+  // Compare each field that's being updated
+  for (const [key, newValue] of Object.entries(transformedData)) {
+    const currentValue = (currentSpecies as Record<string, unknown>)[key]
+
+    // Check if value actually changed
+    const valueChanged = JSON.stringify(currentValue) !== JSON.stringify(newValue)
+    if (valueChanged) {
+      changes.push({
+        field: key,
+        previousValue: currentValue,
+        newValue: newValue,
+      })
+    }
+  }
+
+  // Only update if there are actual changes
+  if (changes.length === 0) {
+    return currentSpecies
+  }
+
+  // Update species and log changes
+  const species = await prisma.species.update({
+    where: { id },
+    data: {
+      ...transformedData,
+      updatedById: reviewerId,
+    },
+  })
+
+  // Log each change to ChangeHistory
+  await prisma.changeHistory.createMany({
+    data: changes.map(change => ({
+      speciesId: id,
+      changedById: reviewerId,
+      changedFields: change.field,
+      previousValue: change.previousValue as object,
+      newValue: change.newValue as object,
+      changeReason,
+    })),
+  })
+
+  await logActivity({
+    action: ActivityAction.SPECIES_UPDATED,
+    userId: reviewerId,
+    speciesId: species.id,
+    details: {
+      updatedFields: changes.map(c => c.field),
+      reviewerEdit: true
+    },
+  })
+
+  return species
+}
+
+export interface RequestRevisionParams {
+  speciesId: string
+  userId: string
+  reason: string
+}
+
+export async function requestRevision(params: RequestRevisionParams) {
+  const { speciesId, userId, reason } = params
+
+  // Verify species exists and is published
+  const species = await prisma.species.findUnique({
+    where: { id: speciesId },
+  })
+
+  if (!species) {
+    throw new Error('Species not found')
+  }
+
+  if (species.status !== SpeciesStatus.PUBLISHED) {
+    throw new Error('Only published species can have revision requests')
+  }
+
+  // Update species to IN_REVIEW with revision info
+  const updated = await prisma.species.update({
+    where: { id: speciesId },
+    data: {
+      status: SpeciesStatus.IN_REVIEW,
+      revisionRequestedById: userId,
+      revisionRequestReason: reason,
+      revisionRequestedAt: new Date(),
+    },
+  })
+
+  // Log activity
+  await logActivity({
+    action: ActivityAction.REVISION_REQUESTED,
+    userId,
+    speciesId,
+    details: { reason },
+  })
+
+  // Notify reviewers
+  const reviewers = await prisma.user.findMany({
+    where: {
+      role: { in: [UserRole.REVIEWER, UserRole.ADMIN] },
+    },
+    select: { email: true },
+  })
+
+  if (reviewers.length > 0) {
+    await sendSubmissionNotification({
+      speciesName: species.scientificName,
+      speciesId: species.id,
+      creatorName: 'User revision request',
+      reviewerEmails: reviewers.map(r => r.email),
+    })
+  }
+
+  return updated
+}
+
+export async function getSpeciesBySlug(slug: string) {
+  return prisma.species.findUnique({
+    where: { slug },
+    include: {
+      createdBy: { select: { id: true, name: true, email: true, avatar: true } },
+      photos: true,
+      revisionRequestedBy: { select: { id: true, name: true, email: true, avatar: true } },
     },
   })
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { withAuth, AuthenticatedRequest } from '@/lib/auth/api'
+import { withAuth, type AuthenticatedContext } from '@/lib/auth/api'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { PHOTO_FRAGMENT_TAGS } from '@/lib/validations/species'
@@ -15,8 +15,8 @@ const photoSchema = z.object({
 const photosSchema = z.array(photoSchema)
 
 // GET /api/species/submissions/[id]/photos - Get photos for a species
-export const GET = withAuth(async (req: AuthenticatedRequest, { params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
+export const GET = withAuth(async (req: NextRequest, { params, session }: AuthenticatedContext) => {
+  const id = params.id
 
   const photos = await prisma.photo.findMany({
     where: { speciesId: id },
@@ -30,9 +30,9 @@ export const GET = withAuth(async (req: AuthenticatedRequest, { params }: { para
 })
 
 // POST /api/species/submissions/[id]/photos - Add photos to a species
-export const POST = withAuth(async (req: AuthenticatedRequest, { params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
-  const userId = req.user.id
+export const POST = withAuth(async (req: NextRequest, { params, session }: AuthenticatedContext) => {
+  const id = params.id
+  const userId = session.user.id
 
   // Verify species exists and user can edit it
   const species = await prisma.species.findUnique({
@@ -99,9 +99,9 @@ export const POST = withAuth(async (req: AuthenticatedRequest, { params }: { par
 })
 
 // PUT /api/species/submissions/[id]/photos - Update all photos for a species
-export const PUT = withAuth(async (req: AuthenticatedRequest, { params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
-  const userId = req.user.id
+export const PUT = withAuth(async (req: NextRequest, { params, session }: AuthenticatedContext) => {
+  const id = params.id
+  const userId = session.user.id
 
   // Verify species exists and user can edit it
   const species = await prisma.species.findUnique({

@@ -20,11 +20,18 @@ import {
 import { type SpeciesDetail } from '@/types/species'
 import { getTranslations } from '@/lib/getTranslations'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/auth/server'
+import { RequestRevisionButton } from '@/components/species/RequestRevisionButton'
 
-// This would normally come from a database
-// For now, we'll use mock data
+// Extended type to include status for revision button check
+interface SpeciesDetailWithStatus extends SpeciesDetail {
+  status: string
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getMockSpecies = (slug: string): SpeciesDetail | null => {
-  const species: Record<string, SpeciesDetail> = {
+  // Mock data kept for reference but not used - page uses getSpeciesFromDb
+  const species = {
     'hymenaea-courbaril': {
       id: '1',
       slug: 'hymenaea-courbaril',
@@ -1152,13 +1159,13 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
     }
   }
 
-  return species[slug] || null
+  return (species as Record<string, SpeciesDetail>)[slug] || null
 }
 
 // Force dynamic rendering to avoid hydration issues
 export const dynamic = 'force-dynamic'
 
-async function getSpeciesFromDb(slug: string): Promise<SpeciesDetail | null> {
+async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus | null> {
   const dbSpecies = await prisma.species.findFirst({
     where: {
       slug,
@@ -1189,38 +1196,41 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetail | null> {
     id: dbSpecies.id,
     slug: dbSpecies.slug,
     scientificName: dbSpecies.scientificName,
-    genus: dbSpecies.genus || undefined,
-    species: dbSpecies.species || undefined,
-    author: dbSpecies.author || undefined,
+    genus: dbSpecies.genus,
+    species: dbSpecies.species,
+    author: dbSpecies.author,
     commonNames: dbSpecies.commonNames,
     synonyms: dbSpecies.synonyms || undefined,
-    botanicalFamily: dbSpecies.botanicalFamily || undefined,
-    variety: dbSpecies.variety || undefined,
+    botanicalFamily: dbSpecies.botanicalFamily,
+    variety: dbSpecies.variety,
     stratum: dbSpecies.stratum,
     successionalStage: dbSpecies.successionalStage,
-    lifeCycle: dbSpecies.lifeCycle || undefined,
-    lifeCycleYears: dbSpecies.lifeCycleYears ? { min: 0, max: 100 } : undefined,
+    lifeCycle: dbSpecies.lifeCycle,
+    lifeCycleYearsStart: dbSpecies.lifeCycleYearsStart,
+    lifeCycleYearsEnd: dbSpecies.lifeCycleYearsEnd,
     heightMeters,
     canopyWidthMeters,
-    canopyShape: dbSpecies.canopyShape || undefined,
-    specieType: undefined,
-    originCenter: dbSpecies.originCenter || undefined,
-    globalBiome: dbSpecies.globalBiome || undefined,
+    canopyShape: dbSpecies.canopyShape,
+    originCenter: dbSpecies.originCenter,
+    globalBiome: dbSpecies.globalBiome,
     regionalBiome: dbSpecies.regionalBiome || undefined,
-    foliageType: dbSpecies.foliageType || undefined,
-    leafDropSeason: dbSpecies.leafDropSeason || undefined,
-    growthRate: dbSpecies.growthRate || undefined,
-    rootSystem: dbSpecies.rootSystem || undefined,
+    foliageType: dbSpecies.foliageType,
+    leafDropSeason: dbSpecies.leafDropSeason,
+    growthRate: dbSpecies.growthRate,
+    rootSystem: dbSpecies.rootSystem,
     nitrogenFixer: dbSpecies.nitrogenFixer || undefined,
-    biomassProduction: dbSpecies.biomassProduction || undefined,
+    serviceSpecies: dbSpecies.serviceSpecies || undefined,
+    biomassProduction: dbSpecies.biomassProduction,
     hasFruit: dbSpecies.hasFruit || undefined,
     edibleFruit: dbSpecies.edibleFruit || undefined,
-    fruitingAge: dbSpecies.fruitingAge ? { min: 0, max: 20 } : undefined,
+    fruitingAgeStart: dbSpecies.fruitingAgeStart,
+    fruitingAgeEnd: dbSpecies.fruitingAgeEnd,
     uses: dbSpecies.uses || undefined,
     propagationMethods: dbSpecies.propagationMethods || undefined,
-    observations: dbSpecies.observations || undefined,
+    observations: dbSpecies.observations,
     imageUrl,
-    images: images.length > 0 ? images : undefined
+    images: images.length > 0 ? images : undefined,
+    status: dbSpecies.status
   }
 }
 
@@ -1234,6 +1244,10 @@ export default async function SpeciesDetailPage({
   if (!species) {
     redirect('/catalog')
   }
+
+  // Get session to check if user can request revision
+  const session = await getSession()
+  const canRequestRevision = !!session?.user && species.status === 'PUBLISHED'
 
   const t = await getTranslations(params.locale, 'speciesDetail')
   const tCommon = await getTranslations(params.locale, 'common')
@@ -1299,11 +1313,6 @@ export default async function SpeciesDetailPage({
                   <Badge className="bg-blue-100 text-blue-700">
                     {tStage(species.successionalStage)}
                   </Badge>
-                  {species.specieType && (
-                    <Badge className="bg-amber-100 text-amber-700">
-                      {tSpecieType(species.specieType)}
-                    </Badge>
-                  )}
                   {species.lifeCycle && (
                     <Badge className="bg-purple-100 text-purple-700">
                       {tLifeCycle(species.lifeCycle)}
@@ -1315,7 +1324,7 @@ export default async function SpeciesDetailPage({
                       {t('nitrogenFixer')}
                     </Badge>
                   )}
-                  {species.service && (
+                  {species.serviceSpecies && (
                     <Badge className="bg-cyan-100 text-cyan-700">
                       {tCatalog('service')}
                     </Badge>
@@ -1327,6 +1336,17 @@ export default async function SpeciesDetailPage({
                     </Badge>
                   )}
                 </div>
+
+                {/* Request Revision Button - for authenticated users on published species */}
+                {canRequestRevision && (
+                  <div className="mb-6">
+                    <RequestRevisionButton
+                      speciesSlug={species.slug}
+                      speciesName={species.scientificName}
+                      locale={params.locale}
+                    />
+                  </div>
+                )}
 
                 {/* Quick Stats */}
                 <div className="space-y-3 border-t pt-6">
@@ -1346,19 +1366,27 @@ export default async function SpeciesDetailPage({
                       </span>
                     </div>
                   )}
-                  {species.lifeCycleYears && (
+                  {(species.lifeCycleYearsStart || species.lifeCycleYearsEnd) && (
                     <div className="flex items-center gap-3 text-sm">
                       <Clock className="h-5 w-5 text-gray-400" />
                       <span className="text-gray-600">
-                        {t('lifespan')}: <span className="font-medium text-gray-900">{species.lifeCycleYears.min}-{species.lifeCycleYears.max} {t('years')}</span>
+                        {t('lifespan')}: <span className="font-medium text-gray-900">
+                          {species.lifeCycleYearsStart && species.lifeCycleYearsEnd
+                            ? `${species.lifeCycleYearsStart}-${species.lifeCycleYearsEnd}`
+                            : species.lifeCycleYearsStart || species.lifeCycleYearsEnd} {t('years')}
+                        </span>
                       </span>
                     </div>
                   )}
-                  {species.fruitingAge && (
+                  {(species.fruitingAgeStart || species.fruitingAgeEnd) && (
                     <div className="flex items-center gap-3 text-sm">
                       <Apple className="h-5 w-5 text-gray-400" />
                       <span className="text-gray-600">
-                        {t('fruitsAt')}: <span className="font-medium text-gray-900">{species.fruitingAge.min}-{species.fruitingAge.max} {t('years')}</span>
+                        {t('fruitsAt')}: <span className="font-medium text-gray-900">
+                          {species.fruitingAgeStart && species.fruitingAgeEnd
+                            ? `${species.fruitingAgeStart}-${species.fruitingAgeEnd}`
+                            : species.fruitingAgeStart || species.fruitingAgeEnd} {t('years')}
+                        </span>
                       </span>
                     </div>
                   )}
@@ -1602,7 +1630,7 @@ export default async function SpeciesDetailPage({
             )}
 
             {/* Life Cycle Timeline */}
-            {(species.lifeCycleYears || species.fruitingAge) && (
+            {(species.lifeCycleYearsStart || species.lifeCycleYearsEnd || species.fruitingAgeStart || species.fruitingAgeEnd) && (
               <Card className="p-6">
                 <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900">
                   <TrendingUp className="h-5 w-5 text-gray-400" />
@@ -1617,19 +1645,23 @@ export default async function SpeciesDetailPage({
                       </Badge>
                     </div>
                   )}
-                  {species.lifeCycleYears && (
+                  {(species.lifeCycleYearsStart || species.lifeCycleYearsEnd) && (
                     <div>
                       <p className="mb-1 text-xs font-medium text-gray-600">{t('lifespan')}</p>
                       <p className="text-sm text-gray-900">
-                        {species.lifeCycleYears.min}-{species.lifeCycleYears.max} {t('years')}
+                        {species.lifeCycleYearsStart && species.lifeCycleYearsEnd
+                          ? `${species.lifeCycleYearsStart}-${species.lifeCycleYearsEnd}`
+                          : species.lifeCycleYearsStart || species.lifeCycleYearsEnd} {t('years')}
                       </p>
                     </div>
                   )}
-                  {species.fruitingAge && (
+                  {(species.fruitingAgeStart || species.fruitingAgeEnd) && (
                     <div>
                       <p className="mb-1 text-xs font-medium text-gray-600">{t('fruitingAge')}</p>
                       <p className="text-sm text-gray-900">
-                        {species.fruitingAge.min}-{species.fruitingAge.max} {t('years')}
+                        {species.fruitingAgeStart && species.fruitingAgeEnd
+                          ? `${species.fruitingAgeStart}-${species.fruitingAgeEnd}`
+                          : species.fruitingAgeStart || species.fruitingAgeEnd} {t('years')}
                       </p>
                     </div>
                   )}

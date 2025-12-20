@@ -1,5 +1,5 @@
-// Stratum/Layer in the forest
-export type Stratum = 'EMERGENT' | 'CANOPY' | 'SUBCANOPY' | 'UNDERSTORY' | 'GROUND_COVER'
+// Stratum/Layer in the forest (matches Prisma schema)
+export type Stratum = 'EMERGENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'GROUND'
 
 // Successional stage
 export type SuccessionalStage = 'PIONEER' | 'EARLY_SECONDARY' | 'LATE_SECONDARY' | 'CLIMAX'
@@ -12,9 +12,6 @@ export type FoliageType = 'EVERGREEN' | 'SEMI_EVERGREEN' | 'DECIDUOUS' | 'SEMI_D
 
 // Growth rate
 export type GrowthRate = 'VERY_FAST' | 'FAST' | 'MEDIUM' | 'SLOW' | 'VERY_SLOW'
-
-// Specie type
-export type SpecieType = 'TREE' | 'SHRUB' | 'VINE' | 'PALM' | 'GRASS' | 'HERB' | 'FERN'
 
 // Regional biomes (major global and regional biomes)
 export type RegionalBiome =
@@ -84,7 +81,6 @@ export interface SpeciesFilters {
   stratum?: Stratum[]
   successionalStage?: SuccessionalStage[]
   lifeCycle?: LifeCycle[]
-  specieType?: SpecieType[]
   regionalBiome?: RegionalBiome[]
   globalBiome?: GlobalBiome[]
   foliageType?: FoliageType[]
@@ -102,20 +98,21 @@ export interface SpeciesListItem {
   commonNames: string[]
   stratum: Stratum
   successionalStage: SuccessionalStage
-  lifeCycle: LifeCycle
-  lifeCycleYears?: { min: number; max: number }
-  specieType: SpecieType
-  regionalBiome?: RegionalBiome[]
-  globalBiome?: GlobalBiome[]
-  foliageType?: FoliageType
-  growthRate?: GrowthRate
+  lifeCycle?: LifeCycle | null
+  lifeCycleYearsStart?: number | null
+  lifeCycleYearsEnd?: number | null
+  regionalBiome?: string[]
+  globalBiome?: string | null
+  foliageType?: FoliageType | null
+  growthRate?: GrowthRate | null
   uses?: PlantUse[]
   nitrogenFixer?: boolean
   edibleFruit?: boolean
-  service?: boolean
-  heightMeters?: number
-  canopyWidthMeters?: number
-  fruitingAge?: { min: number; max: number }
+  serviceSpecies?: boolean
+  heightMeters?: number | null
+  canopyWidthMeters?: number | null
+  fruitingAgeStart?: number | null
+  fruitingAgeEnd?: number | null
   imageUrl: string
 }
 
@@ -151,37 +148,39 @@ export interface SpeciesDetail {
 
   // Nomenclature
   scientificName: string
-  genus?: string
-  species?: string
-  author?: string
+  genus?: string | null
+  species?: string | null
+  author?: string | null
   commonNames: string[]
   synonyms?: string[]
-  botanicalFamily?: string
-  variety?: string
+  botanicalFamily?: string | null
+  variety?: string | null
 
   // Base Data
   stratum: Stratum
   successionalStage: SuccessionalStage
-  lifeCycle?: LifeCycle
-  lifeCycleYears?: { min: number; max: number }
-  heightMeters?: number
-  canopyWidthMeters?: number
-  canopyShape?: CanopyShape
-  specieType?: SpecieType
+  lifeCycle?: LifeCycle | null
+  lifeCycleYearsStart?: number | null
+  lifeCycleYearsEnd?: number | null
+  heightMeters?: number | null
+  canopyWidthMeters?: number | null
+  canopyShape?: CanopyShape | null
 
   // Additional Data
-  originCenter?: string
-  globalBiome?: GlobalBiome
-  regionalBiome?: RegionalBiome[]
-  foliageType?: FoliageType
-  leafDropSeason?: string
-  growthRate?: GrowthRate
-  rootSystem?: RootSystem
+  originCenter?: string | null
+  globalBiome?: string | null
+  regionalBiome?: string[]
+  foliageType?: FoliageType | null
+  leafDropSeason?: string | null
+  growthRate?: GrowthRate | null
+  rootSystem?: RootSystem | null
   nitrogenFixer?: boolean
-  biomassProduction?: BiomassProduction
+  serviceSpecies?: boolean
+  biomassProduction?: BiomassProduction | null
   hasFruit?: boolean
   edibleFruit?: boolean
-  fruitingAge?: { min: number; max: number }
+  fruitingAgeStart?: number | null
+  fruitingAgeEnd?: number | null
 
   // Uses
   uses?: PlantUse[]
@@ -190,12 +189,11 @@ export interface SpeciesDetail {
   propagationMethods?: string[]
 
   // Other
-  observations?: string
+  observations?: string | null
 
   // Images
   imageUrl: string
   images?: string[]
-  service?: boolean
 }
 
 // Search result type for API responses

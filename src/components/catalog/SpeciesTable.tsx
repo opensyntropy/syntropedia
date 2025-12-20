@@ -105,19 +105,23 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
                       </div>
                     </div>
                   )}
-                  {specie.lifeCycleYears && (
+                  {(specie.lifeCycleYearsStart || specie.lifeCycleYearsEnd) && (
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Clock className="h-3.5 w-3.5" />
                       <span>
-                        {specie.lifeCycleYears.min}-{specie.lifeCycleYears.max} {t('years')}
+                        {specie.lifeCycleYearsStart && specie.lifeCycleYearsEnd
+                          ? `${specie.lifeCycleYearsStart}-${specie.lifeCycleYearsEnd}`
+                          : specie.lifeCycleYearsStart || specie.lifeCycleYearsEnd} {t('years')}
                       </span>
                     </div>
                   )}
-                  {specie.fruitingAge && (
+                  {(specie.fruitingAgeStart || specie.fruitingAgeEnd) && (
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Apple className="h-3.5 w-3.5" />
                       <span>
-                        {t('fruitsAt')}: {specie.fruitingAge.min}-{specie.fruitingAge.max} {t('years')}
+                        {t('fruitsAt')}: {specie.fruitingAgeStart && specie.fruitingAgeEnd
+                          ? `${specie.fruitingAgeStart}-${specie.fruitingAgeEnd}`
+                          : specie.fruitingAgeStart || specie.fruitingAgeEnd} {t('years')}
                       </span>
                     </div>
                   )}
@@ -142,14 +146,16 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
                   </Badge>
                 </div>
 
-                <div className="flex flex-wrap gap-2 lg:block lg:space-y-1">
-                  <div className="lg:hidden">
-                    <span className="text-xs font-medium text-gray-500">{t('lifeCycle')}:</span>
+                {specie.lifeCycle && (
+                  <div className="flex flex-wrap gap-2 lg:block lg:space-y-1">
+                    <div className="lg:hidden">
+                      <span className="text-xs font-medium text-gray-500">{t('lifeCycle')}:</span>
+                    </div>
+                    <Badge className={`rounded-full ${lifeCycleColors[specie.lifeCycle]}`}>
+                      {tLifeCycle(specie.lifeCycle)}
+                    </Badge>
                   </div>
-                  <Badge className={`rounded-full ${lifeCycleColors[specie.lifeCycle]}`}>
-                    {tLifeCycle(specie.lifeCycle)}
-                  </Badge>
-                </div>
+                )}
               </div>
             </Card>
           </Link>

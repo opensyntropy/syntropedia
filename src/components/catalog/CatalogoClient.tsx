@@ -43,7 +43,6 @@ export function CatalogoClient({
       currentFilters.stratum?.length ||
       currentFilters.successionalStage?.length ||
       currentFilters.lifeCycle?.length ||
-      currentFilters.specieType?.length ||
       currentFilters.regionalBiome?.length ||
       currentFilters.globalBiome?.length ||
       currentFilters.foliageType?.length ||
@@ -126,7 +125,6 @@ export function CatalogoClient({
     if (filters.stratum?.length) params.set('stratum', filters.stratum.join(','))
     if (filters.successionalStage?.length) params.set('successionalStage', filters.successionalStage.join(','))
     if (filters.lifeCycle?.length) params.set('lifeCycle', filters.lifeCycle.join(','))
-    if (filters.specieType?.length) params.set('specieType', filters.specieType.join(','))
     if (filters.regionalBiome?.length) params.set('regionalBiome', filters.regionalBiome.join(','))
     if (filters.globalBiome?.length) params.set('globalBiome', filters.globalBiome.join(','))
     if (filters.foliageType?.length) params.set('foliageType', filters.foliageType.join(','))
@@ -351,9 +349,7 @@ export function CatalogoClient({
                   {t('reviewerDescription')}
                 </p>
                 <a
-                  href={`${process.env.NEXT_PUBLIC_OASIS_URL || 'http://localhost:3001'}/become-reviewer`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/become-reviewer"
                   className="inline-flex items-center justify-center w-full px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors"
                 >
                   {t('reviewerButton')}

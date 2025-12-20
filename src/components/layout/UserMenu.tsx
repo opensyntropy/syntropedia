@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { User, Settings, LogOut, FileText } from 'lucide-react'
+import { User, Settings, LogOut, FileText, Shield, Award, ClipboardList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -95,6 +95,30 @@ export function UserMenu() {
             <span>{t('myContributions')}</span>
           </Link>
         </DropdownMenuItem>
+        {(session.user.role === 'REVIEWER' || session.user.role === 'ADMIN') && (
+          <DropdownMenuItem asChild>
+            <Link href="/reviews" className="flex cursor-pointer items-center">
+              <ClipboardList className="mr-2 h-4 w-4" />
+              <span>{t('reviews')}</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
+        {session.user.role === 'USER' && (
+          <DropdownMenuItem asChild>
+            <Link href="/become-reviewer" className="flex cursor-pointer items-center">
+              <Award className="mr-2 h-4 w-4" />
+              <span>{t('becomeReviewer')}</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
+        {session.user.role === 'ADMIN' && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin/applications" className="flex cursor-pointer items-center">
+              <Shield className="mr-2 h-4 w-4" />
+              <span>{t('admin')}</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/account" className="flex cursor-pointer items-center">

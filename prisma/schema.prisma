@@ -21,6 +21,7 @@ enum SpeciesStatus {
   DRAFT
   PUBLISHED
   IN_REVIEW
+  REJECTED
 }
 
 enum Stratum {
@@ -90,6 +91,22 @@ enum BiomassProduction {
   VERY_LOW
 }
 
+enum PruningSprout {
+  VERY_HIGH
+  HIGH
+  MEDIUM
+  LOW
+  VERY_LOW
+}
+
+enum SeedlingShade {
+  FULL_SHADE
+  MUCH_SHADE
+  PARTIAL_SHADE
+  LIGHT_SHADE
+  NO_SHADE
+}
+
 enum PlantUse {
   HUMAN_FOOD
   ANIMAL_FOOD
@@ -110,17 +127,27 @@ enum PlantUse {
 enum ReviewDecision {
   APPROVED
   REJECTED
-  CHANGES_REQUESTED
 }
 
 enum ActivityAction {
   SPECIES_CREATED
   SPECIES_UPDATED
   SPECIES_SUBMITTED
+  SPECIES_RESUBMITTED
   REVIEW_APPROVED
   REVIEW_REJECTED
-  REVIEW_CHANGES_REQUESTED
   SPECIES_PUBLISHED
+  REVISION_REQUESTED
+  REVIEWER_APPLICATION_SUBMITTED
+  REVIEWER_APPLICATION_APPROVED
+  REVIEWER_APPLICATION_REJECTED
+  REVIEWER_STATUS_REVOKED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 // Models
@@ -139,12 +166,15 @@ model User {
   // Relations
   speciesCreated Species[]  @relation("SpeciesCreator")
   speciesUpdated Species[]  @relation("SpeciesUpdater")
+  speciesRevisionRequests Species[] @relation("RevisionRequester")
   photos         Photo[]
   changeHistory  ChangeHistory[]
   accounts       Account[]
   sessions       Session[]
   reviewsGiven   SpeciesReview[] @relation("ReviewerReviews")
   activityLogs   ActivityLog[]
+  reviewerApplications    ReviewerApplication[]
+  reviewedApplications    ReviewerApplication[] @relation("ApplicationReviewer")
 
   @@map("users")
 }
@@ -167,7 +197,8 @@ model Species {
   stratum              Stratum
   successionalStage    SuccessionalStage @map("successional_stage")
   lifeCycle            LifeCycle?        @map("life_cycle")
-  lifeCycleYears       String?           @map("life_cycle_years")
+  lifeCycleYearsStart  Int?              @map("life_cycle_years_start")
+  lifeCycleYearsEnd    Int?              @map("life_cycle_years_end")
   heightMeters         Decimal?          @map("height_meters") @db.Decimal(5, 2)
   canopyWidthMeters    Decimal?          @map("canopy_width_meters") @db.Decimal(5, 2)
   canopyShape          CanopyShape?      @map("canopy_shape")
@@ -181,10 +212,14 @@ model Species {
   growthRate           GrowthRate?       @map("growth_rate")
   rootSystem           RootSystem?       @map("root_system")
   nitrogenFixer        Boolean           @default(false) @map("nitrogen_fixer")
+  serviceSpecies       Boolean           @default(false) @map("service_species")
+  pruningSprout        PruningSprout?    @map("pruning_sprout")
+  seedlingShade        SeedlingShade?    @map("seedling_shade")
   biomassProduction    BiomassProduction? @map("biomass_production")
   hasFruit             Boolean           @default(false) @map("has_fruit")
   edibleFruit          Boolean           @default(false) @map("edible_fruit")
-  fruitingAge          String?           @map("fruiting_age")
+  fruitingAgeStart     Int?              @map("fruiting_age_start")
+  fruitingAgeEnd       Int?              @map("fruiting_age_end")
 
   // Uses
   uses                 PlantUse[]
@@ -197,6 +232,13 @@ model Species {
   status               SpeciesStatus     @default(DRAFT)
   discourseTopicUrl    String?           @map("discourse_topic_url")
   submittedAt          DateTime?         @map("submitted_at")
+  publishedAt          DateTime?         @map("published_at")
+
+  // Revision request (for published species put back under review)
+  revisionRequestedById   String?        @map("revision_requested_by_id")
+  revisionRequestedBy     User?          @relation("RevisionRequester", fields: [revisionRequestedById], references: [id])
+  revisionRequestReason   String?        @map("revision_request_reason") @db.Text
+  revisionRequestedAt     DateTime?      @map("revision_requested_at")
 
   // Metadata
   createdById    String   @map("created_by_id")
@@ -298,6 +340,40 @@ model ActivityLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+}
+
+model ReviewerApplication {
+  id            String            @id @default(cuid())
+  userId        String            @map("user_id")
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Required application fields
+  motivation        String        @db.Text
+  fullAddress       String        @map("full_address") @db.Text
+  city              String
+  state             String
+  country           String
+  education         String        @db.Text
+  yearsExperience   Int           @map("years_experience")
+  experienceDetails String        @map("experience_details") @db.Text
+
+  // Optional social media
+  socialLinkedin    String?       @map("social_linkedin")
+  socialInstagram   String?       @map("social_instagram")
+  socialTwitter     String?       @map("social_twitter")
+  socialWebsite     String?       @map("social_website")
+
+  status        ApplicationStatus @default(PENDING)
+  reviewedById  String?           @map("reviewed_by_id")
+  reviewedBy    User?             @relation("ApplicationReviewer", fields: [reviewedById], references: [id])
+  reviewedAt    DateTime?         @map("reviewed_at")
+  reviewNote    String?           @map("review_note") @db.Text
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  @@map("reviewer_applications")
+  @@index([userId])
+  @@index([status])
 }
 
 // NextAuth Models

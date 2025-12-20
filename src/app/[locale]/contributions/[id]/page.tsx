@@ -1,16 +1,19 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getSession, canViewSubmission, canEditSubmission, canDeleteSubmission, isReviewer } from '@/lib/auth/server'
+import { getSession, canViewSubmission, canEditSubmission, canDeleteSubmission, isReviewer, canReview } from '@/lib/auth/server'
 import { getSubmissionById } from '@/lib/services/submission'
-import { getSpeciesActivity } from '@/lib/services/activity'
+import { getSpeciesActivity, getSpeciesChangeHistory } from '@/lib/services/activity'
+import { getUserReview } from '@/lib/services/review'
 import { getTranslations } from '@/lib/getTranslations'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { StatusBadge } from '@/components/submissions/StatusBadge'
 import { ReviewProgress } from '@/components/submissions/ReviewProgress'
 import { ActivityLog } from '@/components/activity/ActivityLog'
+import { ChangeHistory } from '@/components/activity/ChangeHistory'
 import { SpeciesForm } from '@/components/submissions/SpeciesForm'
 import { DeleteSubmissionButton } from '@/components/submissions/DeleteSubmissionButton'
+import { ReviewDecisionButtons } from '@/components/submissions/ReviewDecisionButtons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -62,76 +65,182 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
   const canEdit = canEditSubmission(session, submission)
   const canDelete = canDeleteSubmission(session, submission)
   const userIsReviewer = isReviewer(session)
-  const isEditMode = edit === 'true' && canEdit
 
-  // Get activity log for reviewers
+  // Reviewers can edit species in review (not their own)
+  const canReviewEdit = canReview(session, submission)
+  const isReviewMode = canReviewEdit && submission.status === SpeciesStatus.IN_REVIEW
+  const isEditMode = edit === 'true' && (canEdit || canReviewEdit)
+
+  // Get activity log and change history for reviewers
   const activities = userIsReviewer ? await getSpeciesActivity(id) : []
+  const changeHistory = userIsReviewer ? await getSpeciesChangeHistory(id) : []
+
+  // Get user's review if they've already reviewed
+  const userReview = isReviewMode ? await getUserReview(id, session.user.id) : null
+  const hasAlreadyReviewed = !!userReview
 
   const approvalCount = submission.reviews.filter(
     r => r.decision === ReviewDecision.APPROVED
   ).length
 
   if (isEditMode) {
+    const formMode = isReviewMode ? 'review' : 'edit'
+    const pageTitle = isReviewMode
+      ? (locale === 'pt-BR' ? 'Revisar Espécie' : locale === 'es' ? 'Revisar Especie' : 'Review Species')
+      : t('editSpecies')
+
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
 
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="mb-6">
-            <Link href={`/submissions/${id}`}>
+            <Link href={isReviewMode ? '/reviews' : `/contributions/${id}`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('backToDetails')}
+                {isReviewMode
+                  ? (locale === 'pt-BR' ? 'Voltar para Fila' : locale === 'es' ? 'Volver a Cola' : 'Back to Queue')
+                  : t('backToDetails')}
               </Button>
             </Link>
-            <h1 className="text-3xl font-bold mt-4">{t('editSpecies')}</h1>
+            <h1 className="text-3xl font-bold mt-4">{pageTitle}</h1>
+            {isReviewMode && (
+              <p className="text-muted-foreground mt-1">
+                {locale === 'pt-BR'
+                  ? 'Edite os campos se necessário, depois aprove ou rejeite'
+                  : locale === 'es'
+                  ? 'Edite los campos si es necesario, luego apruebe o rechace'
+                  : 'Edit fields if needed, then approve or reject'}
+              </p>
+            )}
           </div>
 
-          <SpeciesForm
-            mode="edit"
-            speciesId={id}
-            locale={locale}
-            defaultValues={{
-              scientificName: submission.scientificName,
-              genus: submission.genus || undefined,
-              species: submission.species || undefined,
-              author: submission.author || undefined,
-              commonNames: submission.commonNames,
-              synonyms: submission.synonyms,
-              botanicalFamily: submission.botanicalFamily || undefined,
-              variety: submission.variety || undefined,
-              stratum: submission.stratum,
-              successionalStage: submission.successionalStage,
-              lifeCycle: submission.lifeCycle || undefined,
-              lifeCycleYears: submission.lifeCycleYears || undefined,
-              heightMeters: submission.heightMeters ? Number(submission.heightMeters) : undefined,
-              canopyWidthMeters: submission.canopyWidthMeters ? Number(submission.canopyWidthMeters) : undefined,
-              canopyShape: submission.canopyShape || undefined,
-              originCenter: submission.originCenter || undefined,
-              globalBiome: submission.globalBiome || undefined,
-              regionalBiome: submission.regionalBiome,
-              foliageType: submission.foliageType || undefined,
-              leafDropSeason: submission.leafDropSeason || undefined,
-              growthRate: submission.growthRate || undefined,
-              rootSystem: submission.rootSystem || undefined,
-              nitrogenFixer: submission.nitrogenFixer,
-              biomassProduction: submission.biomassProduction || undefined,
-              hasFruit: submission.hasFruit,
-              edibleFruit: submission.edibleFruit,
-              fruitingAge: submission.fruitingAge || undefined,
-              uses: submission.uses,
-              propagationMethods: submission.propagationMethods,
-              observations: submission.observations || undefined,
-            }}
-            defaultPhotos={submission.photos.map(p => ({
-              id: p.id,
-              url: p.url,
-              key: p.url.split('/').pop() || p.id,
-              caption: p.caption || undefined,
-              primary: p.primary,
-              tags: p.tags || [],
-            }))}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <SpeciesForm
+                mode={formMode}
+                speciesId={id}
+                locale={locale}
+                defaultValues={{
+                  scientificName: submission.scientificName,
+                  genus: submission.genus || undefined,
+                  species: submission.species || undefined,
+                  author: submission.author || undefined,
+                  commonNames: submission.commonNames,
+                  synonyms: submission.synonyms,
+                  botanicalFamily: submission.botanicalFamily || undefined,
+                  variety: submission.variety || undefined,
+                  stratum: submission.stratum,
+                  successionalStage: submission.successionalStage,
+                  lifeCycle: submission.lifeCycle || undefined,
+                  lifeCycleYearsStart: submission.lifeCycleYearsStart || undefined,
+                  lifeCycleYearsEnd: submission.lifeCycleYearsEnd || undefined,
+                  heightMeters: submission.heightMeters ? Number(submission.heightMeters) : undefined,
+                  canopyWidthMeters: submission.canopyWidthMeters ? Number(submission.canopyWidthMeters) : undefined,
+                  canopyShape: submission.canopyShape || undefined,
+                  originCenter: submission.originCenter ? submission.originCenter.split(', ').filter(Boolean) : undefined,
+                  globalBiome: submission.globalBiome ? submission.globalBiome.split(', ').filter(Boolean) : undefined,
+                  regionalBiome: submission.regionalBiome,
+                  foliageType: submission.foliageType || undefined,
+                  leafDropSeason: submission.leafDropSeason || undefined,
+                  growthRate: submission.growthRate || undefined,
+                  rootSystem: submission.rootSystem || undefined,
+                  nitrogenFixer: submission.nitrogenFixer,
+                  serviceSpecies: submission.serviceSpecies,
+                  pruningSprout: submission.pruningSprout || undefined,
+                  seedlingShade: submission.seedlingShade || undefined,
+                  biomassProduction: submission.biomassProduction || undefined,
+                  hasFruit: submission.hasFruit,
+                  edibleFruit: submission.edibleFruit,
+                  fruitingAgeStart: submission.fruitingAgeStart || undefined,
+                  fruitingAgeEnd: submission.fruitingAgeEnd || undefined,
+                  uses: submission.uses,
+                  propagationMethods: submission.propagationMethods,
+                  observations: submission.observations || undefined,
+                }}
+                defaultPhotos={submission.photos.map(p => ({
+                  id: p.id,
+                  url: p.url,
+                  key: p.url.split('/').pop() || p.id,
+                  caption: p.caption || undefined,
+                  primary: p.primary,
+                  tags: p.tags || [],
+                }))}
+              />
+            </div>
+
+            {/* Sidebar for review mode */}
+            {isReviewMode && (
+              <div className="space-y-6">
+                {/* Species Creator */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      {locale === 'pt-BR' ? 'Criado por' : locale === 'es' ? 'Creado por' : 'Created by'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      {submission.createdBy.avatar ? (
+                        <img
+                          src={submission.createdBy.avatar}
+                          alt={submission.createdBy.name || ''}
+                          className="w-10 h-10 rounded-full"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <span className="text-primary font-medium">
+                            {(submission.createdBy.name || submission.createdBy.email)[0].toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-medium">{submission.createdBy.name || submission.createdBy.email}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(submission.createdAt).toLocaleDateString(locale)}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Review Progress */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      {locale === 'pt-BR' ? 'Progresso' : locale === 'es' ? 'Progreso' : 'Progress'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ReviewProgress
+                      approvalCount={approvalCount}
+                      rejectionCount={submission.reviews.filter(r => r.decision === ReviewDecision.REJECTED).length}
+                      locale={locale}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Change History */}
+                {changeHistory.length > 0 && (
+                  <ChangeHistory changes={changeHistory as any} locale={locale} />
+                )}
+
+                {/* Activity Log */}
+                {activities.length > 0 && (
+                  <ActivityLog activities={activities as any} locale={locale} />
+                )}
+
+                {/* Decision Buttons at bottom */}
+                <ReviewDecisionButtons
+                  speciesId={id}
+                  locale={locale}
+                  hasAlreadyReviewed={hasAlreadyReviewed}
+                  previousDecision={userReview?.decision}
+                  previousComments={userReview?.comments || undefined}
+                />
+              </div>
+            )}
+          </div>
         </main>
 
         <Footer />
@@ -216,7 +325,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                     {userIsReviewer &&
                       submission.status === SpeciesStatus.IN_REVIEW &&
                       submission.createdById !== session.user.id && (
-                        <Link href={`/submissions/${id}/review`}>
+                        <Link href={`/contributions/${id}?edit=true`}>
                           <Button size="sm">
                             {t('review')}
                           </Button>
@@ -230,7 +339,6 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                     <ReviewProgress
                       approvalCount={approvalCount}
                       rejectionCount={submission.reviews.filter(r => r.decision === ReviewDecision.REJECTED).length}
-                      changesRequestedCount={submission.reviews.filter(r => r.decision === ReviewDecision.CHANGES_REQUESTED).length}
                       locale={locale}
                     />
                   </div>
@@ -277,10 +385,14 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                       <Badge variant="outline">{tCanopyShape(submission.canopyShape)}</Badge>
                     </div>
                   )}
-                  {submission.lifeCycleYears && (
+                  {(submission.lifeCycleYearsStart || submission.lifeCycleYearsEnd) && (
                     <div>
                       <p className="text-sm text-muted-foreground">{tDetail('lifespan')}</p>
-                      <p className="font-medium">{submission.lifeCycleYears} {tDetail('years')}</p>
+                      <p className="font-medium">
+                        {submission.lifeCycleYearsStart && submission.lifeCycleYearsEnd
+                          ? `${submission.lifeCycleYearsStart}-${submission.lifeCycleYearsEnd}`
+                          : submission.lifeCycleYearsStart || submission.lifeCycleYearsEnd} {tDetail('years')}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -332,10 +444,14 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                       <p className="font-medium">{submission.edibleFruit ? tReview('yes') : tReview('no')}</p>
                     </div>
                   )}
-                  {submission.fruitingAge && (
+                  {(submission.fruitingAgeStart || submission.fruitingAgeEnd) && (
                     <div>
                       <p className="text-sm text-muted-foreground">{tDetail('fruitingAge')}</p>
-                      <p className="font-medium">{submission.fruitingAge} {tDetail('years')}</p>
+                      <p className="font-medium">
+                        {submission.fruitingAgeStart && submission.fruitingAgeEnd
+                          ? `${submission.fruitingAgeStart}-${submission.fruitingAgeEnd}`
+                          : submission.fruitingAgeStart || submission.fruitingAgeEnd} {tDetail('years')}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -513,9 +629,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                           variant={
                             review.decision === ReviewDecision.APPROVED
                               ? 'default'
-                              : review.decision === ReviewDecision.REJECTED
-                              ? 'destructive'
-                              : 'secondary'
+                              : 'destructive'
                           }
                           className={
                             review.decision === ReviewDecision.APPROVED
@@ -525,9 +639,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                         >
                           {review.decision === ReviewDecision.APPROVED
                             ? tReview('approve')
-                            : review.decision === ReviewDecision.REJECTED
-                            ? tReview('reject')
-                            : tReview('requestChanges')}
+                            : tReview('reject')}
                         </Badge>
                       </div>
                       {review.comments && (
@@ -539,6 +651,11 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                   ))}
                 </CardContent>
               </Card>
+            )}
+
+            {/* Change History (Reviewers only) */}
+            {userIsReviewer && changeHistory.length > 0 && (
+              <ChangeHistory changes={changeHistory as any} locale={locale} />
             )}
 
             {/* Activity Log (Reviewers only) */}

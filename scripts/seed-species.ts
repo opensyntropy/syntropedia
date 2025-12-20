@@ -2,7 +2,7 @@ import { PrismaClient, Stratum, SuccessionalStage, LifeCycle, FoliageType, Growt
 
 const prisma = new PrismaClient()
 
-const stratums: Stratum[] = ['EMERGENT', 'CANOPY', 'SUBCANOPY', 'UNDERSTORY', 'GROUND_COVER']
+const stratums: Stratum[] = ['EMERGENT', 'HIGH', 'MEDIUM', 'LOW', 'GROUND']
 const stages: SuccessionalStage[] = ['PIONEER', 'EARLY_SECONDARY', 'LATE_SECONDARY', 'CLIMAX']
 const lifeCycles: LifeCycle[] = ['ANNUAL', 'BIENNIAL', 'PERENNIAL']
 const foliageTypes: FoliageType[] = ['EVERGREEN', 'SEMI_EVERGREEN', 'DECIDUOUS', 'SEMI_DECIDUOUS']

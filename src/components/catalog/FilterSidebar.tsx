@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { MultiSelect } from '@/components/ui/multi-select'
 import { Badge } from '@/components/ui/badge'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle, type SpecieType, type RegionalBiome, type GlobalBiome, type FoliageType, type GrowthRate, type PlantUse } from '@/types/species'
+import { type SpeciesFilters, type Stratum, type SuccessionalStage, type LifeCycle, type RegionalBiome, type GlobalBiome, type FoliageType, type GrowthRate, type PlantUse } from '@/types/species'
 import { useTranslations } from '@/lib/IntlProvider'
 import { cn } from '@/lib/utils'
 
@@ -18,10 +18,10 @@ interface FilterSidebarProps {
 
 const stratumOptions: { value: Stratum; color: string }[] = [
   { value: 'EMERGENT', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'CANOPY', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'SUBCANOPY', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { value: 'UNDERSTORY', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  { value: 'GROUND_COVER', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+  { value: 'HIGH', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
+  { value: 'MEDIUM', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
+  { value: 'LOW', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  { value: 'GROUND', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
 ]
 
 const successionalStageOptions: { value: SuccessionalStage; color: string }[] = [
@@ -35,16 +35,6 @@ const lifeCycleOptions: { value: LifeCycle; color: string }[] = [
   { value: 'ANNUAL', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
   { value: 'BIENNIAL', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
   { value: 'PERENNIAL', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
-]
-
-const specieTypeOptions: { value: SpecieType; color: string }[] = [
-  { value: 'TREE', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'SHRUB', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  { value: 'VINE', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { value: 'PALM', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
-  { value: 'GRASS', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-  { value: 'HERB', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-  { value: 'FERN', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
 ]
 
 const regionalBiomeOptions: { value: RegionalBiome; color: string }[] = [
@@ -83,9 +73,12 @@ const globalBiomeOptions: { value: GlobalBiome; color: string }[] = [
   { value: 'TROPICAL_DRY_FOREST', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
   { value: 'TROPICAL_SAVANNA', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
   { value: 'SUBTROPICAL_FOREST', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
+  { value: 'SUBTROPICAL_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
   { value: 'TEMPERATE_FOREST', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
-  { value: 'TEMPERATE_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
+  { value: 'TEMPERATE_GRASSLAND', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
   { value: 'MEDITERRANEAN', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
+  { value: 'BOREAL_FOREST', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
+  { value: 'TUNDRA', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200' },
   { value: 'DESERT', color: 'bg-red-100 text-red-700 hover:bg-red-200' },
   { value: 'MANGROVE', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
 ]
@@ -121,7 +114,6 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   const tStratum = useTranslations('stratum')
   const tStage = useTranslations('successionalStage')
   const tLifeCycle = useTranslations('lifeCycle')
-  const tSpecieType = useTranslations('specieType')
   const tRegionalBiome = useTranslations('regionalBiome')
   const tGlobalBiome = useTranslations('globalBiome')
   const tFoliage = useTranslations('foliageType')
@@ -129,7 +121,7 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   const tUse = useTranslations('plantUse')
 
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['stratum', 'successionalStage', 'specieType'])
+    new Set(['stratum', 'successionalStage', 'lifeCycle'])
   )
 
   // Local state for search input (shows what user types immediately)
@@ -158,7 +150,7 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
     })
   }
 
-  const allSections = ['stratum', 'successionalStage', 'lifeCycle', 'specieType',
+  const allSections = ['stratum', 'successionalStage', 'lifeCycle',
                        'regionalBiome', 'globalBiome', 'foliageType', 'growthRate',
                        'uses']
 
@@ -361,41 +353,6 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                       onClick={() => toggleFilter('lifeCycle', option.value)}
                     >
                       {tLifeCycle(option.value)}
-                    </Badge>
-                  ))}
-                </div>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
-
-          {/* Specie Type Filter */}
-          <Collapsible
-            open={expandedSections.has('specieType')}
-            onOpenChange={(open) => toggleSection('specieType', open)}
-          >
-            <div className="space-y-3">
-              <CollapsibleTrigger asChild>
-                <button className="flex w-full items-center justify-between text-left group">
-                  <h3 className="text-sm font-semibold text-gray-900">{tCatalog('specieType')}</h3>
-                  <ChevronDown className={cn(
-                    "h-4 w-4 text-gray-500 transition-transform duration-200 group-hover:text-gray-700",
-                    expandedSections.has('specieType') && "rotate-180"
-                  )} />
-                </button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2">
-                <div className="flex flex-wrap gap-2">
-                  {specieTypeOptions.map(option => (
-                    <Badge
-                      key={option.value}
-                      className={`cursor-pointer rounded-full border-2 transition-all ${
-                        filters.specieType?.includes(option.value)
-                          ? option.color + ' border-current'
-                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                      onClick={() => toggleFilter('specieType', option.value)}
-                    >
-                      {tSpecieType(option.value)}
                     </Badge>
                   ))}
                 </div>

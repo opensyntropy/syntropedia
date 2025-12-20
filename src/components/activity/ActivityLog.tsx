@@ -1,6 +1,6 @@
 'use client'
 
-import { format } from 'date-fns'
+import { format, type Locale } from 'date-fns'
 import { ptBR, es } from 'date-fns/locale'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ActivityAction } from '@prisma/client'
@@ -36,10 +36,11 @@ interface ActivityLabels {
   created: string
   updated: string
   submitted: string
+  resubmitted: string
   approved: string
   rejected: string
-  changesRequested: string
   published: string
+  revisionRequested: string
 }
 
 const labelsByLocale: Record<string, ActivityLabels> = {
@@ -49,10 +50,11 @@ const labelsByLocale: Record<string, ActivityLabels> = {
     created: 'Created',
     updated: 'Updated',
     submitted: 'Submitted for review',
+    resubmitted: 'Resubmitted for review',
     approved: 'Approved',
     rejected: 'Rejected',
-    changesRequested: 'Requested changes',
     published: 'Published',
+    revisionRequested: 'Requested revision',
   },
   'pt-BR': {
     title: 'Histórico de Atividades',
@@ -60,10 +62,11 @@ const labelsByLocale: Record<string, ActivityLabels> = {
     created: 'Criou',
     updated: 'Atualizou',
     submitted: 'Submeteu para revisão',
+    resubmitted: 'Reenviou para revisão',
     approved: 'Aprovou',
     rejected: 'Rejeitou',
-    changesRequested: 'Solicitou mudanças',
     published: 'Publicou',
+    revisionRequested: 'Solicitou revisão',
   },
   es: {
     title: 'Historial de Actividades',
@@ -71,31 +74,34 @@ const labelsByLocale: Record<string, ActivityLabels> = {
     created: 'Creó',
     updated: 'Actualizó',
     submitted: 'Envió para revisión',
+    resubmitted: 'Reenvió para revisión',
     approved: 'Aprobó',
     rejected: 'Rechazó',
-    changesRequested: 'Solicitó cambios',
     published: 'Publicó',
+    revisionRequested: 'Solicitó revisión',
   },
 }
 
-const actionIcons: Record<ActivityAction, { icon: typeof PlusCircle; color: string }> = {
+const actionIcons: Partial<Record<ActivityAction, { icon: typeof PlusCircle; color: string }>> = {
   SPECIES_CREATED: { icon: PlusCircle, color: 'text-blue-600' },
   SPECIES_UPDATED: { icon: Edit, color: 'text-gray-600' },
   SPECIES_SUBMITTED: { icon: Send, color: 'text-purple-600' },
+  SPECIES_RESUBMITTED: { icon: Send, color: 'text-purple-600' },
   REVIEW_APPROVED: { icon: CheckCircle, color: 'text-green-600' },
   REVIEW_REJECTED: { icon: XCircle, color: 'text-red-600' },
-  REVIEW_CHANGES_REQUESTED: { icon: AlertTriangle, color: 'text-amber-600' },
   SPECIES_PUBLISHED: { icon: Globe, color: 'text-green-700' },
+  REVISION_REQUESTED: { icon: AlertTriangle, color: 'text-amber-600' },
 }
 
-const actionLabelKey: Record<ActivityAction, keyof ActivityLabels> = {
+const actionLabelKey: Partial<Record<ActivityAction, keyof ActivityLabels>> = {
   SPECIES_CREATED: 'created',
   SPECIES_UPDATED: 'updated',
   SPECIES_SUBMITTED: 'submitted',
+  SPECIES_RESUBMITTED: 'resubmitted',
   REVIEW_APPROVED: 'approved',
   REVIEW_REJECTED: 'rejected',
-  REVIEW_CHANGES_REQUESTED: 'changesRequested',
   SPECIES_PUBLISHED: 'published',
+  REVISION_REQUESTED: 'revisionRequested',
 }
 
 const dateLocales: Record<string, Locale> = {
@@ -127,12 +133,12 @@ export function ActivityLog({ activities, showSpeciesLink = false, title, locale
         <CardTitle>{displayTitle}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
           {activities.map((activity) => {
-            const iconConfig = actionIcons[activity.action]
+            const iconConfig = actionIcons[activity.action] || { icon: Edit, color: 'text-gray-600' }
             const Icon = iconConfig.icon
             const labelKey = actionLabelKey[activity.action]
-            const actionLabel = labels[labelKey]
+            const actionLabel = labelKey ? labels[labelKey] : activity.action.replace(/_/g, ' ').toLowerCase()
 
             return (
               <div key={activity.id} className="flex items-start gap-3">
@@ -156,9 +162,13 @@ export function ActivityLog({ activities, showSpeciesLink = false, title, locale
                       </a>
                     )}
                   </div>
-                  {activity.details && (activity.details as { comments?: string }).comments && (
+                  {activity.details && (
+                    (activity.details as { comments?: string }).comments ||
+                    (activity.details as { reason?: string }).reason
+                  ) && (
                     <p className="text-sm text-muted-foreground mt-1">
-                      &quot;{(activity.details as { comments: string }).comments}&quot;
+                      &quot;{(activity.details as { comments?: string; reason?: string }).comments ||
+                        (activity.details as { comments?: string; reason?: string }).reason}&quot;
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground mt-1">

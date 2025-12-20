@@ -34,7 +34,6 @@ export async function submitReview(params: SubmitReviewParams) {
   const actionMap: Record<ReviewDecision, ActivityAction> = {
     APPROVED: ActivityAction.REVIEW_APPROVED,
     REJECTED: ActivityAction.REVIEW_REJECTED,
-    CHANGES_REQUESTED: ActivityAction.REVIEW_CHANGES_REQUESTED,
   }
 
   await logActivity({
@@ -57,20 +56,15 @@ export async function submitReview(params: SubmitReviewParams) {
     if (approvalCount >= 2) {
       await publishSpecies(speciesId, reviewerId)
     }
-  } else if (decision === ReviewDecision.REJECTED || decision === ReviewDecision.CHANGES_REQUESTED) {
-    // Return to DRAFT status and clear reviews
-    await prisma.$transaction([
-      prisma.species.update({
-        where: { id: speciesId },
-        data: {
-          status: SpeciesStatus.DRAFT,
-          submittedAt: null,
-        },
-      }),
-      prisma.speciesReview.deleteMany({
-        where: { speciesId },
-      }),
-    ])
+  } else if (decision === ReviewDecision.REJECTED) {
+    // Set status to REJECTED - user can resubmit later
+    // Keep reviews for history
+    await prisma.species.update({
+      where: { id: speciesId },
+      data: {
+        status: SpeciesStatus.REJECTED,
+      },
+    })
   }
 
   return review
@@ -104,15 +98,12 @@ export async function getReviewStatus(speciesId: string) {
 
   const approvalCount = reviews.filter(r => r.decision === ReviewDecision.APPROVED).length
   const rejectionCount = reviews.filter(r => r.decision === ReviewDecision.REJECTED).length
-  const changesRequestedCount = reviews.filter(r => r.decision === ReviewDecision.CHANGES_REQUESTED).length
 
   return {
     reviews,
     approvalCount,
     rejectionCount,
-    changesRequestedCount,
     isReadyToPublish: approvalCount >= 2,
-    requiresChanges: changesRequestedCount > 0 || rejectionCount > 0,
   }
 }
 
@@ -131,4 +122,45 @@ export async function getUserReview(speciesId: string, userId: string) {
       speciesId_reviewerId: { speciesId, reviewerId: userId },
     },
   })
+}
+
+export async function resubmitRejected(speciesId: string, userId: string) {
+  // Verify the species exists and is rejected
+  const species = await prisma.species.findUnique({
+    where: { id: speciesId },
+  })
+
+  if (!species) {
+    throw new Error('Species not found')
+  }
+
+  if (species.status !== SpeciesStatus.REJECTED) {
+    throw new Error('Species is not in REJECTED status')
+  }
+
+  if (species.createdById !== userId) {
+    throw new Error('Only the species creator can resubmit')
+  }
+
+  // Clear old reviews and set status back to IN_REVIEW
+  await prisma.$transaction([
+    prisma.speciesReview.deleteMany({
+      where: { speciesId },
+    }),
+    prisma.species.update({
+      where: { id: speciesId },
+      data: {
+        status: SpeciesStatus.IN_REVIEW,
+        submittedAt: new Date(),
+      },
+    }),
+  ])
+
+  await logActivity({
+    action: ActivityAction.SPECIES_RESUBMITTED,
+    userId,
+    speciesId,
+  })
+
+  return true
 }

@@ -8,17 +8,20 @@
     "login": "Login",
     "createAccount": "Create Account",
     "myContributions": "My Contributions",
+    "reviews": "Review Queue",
     "myAccount": "My Account",
     "settings": "Settings",
     "logOut": "Log out",
-    "forum": "Forum"
+    "forum": "Forum",
+    "becomeReviewer": "Become Reviewer",
+    "admin": "Admin"
   },
   "stratum": {
     "EMERGENT": "Emergent",
-    "CANOPY": "Canopy",
-    "SUBCANOPY": "Subcanopy",
-    "UNDERSTORY": "Understory",
-    "GROUND_COVER": "Ground Cover"
+    "HIGH": "High (Canopy)",
+    "MEDIUM": "Medium (Subcanopy)",
+    "LOW": "Low (Understory)",
+    "GROUND": "Ground Cover"
   },
   "successionalStage": {
     "PIONEER": "Pioneer",
@@ -69,9 +72,12 @@
     "TROPICAL_DRY_FOREST": "Tropical Dry Forest",
     "TROPICAL_SAVANNA": "Tropical Savanna",
     "SUBTROPICAL_FOREST": "Subtropical Forest",
+    "SUBTROPICAL_GRASSLAND": "Subtropical Grassland",
     "TEMPERATE_FOREST": "Temperate Forest",
     "TEMPERATE_GRASSLAND": "Temperate Grassland",
     "MEDITERRANEAN": "Mediterranean",
+    "BOREAL_FOREST": "Boreal Forest",
+    "TUNDRA": "Tundra",
     "DESERT": "Desert",
     "MANGROVE": "Mangrove"
   },
@@ -179,16 +185,16 @@
     "contribute": {
       "title": "How to Contribute?",
       "step1": {
-        "title": "Login",
-        "description": "Connect via Discourse forum to start contributing"
+        "title": "Create an Account",
+        "description": "Sign up to start contributing species to our database"
       },
       "step2": {
-        "title": "Add photos",
-        "description": "Contribute images of species you know"
+        "title": "Add Species",
+        "description": "Submit new plants with photos, characteristics, and uses. Your contributions will be reviewed before publishing."
       },
       "step3": {
-        "title": "Participate",
-        "description": "Discuss, share experiences, and learn from the community"
+        "title": "Become a Reviewer",
+        "description": "Apply to become a reviewer and help validate species submissions from the community."
       },
       "cta": "Start Contributing →"
     },
@@ -251,6 +257,7 @@
     "all": "All",
     "draft": "Draft",
     "inReview": "In Review",
+    "rejected": "Rejected",
     "published": "Published",
     "view": "View",
     "edit": "Edit",
@@ -270,7 +277,13 @@
     "contributionInfo": "Contribution Info",
     "previous": "Previous",
     "next": "Next",
-    "pageOf": "Page {page} of {total}"
+    "pageOf": "Page {page} of {total}",
+    "filterType": "Type",
+    "allTypes": "All",
+    "newSubmissions": "New",
+    "revisionRequests": "Revisions",
+    "new": "New",
+    "revision": "Revision"
   },
   "speciesForm": {
     "nomenclature": "Nomenclature",
@@ -345,9 +358,9 @@
     "created": "Created",
     "updated": "Updated",
     "submitted": "Submitted for review",
+    "resubmitted": "Resubmitted for review",
     "approved": "Approved",
     "rejected": "Rejected",
-    "changesRequested": "Requested changes",
     "published": "Published"
   },
   "photoTags": {
@@ -414,5 +427,93 @@
       "LAYERING": "Ground Layering",
       "BUDDING": "Budding"
     }
+  },
+  "becomeReviewer": {
+    "title": "Become a Reviewer",
+    "description": "Help build our plant database by reviewing species submissions from the community.",
+    "whatReviewersDo": "What Reviewers Do",
+    "benefit1": "Review and validate species submissions from contributors",
+    "benefit2": "Help ensure accuracy and quality of plant information",
+    "benefit3": "Contribute to building a comprehensive syntropic agriculture database",
+    "loginRequired": "Login Required",
+    "loginRequiredDescription": "You need to be logged in to apply to become a reviewer.",
+    "login": "Login",
+    "alreadyReviewer": "You're Already a Reviewer",
+    "alreadyReviewerDescription": "Thank you for contributing to our community! You can review species submissions from the contributions page.",
+    "viewContributions": "View Contributions",
+    "statusPending": "Application Pending",
+    "statusApproved": "Application Approved",
+    "statusRejected": "Application Rejected",
+    "pendingDescription": "Your application is being reviewed. We'll notify you when a decision is made.",
+    "approvedDescription": "Congratulations! You're now a reviewer. You can start reviewing species submissions.",
+    "rejectedDescription": "Unfortunately, your application was not approved at this time.",
+    "adminNote": "Admin note",
+    "applyTitle": "Apply to Become a Reviewer",
+    "applyDescription": "Tell us about yourself and why you'd like to become a reviewer.",
+    "motivationLabel": "Motivation",
+    "motivationPlaceholder": "Share why you want to contribute to Syntropedia as a reviewer...",
+    "motivationHint": "Minimum 50 characters. Tell us what drives your interest in syntropic agriculture.",
+    "addressSection": "Location",
+    "fullAddress": "Full Address",
+    "fullAddressPlaceholder": "Street, number, neighborhood...",
+    "city": "City",
+    "state": "State/Province",
+    "country": "Country",
+    "experienceSection": "Education & Experience",
+    "education": "Education",
+    "educationPlaceholder": "Describe your educational background (degrees, courses, certifications)...",
+    "yearsExperience": "Years of Experience with Agroforestry/Plant Identification",
+    "experienceDetails": "Experience Details",
+    "experienceDetailsPlaceholder": "Describe your practical experience with agroforestry, syntropic agriculture, or plant identification...",
+    "socialSection": "Social Media & Links",
+    "socialHint": "Optional. Help us learn more about your work.",
+    "website": "Website/Portfolio",
+    "submitting": "Submitting...",
+    "submitApplication": "Submit Application"
+  },
+  "admin": {
+    "applicationsTitle": "Reviewer Applications",
+    "applicationsDescription": "Manage reviewer applications and current reviewers.",
+    "tabApplications": "Applications",
+    "tabReviewers": "Reviewers",
+    "all": "All",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "noApplications": "No applications found.",
+    "noReviewers": "No reviewers found.",
+    "motivation": "Motivation",
+    "adminNote": "Admin note",
+    "notePlaceholder": "Add a note for the applicant (optional)...",
+    "addNote": "Add Note",
+    "approve": "Approve",
+    "reject": "Reject",
+    "revoke": "Revoke",
+    "appliedOn": "Applied on",
+    "memberSince": "Member since",
+    "revokeConfirm": "Are you sure you want to revoke reviewer status from {name}?",
+    "expand": "Details",
+    "collapse": "Hide",
+    "location": "Location",
+    "education": "Education",
+    "experience": "Experience",
+    "yearsExp": "years",
+    "socialLinks": "Social Links",
+    "website": "Website",
+    "speciesReviewQueue": "Species Review Queue",
+    "speciesReviewQueueHint": "Review species submissions awaiting approval"
+  },
+  "reviewQueue": {
+    "title": "Review Queue",
+    "description": "Species submissions awaiting your review",
+    "noSubmissions": "No submissions to review",
+    "noSubmissionsHint": "Check back later for new submissions",
+    "submittedBy": "Submitted by",
+    "requestedBy": "Requested by",
+    "submittedOn": "Submitted on",
+    "approvals": "approvals",
+    "review": "Review",
+    "newSubmissions": "New Submissions",
+    "revisionRequests": "Revision Requests"
   }
 }
