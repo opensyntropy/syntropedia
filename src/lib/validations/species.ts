@@ -89,3 +89,7 @@ export const uploadUrlSchema = z.object({
 export type SpeciesFormData = z.infer<typeof speciesFormSchema>
 export type ReviewFormData = z.infer<typeof reviewFormSchema>
 export type UploadUrlData = z.infer<typeof uploadUrlSchema>
+
+// List of editable species fields - derived from the form schema
+// Used to ensure consistency between form, draftData, and database
+export const SPECIES_EDITABLE_FIELDS = Object.keys(speciesFormSchema.shape) as (keyof SpeciesFormData)[]

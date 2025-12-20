@@ -3,6 +3,8 @@ import { withAuth, type AuthenticatedContext } from '@/lib/auth/api'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { PHOTO_FRAGMENT_TAGS } from '@/lib/validations/species'
+import { logActivity } from '@/lib/services/activity'
+import { ActivityAction } from '@prisma/client'
 
 const photoSchema = z.object({
   url: z.string().url(),
@@ -161,10 +163,34 @@ export const PUT = withAuth(async (req: NextRequest, { params, session }: Authen
   const newUrls = new Set(photosData.map(p => p.url))
   const photosToDelete = existingPhotos.filter(p => !newUrls.has(p.url))
 
-  // Delete removed photos
+  // Track changes for history
+  const changes: Array<{
+    field: string
+    previousValue: unknown
+    newValue: unknown
+  }> = []
+
+  // Track deleted photos
   if (photosToDelete.length > 0) {
+    changes.push({
+      field: 'photos_removed',
+      previousValue: photosToDelete.map(p => ({ url: p.url, caption: p.caption })),
+      newValue: null,
+    })
+
     await prisma.photo.deleteMany({
       where: { id: { in: photosToDelete.map(p => p.id) } },
+    })
+  }
+
+  // Track added photos
+  const existingUrls = new Set(existingPhotos.map(p => p.url))
+  const addedPhotos = photosData.filter(p => !existingUrls.has(p.url))
+  if (addedPhotos.length > 0) {
+    changes.push({
+      field: 'photos_added',
+      previousValue: null,
+      newValue: addedPhotos.map(p => ({ url: p.url, caption: p.caption, tags: p.tags })),
     })
   }
 
@@ -174,6 +200,20 @@ export const PUT = withAuth(async (req: NextRequest, { params, session }: Authen
       const existing = existingPhotos.find(p => p.url === photo.url)
 
       if (existing) {
+        // Track changes to existing photos
+        const photoChanges: string[] = []
+        if (existing.primary !== photo.primary) photoChanges.push('primary')
+        if (existing.caption !== (photo.caption || null)) photoChanges.push('caption')
+        if (JSON.stringify(existing.tags) !== JSON.stringify(photo.tags)) photoChanges.push('tags')
+
+        if (photoChanges.length > 0) {
+          changes.push({
+            field: `photo_updated`,
+            previousValue: { url: existing.url, caption: existing.caption, primary: existing.primary, tags: existing.tags },
+            newValue: { url: photo.url, caption: photo.caption, primary: photo.primary, tags: photo.tags },
+          })
+        }
+
         return prisma.photo.update({
           where: { id: existing.id },
           data: {
@@ -197,6 +237,30 @@ export const PUT = withAuth(async (req: NextRequest, { params, session }: Authen
       }
     })
   )
+
+  // Log changes to ChangeHistory if any
+  if (changes.length > 0) {
+    await prisma.changeHistory.createMany({
+      data: changes.map(change => ({
+        speciesId: id,
+        changedById: userId,
+        changedFields: change.field,
+        previousValue: { value: change.previousValue ?? null },
+        newValue: { value: change.newValue ?? null },
+        changeReason: 'Photo update',
+      })),
+    })
+
+    await logActivity({
+      action: ActivityAction.SPECIES_UPDATED,
+      userId,
+      speciesId: id,
+      details: {
+        updatedFields: changes.map(c => c.field),
+        photoUpdate: true,
+      },
+    })
+  }
 
   return NextResponse.json(result)
 })

@@ -24,7 +24,7 @@ async function getFilteredSpecies(
     const searchPattern = `%${filters.search.trim()}%`
     const searchResults = await prisma.$queryRaw<{ id: string }[]>`
       SELECT id FROM species
-      WHERE status = 'PUBLISHED'
+      WHERE (status = 'PUBLISHED' OR (status = 'IN_REVIEW' AND revision_requested_by_id IS NOT NULL))
       AND (
         scientific_name ILIKE ${searchPattern}
         OR genus ILIKE ${searchPattern}
@@ -35,8 +35,12 @@ async function getFilteredSpecies(
   }
 
   // Build dynamic where clause based on filters
+  // Include PUBLISHED species and IN_REVIEW species with revision requests (previously published)
   const where: Prisma.SpeciesWhereInput = {
-    status: 'PUBLISHED',
+    OR: [
+      { status: 'PUBLISHED' },
+      { status: 'IN_REVIEW', revisionRequestedById: { not: null } }
+    ],
 
     // Text search - use IDs from raw SQL search
     ...(searchMatchingIds !== null && {

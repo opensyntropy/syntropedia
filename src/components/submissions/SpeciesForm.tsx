@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { speciesFormSchema, type SpeciesFormData } from '@/lib/validations/species'
 import { PhotoUpload, type UploadedPhoto, validatePhotoTags } from './PhotoUpload'
 import { Loader2, Plus, X, Save, Send } from 'lucide-react'
+import { ToastNotification, type ToastType } from '@/components/ui/toast-notification'
 
 interface SpeciesFormProps {
   defaultValues?: Partial<SpeciesFormData>
@@ -767,10 +768,17 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitAction, setSubmitAction] = useState<'draft' | 'review' | 'save'>('draft')
-  const [error, setError] = useState<string | null>(null)
   const [photos, setPhotos] = useState<UploadedPhoto[]>(defaultPhotos)
-  const [saveSuccess, setSaveSuccess] = useState(false)
   const [changeReason, setChangeReason] = useState('')
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type })
+  }
+
+  const hideToast = () => {
+    setToast(null)
+  }
 
   // Get translations for current locale
   const t = formTranslationsByLocale[locale] || defaultFormTranslations
@@ -825,27 +833,26 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
 
   const onSubmit = async (data: SpeciesFormData) => {
     setIsSubmitting(true)
-    setError(null)
-    setSaveSuccess(false)
+    setToast(null)
 
     // Validate photo tags before submission
     if (photos.length > 0 && !validatePhotoTags(photos)) {
-      setError(locale === 'pt-BR'
+      showToast(locale === 'pt-BR'
         ? 'Todas as fotos precisam ter ao menos uma parte da planta selecionada'
         : locale === 'es'
         ? 'Todas las fotos deben tener al menos una parte de la planta seleccionada'
-        : 'All photos must have at least one plant part selected')
+        : 'All photos must have at least one plant part selected', 'error')
       setIsSubmitting(false)
       return
     }
 
     // Validate change reason for reviewer edits
     if (mode === 'review' && !changeReason.trim()) {
-      setError(locale === 'pt-BR'
+      showToast(locale === 'pt-BR'
         ? 'É necessário informar o motivo das alterações'
         : locale === 'es'
         ? 'Es necesario informar el motivo de los cambios'
-        : 'Change reason is required for reviewer edits')
+        : 'Change reason is required for reviewer edits', 'error')
       setIsSubmitting(false)
       return
     }
@@ -888,8 +895,11 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
 
       // In review mode, show success message and don't navigate
       if (mode === 'review') {
-        setSaveSuccess(true)
-        setTimeout(() => setSaveSuccess(false), 3000)
+        showToast(locale === 'pt-BR'
+          ? 'Alterações salvas com sucesso!'
+          : locale === 'es'
+          ? 'Cambios guardados con éxito!'
+          : 'Changes saved successfully!', 'success')
         if (onSaveSuccess) {
           onSaveSuccess()
         }
@@ -913,7 +923,7 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
       router.push('/contributions')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      showToast(err instanceof Error ? err.message : 'An error occurred', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -921,10 +931,13 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {error && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-md">
-          {error}
-        </div>
+      {/* Toast Notification */}
+      {toast && (
+        <ToastNotification
+          message={toast.message}
+          type={toast.type}
+          onClose={hideToast}
+        />
       )}
 
       {/* Nomenclature Section */}
@@ -1511,25 +1524,18 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
       {/* Form Actions */}
       <div className="flex justify-end gap-4">
         {mode === 'review' ? (
-          <>
-            {saveSuccess && (
-              <span className="text-green-600 text-sm flex items-center">
-                {locale === 'pt-BR' ? 'Alterações salvas!' : locale === 'es' ? 'Cambios guardados!' : 'Changes saved!'}
-              </span>
+          <Button
+            type="submit"
+            disabled={isSubmitting || !changeReason.trim()}
+            onClick={() => setSubmitAction('save')}
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
             )}
-            <Button
-              type="submit"
-              disabled={isSubmitting || !changeReason.trim()}
-              onClick={() => setSubmitAction('save')}
-            >
-              {isSubmitting ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4 mr-2" />
-              )}
-              {locale === 'pt-BR' ? 'Salvar Alterações' : locale === 'es' ? 'Guardar Cambios' : 'Save Changes'}
-            </Button>
-          </>
+            {locale === 'pt-BR' ? 'Salvar Alterações' : locale === 'es' ? 'Guardar Cambios' : 'Save Changes'}
+          </Button>
         ) : (
           <>
             <Button

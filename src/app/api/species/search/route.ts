@@ -21,10 +21,10 @@ export async function GET(request: NextRequest) {
 
     // Use raw query to enable partial matching on common_names array
     // This searches: scientific_name, genus, and common_names (converted to string)
-    // Using array_to_string instead of EXISTS subquery for better performance
+    // Include PUBLISHED species and IN_REVIEW species with revision requests (previously published)
     const speciesRows = await prisma.$queryRaw<{ id: string; scientific_name: string }[]>`
       SELECT id, scientific_name FROM species
-      WHERE status = 'PUBLISHED'
+      WHERE (status = 'PUBLISHED' OR (status = 'IN_REVIEW' AND revision_requested_by_id IS NOT NULL))
       AND (
         scientific_name ILIKE ${searchPattern}
         OR genus ILIKE ${searchPattern}
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     const totalCountResult = await prisma.$queryRaw<{ count: bigint }[]>`
       SELECT COUNT(*) as count FROM species
-      WHERE status = 'PUBLISHED'
+      WHERE (status = 'PUBLISHED' OR (status = 'IN_REVIEW' AND revision_requested_by_id IS NOT NULL))
       AND (
         scientific_name ILIKE ${searchPattern}
         OR genus ILIKE ${searchPattern}

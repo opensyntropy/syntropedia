@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { format, type Locale } from 'date-fns'
 import { ptBR, es } from 'date-fns/locale'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,6 +13,8 @@ import {
   XCircle,
   AlertTriangle,
   Globe,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react'
 
 interface ActivityEntry {
@@ -114,6 +117,21 @@ export function ActivityLog({ activities, showSpeciesLink = false, title, locale
   const displayTitle = title || labels.title
   const dateLocale = dateLocales[locale]
 
+  // Track which items are expanded (all collapsed by default)
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+
+  const toggleItem = (id: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
   if (activities.length === 0) {
     return (
       <Card>
@@ -133,48 +151,72 @@ export function ActivityLog({ activities, showSpeciesLink = false, title, locale
         <CardTitle>{displayTitle}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+        <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
           {activities.map((activity) => {
             const iconConfig = actionIcons[activity.action] || { icon: Edit, color: 'text-gray-600' }
             const Icon = iconConfig.icon
             const labelKey = actionLabelKey[activity.action]
             const actionLabel = labelKey ? labels[labelKey] : activity.action.replace(/_/g, ' ').toLowerCase()
+            const hasDetails = activity.details && (
+              (activity.details as { comments?: string }).comments ||
+              (activity.details as { reason?: string }).reason
+            )
+            const isExpanded = expandedItems.has(activity.id)
 
             return (
-              <div key={activity.id} className="flex items-start gap-3">
-                <div className={`mt-0.5 ${iconConfig.color}`}>
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium text-sm">
+              <div key={activity.id} className="border rounded-lg overflow-hidden">
+                {/* Collapsible Header */}
+                <button
+                  type="button"
+                  onClick={() => toggleItem(activity.id)}
+                  className="w-full flex items-center gap-2 p-3 text-sm bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  )}
+                  <div className={`flex-shrink-0 ${iconConfig.color}`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-medium">
                       {activity.user.name || activity.user.email}
                     </span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground ml-2">
                       {actionLabel}
                     </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground flex-shrink-0">
+                    {format(new Date(activity.createdAt), 'PP', { locale: dateLocale })}
+                  </span>
+                </button>
+
+                {/* Expandable Content */}
+                {isExpanded && (
+                  <div className="border-t p-3 space-y-2">
+                    {/* Full timestamp */}
+                    <p className="text-xs text-muted-foreground">
+                      {format(new Date(activity.createdAt), 'PPp', { locale: dateLocale })}
+                    </p>
+
                     {showSpeciesLink && activity.species && (
                       <a
                         href={`/submissions/${activity.species.id}`}
-                        className="text-sm text-primary hover:underline truncate"
+                        className="text-sm text-primary hover:underline block"
                       >
                         {activity.species.scientificName}
                       </a>
                     )}
+
+                    {hasDetails && (
+                      <p className="text-sm text-muted-foreground bg-slate-50 p-2 rounded-md">
+                        &quot;{(activity.details as { comments?: string; reason?: string }).comments ||
+                          (activity.details as { comments?: string; reason?: string }).reason}&quot;
+                      </p>
+                    )}
                   </div>
-                  {activity.details && (
-                    (activity.details as { comments?: string }).comments ||
-                    (activity.details as { reason?: string }).reason
-                  ) && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      &quot;{(activity.details as { comments?: string; reason?: string }).comments ||
-                        (activity.details as { comments?: string; reason?: string }).reason}&quot;
-                    </p>
-                  )}
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {format(new Date(activity.createdAt), 'PPp', { locale: dateLocale })}
-                  </p>
-                </div>
+                )}
               </div>
             )
           })}

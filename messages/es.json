@@ -316,7 +316,9 @@
       "ROOT_CUTTING": "Esquejes de Raíz",
       "LAYERING": "Acodo Terrestre",
       "BUDDING": "Injerto de Yema"
-    }
+    },
+    "underRevisionTitle": "Esta especie está en revisión",
+    "underRevisionMessage": "Se está revisando una solicitud de revisión. Puede solicitar una nueva revisión después de que se complete esta revisión."
   },
   "contributions": {
     "title": "Mis Contribuciones",

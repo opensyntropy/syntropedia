@@ -445,7 +445,9 @@
       "ROOT_CUTTING": "Estacas de Raiz",
       "LAYERING": "Mergulhia",
       "BUDDING": "Borbulhia"
-    }
+    },
+    "underRevisionTitle": "Esta espécie está em revisão",
+    "underRevisionMessage": "Uma solicitação de revisão está sendo analisada. Você pode solicitar uma nova revisão após a conclusão desta análise."
   },
   "becomeReviewer": {
     "title": "Seja um Revisor",

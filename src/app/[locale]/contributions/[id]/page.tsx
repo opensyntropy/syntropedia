@@ -1,15 +1,14 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getSession, canViewSubmission, canEditSubmission, canDeleteSubmission, isReviewer, canReview } from '@/lib/auth/server'
-import { getSubmissionById } from '@/lib/services/submission'
-import { getSpeciesActivity, getSpeciesChangeHistory } from '@/lib/services/activity'
+import { getSubmissionById, getFormValuesFromSubmission } from '@/lib/services/submission'
+import { getSpeciesChangeHistory } from '@/lib/services/activity'
 import { getUserReview } from '@/lib/services/review'
 import { getTranslations } from '@/lib/getTranslations'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { StatusBadge } from '@/components/submissions/StatusBadge'
 import { ReviewProgress } from '@/components/submissions/ReviewProgress'
-import { ActivityLog } from '@/components/activity/ActivityLog'
 import { ChangeHistory } from '@/components/activity/ChangeHistory'
 import { SpeciesForm } from '@/components/submissions/SpeciesForm'
 import { DeleteSubmissionButton } from '@/components/submissions/DeleteSubmissionButton'
@@ -71,8 +70,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
   const isReviewMode = canReviewEdit && submission.status === SpeciesStatus.IN_REVIEW
   const isEditMode = edit === 'true' && (canEdit || canReviewEdit)
 
-  // Get activity log and change history for reviewers
-  const activities = userIsReviewer ? await getSpeciesActivity(id) : []
+  // Get change history for reviewers
   const changeHistory = userIsReviewer ? await getSpeciesChangeHistory(id) : []
 
   // Get user's review if they've already reviewed
@@ -121,43 +119,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                 mode={formMode}
                 speciesId={id}
                 locale={locale}
-                defaultValues={{
-                  scientificName: submission.scientificName,
-                  genus: submission.genus || undefined,
-                  species: submission.species || undefined,
-                  author: submission.author || undefined,
-                  commonNames: submission.commonNames,
-                  synonyms: submission.synonyms,
-                  botanicalFamily: submission.botanicalFamily || undefined,
-                  variety: submission.variety || undefined,
-                  stratum: submission.stratum,
-                  successionalStage: submission.successionalStage,
-                  lifeCycle: submission.lifeCycle || undefined,
-                  lifeCycleYearsStart: submission.lifeCycleYearsStart || undefined,
-                  lifeCycleYearsEnd: submission.lifeCycleYearsEnd || undefined,
-                  heightMeters: submission.heightMeters ? Number(submission.heightMeters) : undefined,
-                  canopyWidthMeters: submission.canopyWidthMeters ? Number(submission.canopyWidthMeters) : undefined,
-                  canopyShape: submission.canopyShape || undefined,
-                  originCenter: submission.originCenter ? submission.originCenter.split(', ').filter(Boolean) : undefined,
-                  globalBiome: submission.globalBiome ? submission.globalBiome.split(', ').filter(Boolean) : undefined,
-                  regionalBiome: submission.regionalBiome,
-                  foliageType: submission.foliageType || undefined,
-                  leafDropSeason: submission.leafDropSeason || undefined,
-                  growthRate: submission.growthRate || undefined,
-                  rootSystem: submission.rootSystem || undefined,
-                  nitrogenFixer: submission.nitrogenFixer,
-                  serviceSpecies: submission.serviceSpecies,
-                  pruningSprout: submission.pruningSprout || undefined,
-                  seedlingShade: submission.seedlingShade || undefined,
-                  biomassProduction: submission.biomassProduction || undefined,
-                  hasFruit: submission.hasFruit,
-                  edibleFruit: submission.edibleFruit,
-                  fruitingAgeStart: submission.fruitingAgeStart || undefined,
-                  fruitingAgeEnd: submission.fruitingAgeEnd || undefined,
-                  uses: submission.uses,
-                  propagationMethods: submission.propagationMethods,
-                  observations: submission.observations || undefined,
-                }}
+                defaultValues={getFormValuesFromSubmission(submission)}
                 defaultPhotos={submission.photos.map(p => ({
                   id: p.id,
                   url: p.url,
@@ -226,11 +188,6 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
                 {/* Change History */}
                 {changeHistory.length > 0 && (
                   <ChangeHistory changes={changeHistory as any} locale={locale} />
-                )}
-
-                {/* Activity Log */}
-                {activities.length > 0 && (
-                  <ActivityLog activities={activities as any} locale={locale} />
                 )}
 
                 {/* Decision Buttons at bottom */}
@@ -659,11 +616,6 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
             {/* Change History (Reviewers only) */}
             {userIsReviewer && changeHistory.length > 0 && (
               <ChangeHistory changes={changeHistory as any} locale={locale} />
-            )}
-
-            {/* Activity Log (Reviewers only) */}
-            {userIsReviewer && activities.length > 0 && (
-              <ActivityLog activities={activities as any} locale={locale} />
             )}
           </div>
         </div>

@@ -201,7 +201,7 @@ export interface SpeciesDetail {
 
   // Images
   imageUrl: string
-  images?: string[]
+  photos?: { url: string; tags?: string[] }[]
 }
 
 // Search result type for API responses

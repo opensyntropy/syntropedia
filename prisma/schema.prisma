@@ -240,6 +240,10 @@ model Species {
   revisionRequestReason   String?        @map("revision_request_reason") @db.Text
   revisionRequestedAt     DateTime?      @map("revision_requested_at")
 
+  // Draft data - stores pending edits during revision review
+  // Regular fields remain unchanged until approval
+  draftData               Json?          @map("draft_data")
+
   // Metadata
   createdById    String   @map("created_by_id")
   createdBy      User     @relation("SpeciesCreator", fields: [createdById], references: [id])

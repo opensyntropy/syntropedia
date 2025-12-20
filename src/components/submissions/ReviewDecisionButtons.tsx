@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2, ThumbsUp, ThumbsDown, CheckCircle } from 'lucide-react'
+import { ToastNotification, type ToastType } from '@/components/ui/toast-notification'
 
 interface ReviewDecisionButtonsProps {
   speciesId: string
@@ -24,7 +25,11 @@ export function ReviewDecisionButtons({
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [reviewComments, setReviewComments] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type })
+  }
 
   // Translations
   const texts = {
@@ -62,7 +67,7 @@ export function ReviewDecisionButtons({
     if (hasAlreadyReviewed) return
 
     setIsSubmitting(true)
-    setError(null)
+    setToast(null)
 
     try {
       const response = await fetch(`/api/species/submissions/${speciesId}/reviews`, {
@@ -82,7 +87,7 @@ export function ReviewDecisionButtons({
       router.push('/reviews')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      showToast(err instanceof Error ? err.message : 'An error occurred', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -109,16 +114,19 @@ export function ReviewDecisionButtons({
 
   return (
     <Card>
+      {/* Toast Notification */}
+      {toast && (
+        <ToastNotification
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
       <CardHeader>
         <CardTitle>{t.yourDecision}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {error && (
-          <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm">
-            {error}
-          </div>
-        )}
-
         <div>
           <label className="block text-sm font-medium mb-2">{t.comments}</label>
           <textarea

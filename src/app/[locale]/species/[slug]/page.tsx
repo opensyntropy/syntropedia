@@ -16,17 +16,20 @@ import {
   Layers,
   TrendingUp,
   FlaskConical,
-  Camera
+  Camera,
+  AlertCircle
 } from 'lucide-react'
 import { type SpeciesDetail } from '@/types/species'
 import { getTranslations } from '@/lib/getTranslations'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/server'
 import { RequestRevisionButton } from '@/components/species/RequestRevisionButton'
+import { ImageGallery } from '@/components/species/ImageGallery'
 
 // Extended type to include status for revision button check
 interface SpeciesDetailWithStatus extends SpeciesDetail {
   status: string
+  isUnderRevision: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,9 +71,9 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Grafting'],
       observations: 'Jatobá is a majestic tree native to tropical America. Its hard, durable wood is highly valued for construction and furniture. The fruit pulp is edible and nutritious, commonly used in traditional medicine. As a nitrogen-fixing legume, it enriches the soil and supports forest regeneration. The tree is slow-growing but extremely long-lived, making it ideal for permanent agroforestry systems.',
       imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop',
-      images: [
-        'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1511497584788-876760111969?w=800&auto=format&fit=crop'
+      photos: [
+        { url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop' },
+        { url: 'https://images.unsplash.com/photo-1511497584788-876760111969?w=800&auto=format&fit=crop' }
       ]
     },
     'banana-musa-paradisiaca': {
@@ -106,7 +109,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Suckers', 'Rhizome division'],
       observations: 'Banana is one of the most productive plants for tropical agroforestry. It provides quick biomass, edible fruit, and excellent ground cover. The large leaves create a humid microclimate beneficial for other plants.',
       imageUrl: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=800&auto=format&fit=crop' }]
     },
     'euterpe-edulis': {
       id: '3',
@@ -141,7 +144,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds'],
       observations: 'Juçara palm is an emblematic species of the Atlantic Forest. It produces the highly valued palmito (heart of palm) and açaí-like fruits. The palm is critically important for forest fauna as a food source. Sustainable management practices are essential as overharvesting has led to population decline. In agroforestry systems, it provides shade and valuable products.',
       imageUrl: 'https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?w=800&auto=format&fit=crop' }]
     },
     'coffea-arabica': {
       id: '4',
@@ -176,7 +179,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings', 'Grafting'],
       observations: 'Coffee is an important cash crop that thrives under partial shade in agroforestry systems. It benefits from the protection of taller trees and contributes to understory diversity. Shade-grown coffee produces higher quality beans and supports biodiversity. The shrub requires well-drained soils and consistent moisture.',
       imageUrl: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&auto=format&fit=crop' }]
     },
     'malpighia-emarginata': {
       id: '5',
@@ -211,7 +214,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings', 'Grafting'],
       observations: 'Acerola is renowned for its exceptionally high vitamin C content, making it a valuable fruit crop. The small shrub is highly productive and can fruit multiple times per year in favorable conditions. It adapts well to various soil types and is drought-tolerant once established. In agroforestry, it fills the understory layer and attracts pollinators.',
       imageUrl: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=800&auto=format&fit=crop' }]
     },
     'inga-edulis': {
       id: '6',
@@ -246,7 +249,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings'],
       observations: 'Ingá is an excellent pioneer species for agroforestry systems. As a nitrogen-fixing legume, it rapidly improves soil fertility. Its fast growth provides quick shade for crops like coffee and cacao. The sweet edible pulp surrounding the seeds is enjoyed by humans and wildlife. The tree produces abundant biomass and leaf litter, enriching the soil. It is particularly valuable in degraded land restoration.',
       imageUrl: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&auto=format&fit=crop' }]
     },
     'cecropia-pachystachya': {
       id: '7',
@@ -281,7 +284,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings'],
       observations: 'Embaúba is an iconic pioneer tree crucial for forest regeneration. It grows extremely fast and provides shelter and food for wildlife, especially sloths and birds. The hollow stems house ant colonies in a symbiotic relationship. Rich in nitrogen-fixing capabilities, it enriches degraded soils. Its medicinal properties include treatment for respiratory conditions and hypertension.',
       imageUrl: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&auto=format&fit=crop' }]
     },
     'theobroma-cacao': {
       id: '8',
@@ -316,7 +319,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Grafting', 'Cuttings'],
       observations: 'Cacao is the source of chocolate and a vital crop for agroforestry systems. It thrives under forest canopy shade, making it ideal for multi-strata systems. The tree produces pods directly on its trunk and branches, containing seeds rich in valuable compounds. Shade-grown cacao promotes biodiversity and produces higher quality beans. It requires humid conditions and benefits from companion trees.',
       imageUrl: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1511381939415-e44015466834?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=800&auto=format&fit=crop' }]
     },
     'schinus-terebinthifolia': {
       id: '9',
@@ -351,7 +354,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings'],
       observations: 'Aroeira-vermelha is a resilient tree with powerful medicinal properties, particularly for wound healing and anti-inflammatory treatments. The red berries resemble pink peppercorns and have culinary uses. It adapts to various soil conditions and climate zones, making it valuable for restoration projects. The tree attracts diverse pollinators and provides year-round food for birds.',
       imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop' }]
     },
     'leucaena-leucocephala': {
       id: '10',
@@ -386,7 +389,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings'],
       observations: 'Leucena is an exceptional nitrogen-fixing tree that rapidly improves soil fertility. Its protein-rich foliage is excellent livestock fodder, though should be fed in moderation. The tree produces abundant biomass for mulching and green manure. It grows quickly in challenging conditions, making it ideal for degraded land rehabilitation. Regular pruning stimulates growth and biomass production.',
       imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&auto=format&fit=crop' }]
     },
     'piper-aduncum': {
       id: '11',
@@ -421,7 +424,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings'],
       observations: 'Pimenta-de-macaco is a fast-growing pioneer shrub with significant medicinal properties, particularly as an insect repellent and antimicrobial agent. It quickly colonizes disturbed areas, providing ground cover and preventing erosion. The aromatic leaves have traditional uses in folk medicine. Birds and small mammals feed on the small fruits, aiding in seed dispersal and forest regeneration.',
       imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&auto=format&fit=crop' }]
     },
     'mimosa-caesalpiniifolia': {
       id: '12',
@@ -456,7 +459,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings'],
       observations: 'Sabiá is a hardy leguminous tree native to the Brazilian Caatinga. It provides excellent timber for posts and fuel, while fixing nitrogen in the soil. The dense, thorny foliage makes it ideal for living fences and windbreaks. It tolerates drought and poor soils, making it valuable for dryland agroforestry. The tree supports local wildlife and enriches degraded soils.',
       imageUrl: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&auto=format&fit=crop' }]
     },
     'annona-muricata': {
       id: '13',
@@ -491,7 +494,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Grafting', 'Air layering'],
       observations: 'Graviola produces large, delicious fruits with creamy white pulp rich in nutrients and unique flavor. The fruit and leaves have traditional medicinal uses, including anti-inflammatory and antimicrobial properties. It thrives in humid tropical climates and benefits from partial shade in agroforestry systems. The tree requires hand pollination for optimal fruit production and provides year-round foliage.',
       imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop' }]
     },
     'gliricidia-sepium': {
       id: '14',
@@ -526,7 +529,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Stakes', 'Seeds', 'Cuttings'],
       observations: 'Gliricídia is a multipurpose tree widely used in agroforestry worldwide. It fixes substantial nitrogen, produces abundant biomass, and provides excellent livestock fodder. The tree can be easily propagated from living stakes and tolerates heavy pruning. It serves as ideal shade for coffee and cacao, and its attractive pink flowers support pollinators. The leaves have rodenticidal properties.',
       imageUrl: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&auto=format&fit=crop' }]
     },
     'psidium-guajava': {
       id: '15',
@@ -561,7 +564,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings', 'Grafting'],
       observations: 'Guava is a highly productive fruit tree with exceptional vitamin C content. The fruits are versatile for fresh eating, juices, and preserves. The leaves have medicinal properties for digestive health. The tree adapts to various soil types and climates, producing fruit year-round in favorable conditions. It attracts numerous pollinators and fruit-eating birds, supporting biodiversity in agroforestry systems.',
       imageUrl: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&auto=format&fit=crop' }]
     },
     'genipa-americana': {
       id: '16',
@@ -596,7 +599,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Grafting'],
       observations: 'Jenipapo produces large fruits with aromatic pulp used for juices, liqueurs, and traditional body paint by indigenous peoples. The fruit is rich in iron and has medicinal properties. The durable wood is valued for construction. The tree is adapted to seasonally flooded areas and provides important food for wildlife. It is long-lived and valuable for permanent agroforestry systems.',
       imageUrl: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1483086431886-3590a88317fe?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?w=800&auto=format&fit=crop' }]
     },
     'spondias-mombin': {
       id: '17',
@@ -631,7 +634,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings', 'Stakes'],
       observations: 'Cajá is a majestic tree producing delicious tropical fruits with tangy-sweet flavor. The fruits are rich in vitamins and used for juices, ice cream, and preserves. The tree is highly drought-resistant, making it valuable for semi-arid agroforestry. It provides excellent shade and wildlife habitat. The durable wood has commercial value. The tree can be propagated from large branch cuttings.',
       imageUrl: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&auto=format&fit=crop' }]
     },
     'manihot-esculenta': {
       id: '18',
@@ -666,7 +669,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Stem cuttings', 'Stakes'],
       observations: 'Cassava is a staple crop providing carbohydrate-rich tuberous roots that feed millions worldwide. It thrives in poor soils and drought conditions where other crops fail. In agroforestry, it provides quick ground cover and food security. The leaves are also edible and nutritious. Cassava is easily propagated from stem cuttings and can be intercropped with trees, offering income while forests develop.',
       imageUrl: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&auto=format&fit=crop' }]
     },
     'carica-papaya': {
       id: '19',
@@ -701,7 +704,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Tissue culture'],
       observations: 'Papaya is one of the fastest fruiting trees, producing within the first year. The fruits are rich in enzymes, vitamins, and have digestive health benefits. The latex and leaves contain papain, used medicinally and in meat tenderizers. Short-lived but highly productive, papaya is ideal for early income in young agroforestry systems. It requires warm temperatures and good drainage.',
       imageUrl: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800&auto=format&fit=crop' }]
     },
     'erythrina-fusca': {
       id: '20',
@@ -736,7 +739,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings', 'Stakes'],
       observations: 'Mulungu is a nitrogen-fixing tree with powerful medicinal properties, particularly as a natural sedative and anxiolytic. The spectacular red flowers attract hummingbirds and other pollinators. It adapts to waterlogged soils and is ideal for riparian restoration. The light, cork-like wood has traditional uses in crafts. The tree provides excellent shade and enriches soil through nitrogen fixation.',
       imageUrl: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=800&auto=format&fit=crop' }]
     },
     'anacardium-occidentale': {
       id: '21',
@@ -771,7 +774,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Grafting', 'Air layering'],
       observations: 'Cashew produces valuable nuts and the cashew apple, both with commercial importance. The tree is extremely drought-resistant and thrives in sandy, poor soils. It has an extensive root system that prevents erosion. The tree provides wide-spreading shade and the cashew shell liquid has industrial and medicinal uses. Grafted varieties produce higher yields and fruit within 2-3 years.',
       imageUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop' }]
     },
     'passiflora-edulis': {
       id: '22',
@@ -806,7 +809,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings', 'Grafting'],
       observations: 'Passion fruit is a vigorous vine producing aromatic fruits with unique flavor, rich in vitamins and antioxidants. The leaves and flowers have sedative medicinal properties. In agroforestry, it provides ground cover, fruits quickly, and requires support structures like trellises or trees. The spectacular flowers attract diverse pollinators. It produces abundantly in the first year and thrives in humid tropical climates.',
       imageUrl: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&auto=format&fit=crop' }]
     },
     'citrus-sinensis': {
       id: '23',
@@ -841,7 +844,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Grafting', 'Budding', 'Seeds'],
       observations: 'Orange is one of the most economically important fruit crops worldwide. The fruits are rich in vitamin C and versatile for fresh consumption and juices. The fragrant flowers are excellent for honey production and perfume. In agroforestry, grafted trees produce high-quality fruit within 3-4 years. The tree requires good drainage and benefits from protection from strong winds. The aromatic leaves have culinary and medicinal uses.',
       imageUrl: 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=800&auto=format&fit=crop' }]
     },
     'persea-americana': {
       id: '24',
@@ -876,7 +879,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Grafting', 'Seeds', 'Air layering'],
       observations: 'Avocado produces nutritious fruits rich in healthy fats, vitamins, and minerals. The tree is valuable in agroforestry for its canopy layer contribution and long productive life. Grafted varieties ensure fruit quality and earlier production. The tree requires well-drained soils and adequate water. The leaves have antimicrobial properties and the oil from fruits has cosmetic and culinary uses. It provides excellent habitat for beneficial insects.',
       imageUrl: 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800&auto=format&fit=crop' }]
     },
     'mangifera-indica': {
       id: '25',
@@ -911,7 +914,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Grafting', 'Budding', 'Seeds'],
       observations: 'Mango is a majestic fruit tree producing delicious, nutritious fruits beloved worldwide. The tree is long-lived and becomes increasingly productive with age. It provides extensive shade and serves as a keystone species in agroforestry systems. Grafted varieties ensure quality fruit production within 5-7 years. The tree is drought-tolerant once established and has dense, valuable timber. The leaves and bark have medicinal properties.',
       imageUrl: 'https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1490682143684-14369e18dce8?w=800&auto=format&fit=crop' }]
     },
     'artocarpus-heterophyllus': {
       id: '26',
@@ -946,7 +949,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Grafting', 'Seeds', 'Air layering'],
       observations: 'Jackfruit produces the largest tree-borne fruit in the world, with versatile culinary uses from unripe to ripe stages. The young fruit is used as a meat substitute, while ripe fruit is sweet and nutritious. The tree is highly productive and provides valuable timber. It enriches soil with leaf litter and offers extensive shade. Seeds are also edible when cooked. The tree is resilient to pests and adapts well to various conditions.',
       imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop' }]
     },
     'bambusa-vulgaris': {
       id: '27',
@@ -981,7 +984,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Rhizome division', 'Culm cuttings', 'Branch cuttings'],
       observations: 'Bamboo is one of the fastest-growing plants on Earth, producing enormous biomass and versatile construction material. It provides erosion control, windbreaks, and living fences. The culms are harvested sustainably without killing the plant. Bamboo creates a unique microclimate and provides habitat for wildlife. It is valuable for carbon sequestration and soil stabilization. The young shoots of some varieties are edible.',
       imageUrl: 'https://images.unsplash.com/photo-1511871893393-82e9c16b81e3?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1511871893393-82e9c16b81e3?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1511871893393-82e9c16b81e3?w=800&auto=format&fit=crop' }]
     },
     'moringa-oleifera': {
       id: '28',
@@ -1016,7 +1019,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings'],
       observations: 'Moringa is known as the "miracle tree" due to its exceptional nutritional value. The leaves, pods, flowers, and seeds are all edible and rich in vitamins, minerals, and protein. It grows rapidly in challenging conditions with minimal water. The seeds produce oil for cooking and cosmetics, and also purify water. In agroforestry, it provides nutritious fodder and human food while improving soil quality through deep-rooting nutrient cycling.',
       imageUrl: 'https://images.unsplash.com/photo-1487260211189-670c54da558d?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1487260211189-670c54da558d?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1487260211189-670c54da558d?w=800&auto=format&fit=crop' }]
     },
     'syzygium-cumini': {
       id: '29',
@@ -1051,7 +1054,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Grafting', 'Air layering'],
       observations: 'Jamelão produces abundant purple-black fruits with antidiabetic and antioxidant properties. The tree is long-lived and provides excellent shade for people and understory crops. The fruits attract diverse wildlife, especially birds. The dense wood is valuable for construction. The tree is highly resilient to urban pollution and drought once established, making it ideal for both agroforestry and urban forestry applications.',
       imageUrl: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800&auto=format&fit=crop' }]
     },
     'cajanus-cajan': {
       id: '30',
@@ -1086,7 +1089,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds'],
       observations: 'Pigeon pea is a multipurpose nitrogen-fixing shrub providing protein-rich edible seeds for humans and livestock. It grows rapidly, produces abundant biomass for mulch, and improves soil fertility. The deep taproot breaks up compacted soil and accesses deep nutrients. In agroforestry, it provides quick ground cover and food production while supporting tree establishment. The leaves and green pods are excellent animal fodder.',
       imageUrl: 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&auto=format&fit=crop' }]
     },
     'tithonia-diversifolia': {
       id: '31',
@@ -1121,7 +1124,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Cuttings', 'Seeds'],
       observations: 'Mexican sunflower is a biomass powerhouse producing enormous quantities of nutrient-rich organic matter for mulching and composting. The leaves are high in nitrogen, phosphorus, and potassium, making excellent green manure. It grows rapidly from cuttings and tolerates poor soils and drought. The bright yellow flowers attract beneficial insects and pollinators. Regular cutting stimulates regrowth and provides continuous biomass for soil improvement.',
       imageUrl: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1495567720989-cebdbdd97913?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?w=800&auto=format&fit=crop' }]
     },
     'eugenia-uniflora': {
       id: '32',
@@ -1156,7 +1159,7 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
       propagationMethods: ['Seeds', 'Cuttings', 'Air layering'],
       observations: 'Pitanga produces delicious, distinctive fruits rich in vitamin C and antioxidants. The small tree is highly adaptable to different climates and soils, thriving from tropical to subtropical regions. The aromatic leaves have medicinal properties and insect-repellent qualities. It makes an excellent ornamental hedge that produces edible fruit. The tree attracts diverse birds and beneficial insects. It fruits prolifically and requires minimal maintenance.',
       imageUrl: 'https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?w=800&auto=format&fit=crop',
-      images: ['https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?w=800&auto=format&fit=crop']
+      photos: [{ url: 'https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?w=800&auto=format&fit=crop' }]
     }
   }
 
@@ -1167,16 +1170,20 @@ const getMockSpecies = (slug: string): SpeciesDetail | null => {
 export const dynamic = 'force-dynamic'
 
 async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus | null> {
+  // Include PUBLISHED species and IN_REVIEW species with revision requests (previously published)
   const dbSpecies = await prisma.species.findFirst({
     where: {
       slug,
-      status: 'PUBLISHED'
+      OR: [
+        { status: 'PUBLISHED' },
+        { status: 'IN_REVIEW', revisionRequestedById: { not: null } }
+      ]
     },
     include: {
       photos: {
         where: { approved: true },
         orderBy: { primary: 'desc' },
-        select: { url: true }
+        select: { url: true, tags: true }
       }
     }
   })
@@ -1187,7 +1194,11 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus |
   // SVG placeholder - no external network call needed
   const placeholderSvg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='800' height='600' fill='%234ade80'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='white'%3ENo Image%3C/text%3E%3C/svg%3E`
   const imageUrl = primaryPhoto?.url || placeholderSvg
-  const images = dbSpecies.photos.map(photo => photo.url)
+  // Map photos with url and tags for ImageGallery
+  const photos = dbSpecies.photos.map(photo => ({
+    url: photo.url,
+    tags: photo.tags
+  }))
 
   // Convert Decimal types to numbers to avoid React hydration errors
   const heightMeters = dbSpecies.heightMeters ? Number(dbSpecies.heightMeters.toString()) : undefined
@@ -1232,8 +1243,9 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus |
     propagationMethods: dbSpecies.propagationMethods || undefined,
     observations: dbSpecies.observations,
     imageUrl,
-    images: images.length > 0 ? images : undefined,
-    status: dbSpecies.status
+    photos: photos.length > 0 ? photos : undefined,
+    status: dbSpecies.status,
+    isUnderRevision: dbSpecies.status === 'IN_REVIEW' && !!dbSpecies.revisionRequestedById
   }
 }
 
@@ -1289,15 +1301,11 @@ export default async function SpeciesDetailPage({
         <div className="mb-8">
           <Card className="overflow-hidden">
             <div className="grid gap-8 lg:grid-cols-2">
-              {/* Image */}
-              <div className="relative aspect-[4/3] bg-gray-100 lg:aspect-auto">
-                <Image
-                  src={species.imageUrl}
+              {/* Image Gallery */}
+              <div className="p-4 lg:p-6">
+                <ImageGallery
+                  photos={species.photos || [{ url: species.imageUrl }]}
                   alt={species.scientificName}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
                 />
               </div>
 
@@ -1353,6 +1361,19 @@ export default async function SpeciesDetailPage({
                   </div>
                 )}
 
+                {/* Under Revision Banner - shown when species is being reviewed */}
+                {species.isUnderRevision && session?.user && (
+                  <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-amber-800">
+                        <p className="font-medium">{t('underRevisionTitle')}</p>
+                        <p className="mt-1">{t('underRevisionMessage')}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Quick Stats */}
                 <div className="space-y-3 border-t pt-6">
                   {species.heightMeters && (
@@ -1401,30 +1422,6 @@ export default async function SpeciesDetailPage({
           </Card>
         </div>
 
-        {/* Photo Gallery */}
-        {species.images && species.images.length > 1 && (
-          <div className="mb-8">
-            <Card className="p-6">
-              <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-gray-900">
-                <Camera className="h-5 w-5 text-gray-400" />
-                {t('photos')} ({species.images.length})
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {species.images.map((imageUrl, index) => (
-                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                    <Image
-                      src={imageUrl}
-                      alt={`${species.scientificName} - Photo ${index + 1}`}
-                      fill
-                      className="object-cover hover:scale-105 transition-transform cursor-pointer"
-                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                    />
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        )}
 
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">

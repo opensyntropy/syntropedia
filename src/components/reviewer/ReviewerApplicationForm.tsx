@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useTranslations } from '@/lib/IntlProvider'
+import { ToastNotification, type ToastType } from '@/components/ui/toast-notification'
 
 interface ReviewerApplicationFormProps {
   locale: string
@@ -46,7 +47,11 @@ export function ReviewerApplicationForm({ locale }: ReviewerApplicationFormProps
     socialWebsite: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type })
+  }
 
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -55,7 +60,7 @@ export function ReviewerApplicationForm({ locale }: ReviewerApplicationFormProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setError(null)
+    setToast(null)
 
     try {
       const response = await fetch('/api/reviewer-applications', {
@@ -72,9 +77,15 @@ export function ReviewerApplicationForm({ locale }: ReviewerApplicationFormProps
         throw new Error(data.error || 'Failed to submit application')
       }
 
+      const successMessage = locale === 'pt-BR'
+        ? 'Candidatura enviada com sucesso!'
+        : locale === 'es'
+        ? '¡Solicitud enviada con éxito!'
+        : 'Application submitted successfully!'
+      showToast(successMessage, 'success')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      showToast(err instanceof Error ? err.message : 'An error occurred', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -82,6 +93,15 @@ export function ReviewerApplicationForm({ locale }: ReviewerApplicationFormProps
 
   return (
     <Card>
+      {/* Toast Notification */}
+      {toast && (
+        <ToastNotification
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
       <CardHeader>
         <CardTitle>{t('applyTitle')}</CardTitle>
         <CardDescription>{t('applyDescription')}</CardDescription>
@@ -259,12 +279,6 @@ export function ReviewerApplicationForm({ locale }: ReviewerApplicationFormProps
               </div>
             </div>
           </div>
-
-          {error && (
-            <div className="text-sm text-red-500 bg-red-50 p-3 rounded-md">
-              {error}
-            </div>
-          )}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? t('submitting') : t('submitApplication')}

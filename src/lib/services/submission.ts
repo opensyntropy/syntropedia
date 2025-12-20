@@ -1,8 +1,8 @@
 import prisma from '@/lib/prisma'
-import { SpeciesStatus, UserRole, ActivityAction } from '@prisma/client'
+import { SpeciesStatus, UserRole, ActivityAction, Prisma } from '@prisma/client'
 import { logActivity } from './activity'
 import { sendSubmissionNotification } from './email'
-import type { SpeciesFormData } from '@/lib/validations/species'
+import { SPECIES_EDITABLE_FIELDS, type SpeciesFormData } from '@/lib/validations/species'
 
 // Transform form data arrays to Prisma-compatible types
 function transformFormData(data: Partial<SpeciesFormData>) {
@@ -245,7 +245,7 @@ export async function getSubmissions(params: GetSubmissionsParams = {}) {
 }
 
 export async function getSubmissionById(id: string) {
-  return prisma.species.findUnique({
+  const submission = await prisma.species.findUnique({
     where: { id },
     include: {
       createdBy: { select: { id: true, name: true, email: true, avatar: true } },
@@ -259,6 +259,57 @@ export async function getSubmissionById(id: string) {
       },
     },
   })
+
+  return submission
+}
+
+// Fields that need special transformations when loading from DB to form
+const DECIMAL_FIELDS = ['heightMeters', 'canopyWidthMeters'] as const
+const COMMA_SEPARATED_FIELDS = ['originCenter', 'globalBiome'] as const
+const BOOLEAN_FIELDS = ['nitrogenFixer', 'serviceSpecies', 'hasFruit', 'edibleFruit'] as const
+const REQUIRED_FIELDS = ['scientificName', 'commonNames', 'stratum', 'successionalStage', 'synonyms', 'regionalBiome', 'uses', 'propagationMethods'] as const
+
+// Helper to get form values for editing - merges draftData for revision requests
+// Uses SPECIES_EDITABLE_FIELDS to ensure consistency with schema
+export function getFormValuesFromSubmission(submission: NonNullable<Awaited<ReturnType<typeof getSubmissionById>>>) {
+  const draftData = (submission.draftData as Record<string, unknown>) || {}
+  const isRevisionRequest = !!submission.revisionRequestedById
+  const submissionRecord = submission as Record<string, unknown>
+
+  // Get raw value: use draft value if exists (for revision requests), otherwise use regular field
+  const getRawValue = (field: string): unknown => {
+    if (isRevisionRequest && field in draftData) {
+      return draftData[field]
+    }
+    return submissionRecord[field]
+  }
+
+  // Build result dynamically from SPECIES_EDITABLE_FIELDS
+  const result: Record<string, unknown> = {}
+
+  for (const field of SPECIES_EDITABLE_FIELDS) {
+    const rawValue = getRawValue(field)
+
+    // Apply field-specific transformations
+    if (DECIMAL_FIELDS.includes(field as typeof DECIMAL_FIELDS[number])) {
+      // Decimal fields need Number conversion
+      result[field] = rawValue ? Number(rawValue) : undefined
+    } else if (COMMA_SEPARATED_FIELDS.includes(field as typeof COMMA_SEPARATED_FIELDS[number])) {
+      // Comma-separated string fields need to be split into arrays
+      result[field] = rawValue ? String(rawValue).split(', ').filter(Boolean) : undefined
+    } else if (BOOLEAN_FIELDS.includes(field as typeof BOOLEAN_FIELDS[number])) {
+      // Boolean fields keep their value as-is
+      result[field] = rawValue
+    } else if (REQUIRED_FIELDS.includes(field as typeof REQUIRED_FIELDS[number])) {
+      // Required fields keep their value as-is
+      result[field] = rawValue
+    } else {
+      // Optional fields: convert falsy to undefined
+      result[field] = rawValue || undefined
+    }
+  }
+
+  return result as SpeciesFormData
 }
 
 export interface GetReviewQueueParams {
@@ -322,6 +373,39 @@ export interface ReviewerEditParams {
   changeReason: string
 }
 
+// Normalize value for comparison - treats null, undefined, "" as equivalent
+// Also handles Decimal objects and empty arrays
+function normalizeForComparison(value: unknown): unknown {
+  // Handle Prisma Decimal objects
+  if (value !== null && typeof value === 'object' && 'toNumber' in value) {
+    return (value as { toNumber: () => number }).toNumber()
+  }
+
+  // Treat null, undefined, and empty string as equivalent (null)
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+
+  // Treat empty arrays as null for optional array fields
+  if (Array.isArray(value) && value.length === 0) {
+    return null
+  }
+
+  // For arrays, normalize each element
+  if (Array.isArray(value)) {
+    return value.map(normalizeForComparison)
+  }
+
+  return value
+}
+
+// Compare two values after normalization
+function valuesAreEqual(a: unknown, b: unknown): boolean {
+  const normalizedA = normalizeForComparison(a)
+  const normalizedB = normalizeForComparison(b)
+  return JSON.stringify(normalizedA) === JSON.stringify(normalizedB)
+}
+
 export async function reviewerEditSubmission(params: ReviewerEditParams) {
   const { id, data, reviewerId, changeReason } = params
 
@@ -334,22 +418,95 @@ export async function reviewerEditSubmission(params: ReviewerEditParams) {
     throw new Error('Species not found')
   }
 
-  // Track changes for each modified field
+  const transformedData = transformFormData(data)
+
+  // Check if this is a revision request (published species under review)
+  // In this case, edits go to draftData JSON, not to regular fields
+  const isRevisionRequest = !!currentSpecies.revisionRequestedById
+
+  if (isRevisionRequest) {
+    // For revision requests: store edits in draftData JSON
+    // Regular database fields remain unchanged (preserving published data)
+    const currentDraft = (currentSpecies.draftData as Record<string, unknown>) || {}
+
+    // Track changes comparing against current draft (or original values if no draft yet)
+    const changes: Array<{
+      field: string
+      previousValue: unknown
+      newValue: unknown
+    }> = []
+
+    for (const [key, newValue] of Object.entries(transformedData)) {
+      // Compare against draft value if exists, otherwise against original published value
+      const previousValue = key in currentDraft
+        ? currentDraft[key]
+        : (currentSpecies as Record<string, unknown>)[key]
+
+      // Use normalized comparison to avoid false positives from null/undefined/empty differences
+      if (!valuesAreEqual(previousValue, newValue)) {
+        changes.push({
+          field: key,
+          previousValue,
+          newValue,
+        })
+      }
+    }
+
+    if (changes.length === 0) {
+      return currentSpecies
+    }
+
+    // Merge new edits into draftData
+    const updatedDraft = { ...currentDraft, ...transformedData }
+
+    const species = await prisma.species.update({
+      where: { id },
+      data: {
+        draftData: updatedDraft as Prisma.InputJsonValue,
+        updatedById: reviewerId,
+      },
+    })
+
+    // Log each change to ChangeHistory
+    // Wrap values in objects to ensure valid JSON (undefined becomes null)
+    await prisma.changeHistory.createMany({
+      data: changes.map(change => ({
+        speciesId: id,
+        changedById: reviewerId,
+        changedFields: change.field,
+        previousValue: { value: change.previousValue ?? null },
+        newValue: { value: change.newValue ?? null },
+        changeReason,
+      })),
+    })
+
+    await logActivity({
+      action: ActivityAction.SPECIES_UPDATED,
+      userId: reviewerId,
+      speciesId: species.id,
+      details: {
+        updatedFields: changes.map(c => c.field),
+        reviewerEdit: true,
+        isDraft: true,
+      },
+    })
+
+    return species
+  }
+
+  // For new submissions (not revision requests): edit regular fields directly
   const changes: Array<{
     field: string
     previousValue: unknown
     newValue: unknown
   }> = []
 
-  const transformedData = transformFormData(data)
-
   // Compare each field that's being updated
   for (const [key, newValue] of Object.entries(transformedData)) {
     const currentValue = (currentSpecies as Record<string, unknown>)[key]
 
-    // Check if value actually changed
-    const valueChanged = JSON.stringify(currentValue) !== JSON.stringify(newValue)
-    if (valueChanged) {
+    // Use normalized comparison to avoid false positives from null/undefined/empty differences
+    if (!valuesAreEqual(currentValue, newValue)) {
       changes.push({
         field: key,
         previousValue: currentValue,
@@ -373,13 +530,14 @@ export async function reviewerEditSubmission(params: ReviewerEditParams) {
   })
 
   // Log each change to ChangeHistory
+  // Wrap values in objects to ensure valid JSON (undefined becomes null)
   await prisma.changeHistory.createMany({
     data: changes.map(change => ({
       speciesId: id,
       changedById: reviewerId,
       changedFields: change.field,
-      previousValue: change.previousValue as object,
-      newValue: change.newValue as object,
+      previousValue: { value: change.previousValue ?? null },
+      newValue: { value: change.newValue ?? null },
       changeReason,
     })),
   })
@@ -419,7 +577,11 @@ export async function requestRevision(params: RequestRevisionParams) {
     throw new Error('Only published species can have revision requests')
   }
 
-  // Update species to IN_REVIEW with revision info
+  // Clear old reviews from previous review cycle and update species to IN_REVIEW
+  await prisma.speciesReview.deleteMany({
+    where: { speciesId },
+  })
+
   const updated = await prisma.species.update({
     where: { id: speciesId },
     data: {

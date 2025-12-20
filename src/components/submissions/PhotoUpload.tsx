@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react'
 import { PHOTO_FRAGMENT_TAGS, type PhotoFragmentTag } from '@/lib/validations/species'
+import { ToastNotification, type ToastType } from '@/components/ui/toast-notification'
 
 export interface UploadedPhoto {
   id?: string
@@ -124,9 +125,13 @@ export function PhotoUpload({
 }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
-  const [error, setError] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
 
   const t = translationsByLocale[locale] || translationsByLocale.en
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type })
+  }
 
   const uploadFile = async (file: File): Promise<UploadedPhoto | null> => {
     try {
@@ -175,13 +180,13 @@ export function PhotoUpload({
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (photos.length >= maxPhotos) {
-        setError(t.maxPhotosReached)
+        showToast(t.maxPhotosReached, 'warning')
         return
       }
 
       const filesToUpload = acceptedFiles.slice(0, maxPhotos - photos.length)
       setUploading(true)
-      setError(null)
+      setToast(null)
 
       const newPhotos: UploadedPhoto[] = []
 
@@ -192,7 +197,7 @@ export function PhotoUpload({
             newPhotos.push(photo)
           }
         } catch (err) {
-          setError(err instanceof Error ? err.message : 'Upload failed')
+          showToast(err instanceof Error ? err.message : 'Upload failed', 'error')
         }
       }
 
@@ -248,6 +253,15 @@ export function PhotoUpload({
 
   return (
     <Card>
+      {/* Toast Notification */}
+      {toast && (
+        <ToastNotification
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
       <CardContent className="pt-6 space-y-4">
         <h3 className="font-semibold text-lg flex items-center gap-2">
           <ImageIcon className="h-5 w-5" />
@@ -278,10 +292,6 @@ export function PhotoUpload({
             </div>
           )}
         </div>
-
-        {error && (
-          <p className="text-sm text-red-500">{error}</p>
-        )}
 
         {/* Photo Grid */}
         {photos.length > 0 && (

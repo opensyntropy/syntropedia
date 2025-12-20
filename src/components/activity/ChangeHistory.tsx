@@ -1,10 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { format, type Locale } from 'date-fns'
 import { ptBR, es } from 'date-fns/locale'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { History, ArrowRight, User } from 'lucide-react'
+import { History, ArrowRight, User, ChevronDown, ChevronRight } from 'lucide-react'
 
 interface ChangeEntry {
   id: string
@@ -29,6 +30,7 @@ interface ChangeHistoryLabels {
   to: string
   reason: string
   changedBy: string
+  fieldsChanged: string
 }
 
 const labelsByLocale: Record<string, ChangeHistoryLabels> = {
@@ -40,6 +42,7 @@ const labelsByLocale: Record<string, ChangeHistoryLabels> = {
     to: 'To',
     reason: 'Reason',
     changedBy: 'Changed by',
+    fieldsChanged: 'fields changed',
   },
   'pt-BR': {
     title: 'Histórico de Alterações',
@@ -49,6 +52,7 @@ const labelsByLocale: Record<string, ChangeHistoryLabels> = {
     to: 'Para',
     reason: 'Motivo',
     changedBy: 'Alterado por',
+    fieldsChanged: 'campos alterados',
   },
   es: {
     title: 'Historial de Cambios',
@@ -58,6 +62,7 @@ const labelsByLocale: Record<string, ChangeHistoryLabels> = {
     to: 'A',
     reason: 'Motivo',
     changedBy: 'Cambiado por',
+    fieldsChanged: 'campos cambiados',
   },
 }
 
@@ -97,6 +102,9 @@ const fieldNamesByLocale: Record<string, Record<string, string>> = {
     uses: 'Uses',
     propagationMethods: 'Propagation Methods',
     observations: 'Observations',
+    photos_added: 'Photos Added',
+    photos_removed: 'Photos Removed',
+    photo_updated: 'Photo Updated',
   },
   'pt-BR': {
     scientificName: 'Nome Científico',
@@ -132,6 +140,9 @@ const fieldNamesByLocale: Record<string, Record<string, string>> = {
     uses: 'Usos',
     propagationMethods: 'Métodos de Propagação',
     observations: 'Observações',
+    photos_added: 'Fotos Adicionadas',
+    photos_removed: 'Fotos Removidas',
+    photo_updated: 'Foto Atualizada',
   },
   es: {
     scientificName: 'Nombre Científico',
@@ -167,6 +178,9 @@ const fieldNamesByLocale: Record<string, Record<string, string>> = {
     uses: 'Usos',
     propagationMethods: 'Métodos de Propagación',
     observations: 'Observaciones',
+    photos_added: 'Fotos Añadidas',
+    photos_removed: 'Fotos Eliminadas',
+    photo_updated: 'Foto Actualizada',
   },
 }
 
@@ -175,10 +189,36 @@ const dateLocales: Record<string, Locale> = {
   es: es,
 }
 
-function formatValue(value: unknown): string {
+function formatValue(value: unknown, field?: string, locale?: string): string {
+  // Handle wrapped values from the new format { value: actualValue }
+  if (value !== null && typeof value === 'object' && 'value' in value) {
+    return formatValue((value as { value: unknown }).value, field, locale)
+  }
+
   if (value === null || value === undefined) {
     return '-'
   }
+
+  // Handle photo-related fields with friendly messages
+  if (field?.startsWith('photos_') || field === 'photo_updated') {
+    if (Array.isArray(value)) {
+      const count = value.length
+      const photoLabel = locale === 'pt-BR' ? (count === 1 ? 'foto' : 'fotos')
+        : locale === 'es' ? (count === 1 ? 'foto' : 'fotos')
+        : (count === 1 ? 'photo' : 'photos')
+      return `${count} ${photoLabel}`
+    }
+    // Single photo update - show what changed
+    if (typeof value === 'object' && value !== null) {
+      const photo = value as { url?: string; caption?: string; primary?: boolean; tags?: string[] }
+      const parts: string[] = []
+      if (photo.caption) parts.push(`"${photo.caption}"`)
+      if (photo.primary) parts.push(locale === 'pt-BR' ? 'principal' : locale === 'es' ? 'principal' : 'primary')
+      if (photo.tags?.length) parts.push(`tags: ${photo.tags.join(', ')}`)
+      return parts.length > 0 ? parts.join(', ') : (locale === 'pt-BR' ? '(sem detalhes)' : locale === 'es' ? '(sin detalles)' : '(no details)')
+    }
+  }
+
   if (typeof value === 'boolean') {
     return value ? 'Yes' : 'No'
   }
@@ -195,6 +235,21 @@ export function ChangeHistory({ changes, locale = 'en' }: ChangeHistoryProps) {
   const labels = labelsByLocale[locale] || labelsByLocale.en
   const fieldNames = fieldNamesByLocale[locale] || fieldNamesByLocale.en
   const dateLocale = dateLocales[locale]
+
+  // Track which groups are expanded (all collapsed by default)
+  const [expandedGroups, setExpandedGroups] = useState<Set<number>>(new Set())
+
+  const toggleGroup = (index: number) => {
+    setExpandedGroups(prev => {
+      const next = new Set(prev)
+      if (next.has(index)) {
+        next.delete(index)
+      } else {
+        next.add(index)
+      }
+      return next
+    })
+  }
 
   if (changes.length === 0) {
     return (
@@ -259,64 +314,92 @@ export function ChangeHistory({ changes, locale = 'en' }: ChangeHistoryProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
-          {groupedChanges.map((group, groupIndex) => (
-            <div key={groupIndex} className="border-l-2 border-amber-400 pl-4 space-y-3">
-              {/* Header with user and time */}
-              <div className="flex items-center gap-2 text-sm">
-                {group.changedBy.avatar ? (
-                  <img
-                    src={group.changedBy.avatar}
-                    alt={group.changedBy.name || ''}
-                    className="w-6 h-6 rounded-full"
-                  />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center">
-                    <User className="h-3 w-3 text-amber-600" />
+        <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+          {groupedChanges.map((group, groupIndex) => {
+            const isExpanded = expandedGroups.has(groupIndex)
+
+            return (
+              <div key={groupIndex} className="border rounded-lg overflow-hidden">
+                {/* Collapsible Header */}
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(groupIndex)}
+                  className="w-full flex items-center gap-2 p-3 text-sm bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  )}
+                  {group.changedBy.avatar ? (
+                    <img
+                      src={group.changedBy.avatar}
+                      alt={group.changedBy.name || ''}
+                      className="w-6 h-6 rounded-full flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                      <User className="h-3 w-3 text-amber-600" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <span className="font-medium">
+                      {group.changedBy.name || group.changedBy.email}
+                    </span>
+                    <span className="text-muted-foreground ml-2">
+                      ({group.fields.length} {labels.fieldsChanged})
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground flex-shrink-0">
+                    {format(group.changedAt, 'PP', { locale: dateLocale })}
+                  </span>
+                </button>
+
+                {/* Expandable Content */}
+                {isExpanded && (
+                  <div className="border-t border-l-2 border-l-amber-400 p-3 space-y-3">
+                    {/* Full timestamp */}
+                    <p className="text-xs text-muted-foreground">
+                      {format(group.changedAt, 'PPp', { locale: dateLocale })}
+                    </p>
+
+                    {/* Reason */}
+                    {group.changeReason && (
+                      <div className="bg-amber-50 border border-amber-200 rounded-md p-2">
+                        <p className="text-sm">
+                          <span className="font-medium text-amber-800">{labels.reason}:</span>{' '}
+                          <span className="text-amber-700">{group.changeReason}</span>
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Field changes */}
+                    <div className="space-y-2">
+                      {group.fields.map((field, fieldIndex) => (
+                        <div
+                          key={fieldIndex}
+                          className="bg-slate-50 rounded-md p-3 text-sm"
+                        >
+                          <div className="font-medium text-slate-700 mb-2">
+                            {fieldNames[field.field] || field.field}
+                          </div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                              {formatValue(field.from, field.field, locale)}
+                            </Badge>
+                            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              {formatValue(field.to, field.field, locale)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
-                <span className="font-medium">
-                  {group.changedBy.name || group.changedBy.email}
-                </span>
-                <span className="text-muted-foreground">
-                  {format(group.changedAt, 'PPp', { locale: dateLocale })}
-                </span>
               </div>
-
-              {/* Reason */}
-              {group.changeReason && (
-                <div className="bg-amber-50 border border-amber-200 rounded-md p-2">
-                  <p className="text-sm">
-                    <span className="font-medium text-amber-800">{labels.reason}:</span>{' '}
-                    <span className="text-amber-700">{group.changeReason}</span>
-                  </p>
-                </div>
-              )}
-
-              {/* Field changes */}
-              <div className="space-y-2">
-                {group.fields.map((field, fieldIndex) => (
-                  <div
-                    key={fieldIndex}
-                    className="bg-slate-50 rounded-md p-3 text-sm"
-                  >
-                    <div className="font-medium text-slate-700 mb-2">
-                      {fieldNames[field.field] || field.field}
-                    </div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
-                        {formatValue(field.from)}
-                      </Badge>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                        {formatValue(field.to)}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </CardContent>
     </Card>

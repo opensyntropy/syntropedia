@@ -445,7 +445,9 @@
       "ROOT_CUTTING": "Root Cuttings",
       "LAYERING": "Ground Layering",
       "BUDDING": "Budding"
-    }
+    },
+    "underRevisionTitle": "This species is under revision",
+    "underRevisionMessage": "A revision request is currently being reviewed. You can request a new revision after this review is complete."
   },
   "becomeReviewer": {
     "title": "Become a Reviewer",

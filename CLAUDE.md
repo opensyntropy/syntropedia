@@ -14,3 +14,8 @@
 - Next.js 13+ with App Router
 - Locale stored in cookie (`NEXT_LOCALE`), not in URL
 - Translations in `/messages/{locale}.json`
+
+## Form Actions
+
+- **All form actions must display success/error feedback** - Every form submission and API call must show visible feedback to the user using `ToastNotification` component
+- Include localized messages for all three languages (en, pt-BR, es)

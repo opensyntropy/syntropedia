@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertTriangle, X, Loader2 } from 'lucide-react'
+import { ToastNotification, type ToastType } from '@/components/ui/toast-notification'
 
 interface RequestRevisionModalProps {
   speciesSlug: string
@@ -74,19 +75,23 @@ export function RequestRevisionModal({
 }: RequestRevisionModalProps) {
   const [reason, setReason] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
   const [success, setSuccess] = useState(false)
 
   const labels = labelsByLocale[locale] || labelsByLocale.en
+
+  const showToast = (message: string, type: ToastType) => {
+    setToast({ message, type })
+  }
 
   if (!isOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
+    setToast(null)
 
     if (reason.trim().length < 10) {
-      setError(labels.errorMinLength)
+      showToast(labels.errorMinLength, 'error')
       return
     }
 
@@ -105,13 +110,14 @@ export function RequestRevisionModal({
       }
 
       setSuccess(true)
+      showToast(labels.success, 'success')
       setTimeout(() => {
         onClose()
         // Don't refresh - the species status changed to IN_REVIEW
         // and refreshing would redirect away from the page
       }, 2000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      showToast(err instanceof Error ? err.message : 'An error occurred', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -150,6 +156,15 @@ export function RequestRevisionModal({
         </CardHeader>
 
         <CardContent>
+          {/* Toast Notification */}
+          {toast && (
+            <ToastNotification
+              message={toast.message}
+              type={toast.type}
+              onClose={() => setToast(null)}
+            />
+          )}
+
           {success ? (
             <div className="text-center py-6">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -164,12 +179,6 @@ export function RequestRevisionModal({
               <p className="text-sm text-muted-foreground">
                 {labels.description}
               </p>
-
-              {error && (
-                <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm">
-                  {error}
-                </div>
-              )}
 
               <div>
                 <label className="block text-sm font-medium mb-2">

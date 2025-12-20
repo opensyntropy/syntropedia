@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
-import { ReviewDecision, SpeciesStatus, ActivityAction } from '@prisma/client'
+import { ReviewDecision, SpeciesStatus, ActivityAction, Prisma } from '@prisma/client'
 import { logActivity } from './activity'
+import { SPECIES_EDITABLE_FIELDS } from '@/lib/validations/species'
 
 export interface SubmitReviewParams {
   speciesId: string
@@ -57,33 +58,88 @@ export async function submitReview(params: SubmitReviewParams) {
       await publishSpecies(speciesId, reviewerId)
     }
   } else if (decision === ReviewDecision.REJECTED) {
-    // Set status to REJECTED - user can resubmit later
-    // Keep reviews for history
-    await prisma.species.update({
+    // Check if this is a revision request (previously published species)
+    const species = await prisma.species.findUnique({
       where: { id: speciesId },
-      data: {
-        status: SpeciesStatus.REJECTED,
-      },
+      select: { revisionRequestedById: true },
     })
+
+    if (species?.revisionRequestedById) {
+      // Revision request rejected: restore to PUBLISHED, discard draft
+      await prisma.species.update({
+        where: { id: speciesId },
+        data: {
+          status: SpeciesStatus.PUBLISHED,
+          // Clear draft and revision fields
+          draftData: Prisma.DbNull,
+          revisionRequestedById: null,
+          revisionRequestReason: null,
+          revisionRequestedAt: null,
+        },
+      })
+    } else {
+      // New submission rejected: set status to REJECTED
+      await prisma.species.update({
+        where: { id: speciesId },
+        data: {
+          status: SpeciesStatus.REJECTED,
+        },
+      })
+    }
   }
 
   return review
 }
 
 async function publishSpecies(speciesId: string, publishedById: string) {
+  // Get current species to check for draftData
+  const species = await prisma.species.findUnique({
+    where: { id: speciesId },
+    select: { draftData: true, revisionRequestedById: true },
+  })
+
+  // Build update data
+  const updateData: Record<string, unknown> = {
+    status: SpeciesStatus.PUBLISHED,
+    updatedById: publishedById,
+    publishedAt: new Date(),
+    // Clear revision and draft fields
+    draftData: Prisma.DbNull,
+    revisionRequestedById: null,
+    revisionRequestReason: null,
+    revisionRequestedAt: null,
+  }
+
+  // If there's draftData (from revision review), apply it to regular fields
+  // Only apply fields that exist in the current schema to handle schema changes
+  if (species?.draftData && typeof species.draftData === 'object') {
+    const draftData = species.draftData as Record<string, unknown>
+    for (const field of SPECIES_EDITABLE_FIELDS) {
+      if (field in draftData) {
+        updateData[field] = draftData[field]
+      }
+    }
+  }
+
   await prisma.species.update({
     where: { id: speciesId },
-    data: {
-      status: SpeciesStatus.PUBLISHED,
-      updatedById: publishedById,
-    },
+    data: updateData,
+  })
+
+  // Approve all photos for this species
+  await prisma.photo.updateMany({
+    where: { speciesId },
+    data: { approved: true },
   })
 
   await logActivity({
     action: ActivityAction.SPECIES_PUBLISHED,
     userId: publishedById,
     speciesId,
-    details: { reason: 'Double review approval reached' },
+    details: {
+      reason: 'Double review approval reached',
+      hadDraftData: !!species?.draftData,
+    },
   })
 }
 
