@@ -880,7 +880,9 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
         })
 
         if (!photosResponse.ok) {
-          console.error('Failed to save photos')
+          const photoResult = await photosResponse.json().catch(() => ({}))
+          console.error('Failed to save photos:', photoResult)
+          throw new Error(photoResult.error || 'Failed to save photos')
         }
       }
 
