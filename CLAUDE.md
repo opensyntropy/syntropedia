@@ -1,5 +1,9 @@
 # Claude Code Instructions
 
+## Git Workflow
+
+- **Do not push unless explicitly requested** - Only commit changes locally. Push to remote only when the user explicitly asks to push.
+
 ## URL Conventions
 
 - **Always use English for URLs** - All routes and URL paths must be in English regardless of the UI language
