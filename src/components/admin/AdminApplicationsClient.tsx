@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from '@/lib/IntlProvider'
 import { ApplicationsList } from './ApplicationsList'
 import { ReviewersList } from './ReviewersList'
-import { ClipboardList } from 'lucide-react'
 
 interface Application {
   id: string
@@ -73,17 +72,6 @@ export function AdminApplicationsClient({
 
   return (
     <div className="space-y-6">
-      {/* Quick Link to Species Review Queue */}
-      <Link href="/reviews">
-        <div className="flex items-center gap-3 p-4 bg-primary-50 border border-primary-200 rounded-lg hover:bg-primary-100 transition-colors">
-          <ClipboardList className="h-5 w-5 text-primary-600" />
-          <div>
-            <p className="font-medium text-primary-700">{t('speciesReviewQueue')}</p>
-            <p className="text-sm text-primary-600">{t('speciesReviewQueueHint')}</p>
-          </div>
-        </div>
-      </Link>
-
       {/* Tab Navigation */}
       <div className="flex gap-2 border-b pb-2">
         <Button
