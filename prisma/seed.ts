@@ -1775,7 +1775,7 @@ async function main() {
         id: `photo-${species.slug}`,
         url: photoUrl,
         caption: `${species.scientificName}`,
-        tags: [species.genus || '', species.stratum],
+        tags: ['whole'],
         approved: true,
         primary: true,
         speciesId: species.id,
