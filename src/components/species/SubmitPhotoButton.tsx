@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { AlertTriangle } from 'lucide-react'
-import { RequestRevisionModal } from './RequestRevisionModal'
+import { Camera } from 'lucide-react'
+import { SubmitPhotoModal } from './SubmitPhotoModal'
 
-interface RequestRevisionButtonProps {
+interface SubmitPhotoButtonProps {
   speciesSlug: string
   speciesName: string
   locale?: string
@@ -14,17 +14,17 @@ interface RequestRevisionButtonProps {
 }
 
 const buttonLabels: Record<string, string> = {
-  en: 'Report Issue',
-  'pt-BR': 'Reportar Erro',
-  es: 'Reportar Error',
+  en: 'Submit Photo',
+  'pt-BR': 'Enviar Foto',
+  es: 'Enviar Foto',
 }
 
-export function RequestRevisionButton({
+export function SubmitPhotoButton({
   speciesSlug,
   speciesName,
   locale = 'en',
   isLoggedIn = false,
-}: RequestRevisionButtonProps) {
+}: SubmitPhotoButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
 
@@ -42,13 +42,13 @@ export function RequestRevisionButton({
         variant="outline"
         size="sm"
         onClick={handleClick}
-        className="border-amber-300 text-amber-700 hover:bg-amber-50"
+        className="border-green-300 text-green-700 hover:bg-green-50"
       >
-        <AlertTriangle className="h-4 w-4 mr-2" />
+        <Camera className="h-4 w-4 mr-2" />
         {buttonLabels[locale] || buttonLabels.en}
       </Button>
 
-      <RequestRevisionModal
+      <SubmitPhotoModal
         speciesSlug={speciesSlug}
         speciesName={speciesName}
         isOpen={isModalOpen}

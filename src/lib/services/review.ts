@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma'
 import { ReviewDecision, SpeciesStatus, ActivityAction, Prisma } from '@prisma/client'
 import { logActivity } from './activity'
 import { SPECIES_EDITABLE_FIELDS } from '@/lib/validations/species'
+import { awardXP, checkBadges } from './gamification'
 
 export interface SubmitReviewParams {
   speciesId: string
@@ -43,6 +44,10 @@ export async function submitReview(params: SubmitReviewParams) {
     speciesId,
     details: comments ? { comments } : undefined,
   })
+
+  // Award XP for submitting a review
+  await awardXP(reviewerId, 'REVIEW_SUBMITTED')
+  await checkBadges(reviewerId)
 
   // Handle decision outcomes
   if (decision === ReviewDecision.APPROVED) {
@@ -92,10 +97,10 @@ export async function submitReview(params: SubmitReviewParams) {
 }
 
 async function publishSpecies(speciesId: string, publishedById: string) {
-  // Get current species to check for draftData
+  // Get current species to check for draftData and creator
   const species = await prisma.species.findUnique({
     where: { id: speciesId },
-    select: { draftData: true, revisionRequestedById: true },
+    select: { draftData: true, revisionRequestedById: true, createdById: true },
   })
 
   // Build update data
@@ -141,6 +146,12 @@ async function publishSpecies(speciesId: string, publishedById: string) {
       hadDraftData: !!species?.draftData,
     },
   })
+
+  // Award XP to the species creator
+  if (species?.createdById) {
+    await awardXP(species.createdById, 'SPECIES_PUBLISHED')
+    await checkBadges(species.createdById)
+  }
 }
 
 export async function getReviewStatus(speciesId: string) {
@@ -217,6 +228,10 @@ export async function resubmitRejected(speciesId: string, userId: string) {
     userId,
     speciesId,
   })
+
+  // Award XP for persistence (resubmitting after rejection)
+  await awardXP(userId, 'SPECIES_RESUBMITTED')
+  await checkBadges(userId)
 
   return true
 }

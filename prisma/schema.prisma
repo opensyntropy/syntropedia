@@ -17,6 +17,11 @@ enum UserRole {
   ADMIN
 }
 
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
 enum SpeciesStatus {
   DRAFT
   PUBLISHED
@@ -150,6 +155,13 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum BadgeCategory {
+  CONTRIBUTOR
+  REVIEWER
+  COMMUNITY
+  SPECIAL
+}
+
 // Models
 model User {
   id            String    @id @default(cuid())
@@ -159,9 +171,15 @@ model User {
   image         String?
   avatar        String?
   role          UserRole  @default(USER)
+  status        UserStatus @default(ACTIVE)
   discourseId   String?   @unique @map("discourse_id")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Gamification
+  xp            Int       @default(0)
+  level         Int       @default(1)
+  title         String?
 
   // Relations
   speciesCreated Species[]  @relation("SpeciesCreator")
@@ -175,6 +193,7 @@ model User {
   activityLogs   ActivityLog[]
   reviewerApplications    ReviewerApplication[]
   reviewedApplications    ReviewerApplication[] @relation("ApplicationReviewer")
+  badges         UserBadge[]
 
   @@map("users")
 }
@@ -226,6 +245,8 @@ model Species {
 
   // Propagation
   propagationMethods   String[]          @map("propagation_methods")
+  germinationDaysMin   Int?              @map("germination_days_min")
+  germinationDaysMax   Int?              @map("germination_days_max")
 
   // Other
   observations         String?           @db.Text
@@ -273,13 +294,16 @@ model Species {
 }
 
 model Photo {
-  id          String   @id @default(cuid())
-  url         String
-  caption     String?
-  tags        String[]
-  location    String?
-  approved    Boolean  @default(false)
-  primary     Boolean  @default(false)
+  id              String    @id @default(cuid())
+  url             String
+  caption         String?
+  tags            String[]
+  location        String?
+  approved        Boolean   @default(false)
+  primary         Boolean   @default(false)
+  rejected        Boolean   @default(false)
+  rejectionReason String?   @map("rejection_reason")
+  rejectedAt      DateTime? @map("rejected_at")
 
   speciesId   String   @map("species_id")
   species     Species  @relation(fields: [speciesId], references: [id], onDelete: Cascade)
@@ -291,6 +315,7 @@ model Photo {
   @@map("photos")
   @@index([speciesId])
   @@index([approved])
+  @@index([rejected])
 }
 
 model ChangeHistory {
@@ -378,6 +403,36 @@ model ReviewerApplication {
   @@map("reviewer_applications")
   @@index([userId])
   @@index([status])
+}
+
+model Badge {
+  id            String        @id @default(cuid())
+  code          String        @unique
+  name          String
+  description   String
+  icon          String
+  category      BadgeCategory
+  requirement   Json
+  xpReward      Int           @default(0) @map("xp_reward")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  users         UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId     String    @map("badge_id")
+  badge       Badge     @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt    DateTime  @default(now()) @map("earned_at")
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+  @@index([userId])
+  @@index([badgeId])
 }
 
 // NextAuth Models

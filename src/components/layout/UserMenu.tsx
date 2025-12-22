@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { User, Settings, LogOut, FileText, Shield, Award, ClipboardList } from 'lucide-react'
+import { User, Users, Settings, LogOut, Shield, Award } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -38,13 +38,7 @@ export function UserMenu() {
           className="rounded-full bg-primary-600 text-white hover:bg-primary-700"
           asChild
         >
-          <a
-            href={`${process.env.NEXT_PUBLIC_OASIS_URL || 'http://localhost:3001'}/register`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t('createAccount')}
-          </a>
+          <Link href="/contribute">{t('participate')}</Link>
         </Button>
       </div>
     )
@@ -89,20 +83,6 @@ export function UserMenu() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/contributions" className="flex cursor-pointer items-center">
-            <FileText className="mr-2 h-4 w-4" />
-            <span>{t('myContributions')}</span>
-          </Link>
-        </DropdownMenuItem>
-        {(session.user.role === 'REVIEWER' || session.user.role === 'ADMIN') && (
-          <DropdownMenuItem asChild>
-            <Link href="/reviews" className="flex cursor-pointer items-center">
-              <ClipboardList className="mr-2 h-4 w-4" />
-              <span>{t('reviews')}</span>
-            </Link>
-          </DropdownMenuItem>
-        )}
         {session.user.role === 'USER' && (
           <DropdownMenuItem asChild>
             <Link href="/become-reviewer" className="flex cursor-pointer items-center">
@@ -112,14 +92,21 @@ export function UserMenu() {
           </DropdownMenuItem>
         )}
         {session.user.role === 'ADMIN' && (
-          <DropdownMenuItem asChild>
-            <Link href="/admin/applications" className="flex cursor-pointer items-center">
-              <Shield className="mr-2 h-4 w-4" />
-              <span>{t('admin')}</span>
-            </Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/applications" className="flex cursor-pointer items-center">
+                <Shield className="mr-2 h-4 w-4" />
+                <span>{t('admin')}</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/admin/users" className="flex cursor-pointer items-center">
+                <Users className="mr-2 h-4 w-4" />
+                <span>{t('manageUsers')}</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
         )}
-        <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/account" className="flex cursor-pointer items-center">
             <User className="mr-2 h-4 w-4" />

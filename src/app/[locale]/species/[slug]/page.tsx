@@ -24,6 +24,7 @@ import { getTranslations } from '@/lib/getTranslations'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/auth/server'
 import { RequestRevisionButton } from '@/components/species/RequestRevisionButton'
+import { SubmitPhotoButton } from '@/components/species/SubmitPhotoButton'
 import { ImageGallery } from '@/components/species/ImageGallery'
 
 // Extended type to include status for revision button check
@@ -1241,6 +1242,8 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus |
     fruitingAgeEnd: dbSpecies.fruitingAgeEnd,
     uses: dbSpecies.uses || undefined,
     propagationMethods: dbSpecies.propagationMethods || undefined,
+    germinationDaysMin: dbSpecies.germinationDaysMin,
+    germinationDaysMax: dbSpecies.germinationDaysMax,
     observations: dbSpecies.observations,
     imageUrl,
     photos: photos.length > 0 ? photos : undefined,
@@ -1260,9 +1263,10 @@ export default async function SpeciesDetailPage({
     redirect('/catalog')
   }
 
-  // Get session to check if user can request revision
+  // Get session to check if user is logged in
   const session = await getSession()
-  const canRequestRevision = !!session?.user && species.status === 'PUBLISHED'
+  const isLoggedIn = !!session?.user
+  const showRevisionButton = species.status === 'PUBLISHED'
 
   const t = await getTranslations(params.locale, 'speciesDetail')
   const tCommon = await getTranslations(params.locale, 'common')
@@ -1350,19 +1354,26 @@ export default async function SpeciesDetailPage({
                   )}
                 </div>
 
-                {/* Request Revision Button - for authenticated users on published species */}
-                {canRequestRevision && (
-                  <div className="mb-6">
+                {/* Action Buttons - for published species */}
+                {showRevisionButton && (
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    <SubmitPhotoButton
+                      speciesSlug={species.slug}
+                      speciesName={species.scientificName}
+                      locale={params.locale}
+                      isLoggedIn={isLoggedIn}
+                    />
                     <RequestRevisionButton
                       speciesSlug={species.slug}
                       speciesName={species.scientificName}
                       locale={params.locale}
+                      isLoggedIn={isLoggedIn}
                     />
                   </div>
                 )}
 
                 {/* Under Revision Banner - shown when species is being reviewed */}
-                {species.isUnderRevision && session?.user && (
+                {species.status === 'IN_REVIEW' && (
                   <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
                     <div className="flex items-start gap-3">
                       <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
@@ -1729,20 +1740,35 @@ export default async function SpeciesDetailPage({
             )}
 
             {/* Propagation */}
-            {species.propagationMethods && species.propagationMethods.length > 0 && (
+            {((species.propagationMethods && species.propagationMethods.length > 0) || species.germinationDaysMin || species.germinationDaysMax) && (
               <Card className="p-6">
                 <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900">
                   <Sprout className="h-5 w-5 text-gray-400" />
                   {t('propagation')}
                 </h2>
-                <ul className="space-y-2">
-                  {species.propagationMethods.map((method, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                      <Sprout className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
-                      {method}
-                    </li>
-                  ))}
-                </ul>
+                {species.propagationMethods && species.propagationMethods.length > 0 && (
+                  <ul className="space-y-2 mb-4">
+                    {species.propagationMethods.map((method, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                        <Sprout className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+                        {method}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {(species.germinationDaysMin || species.germinationDaysMax) && (
+                  <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <Clock className="h-4 w-4 flex-shrink-0 text-amber-600" />
+                    <span className="font-medium">{t('germinationTime')}:</span>
+                    <span>
+                      {species.germinationDaysMin && species.germinationDaysMax
+                        ? `${species.germinationDaysMin}-${species.germinationDaysMax} ${t('days')}`
+                        : species.germinationDaysMin
+                        ? `${species.germinationDaysMin}+ ${t('days')}`
+                        : `${t('upTo')} ${species.germinationDaysMax} ${t('days')}`}
+                    </span>
+                  </div>
+                )}
               </Card>
             )}
           </div>

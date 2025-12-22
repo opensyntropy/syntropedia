@@ -6,10 +6,13 @@ import { LanguageSwitcher } from './LanguageSwitcher'
 import { UserMenu } from './UserMenu'
 import { useState } from 'react'
 import { useTranslations } from '@/lib/IntlProvider'
+import { useSession } from 'next-auth/react'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const t = useTranslations('common')
+  const { data: session } = useSession()
+  const isReviewer = session?.user?.role === 'REVIEWER' || session?.user?.role === 'ADMIN'
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
@@ -26,15 +29,31 @@ export function Header() {
         <nav className="hidden items-center gap-8 md:flex">
           <Link
             href="/catalog"
-            className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
+            className="rounded-full bg-primary-600 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700"
           >
             {t('catalog')}
           </Link>
+          {session && (
+            <Link
+              href="/contributions"
+              className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
+            >
+              {t('contributions')}
+            </Link>
+          )}
+          {isReviewer && (
+            <Link
+              href="/reviews"
+              className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
+            >
+              {t('reviews')}
+            </Link>
+          )}
           <Link
-            href="/about"
+            href="/leaderboard"
             className="text-sm font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
-            {t('about')}
+            {t('leaderboard')}
           </Link>
           <Link
             href="https://placenta.opensyntropy.earth"
@@ -72,17 +91,35 @@ export function Header() {
           <nav className="container mx-auto flex flex-col gap-4 px-6 py-6">
             <Link
               href="/catalog"
-              className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+              className="inline-block w-fit rounded-full bg-primary-600 px-4 py-1.5 text-base font-semibold text-white transition-colors hover:bg-primary-700"
               onClick={() => setMobileMenuOpen(false)}
             >
               {t('catalog')}
             </Link>
+            {session && (
+              <Link
+                href="/contributions"
+                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('contributions')}
+              </Link>
+            )}
+            {isReviewer && (
+              <Link
+                href="/reviews"
+                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('reviews')}
+              </Link>
+            )}
             <Link
-              href="/about"
+              href="/leaderboard"
               className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('about')}
+              {t('leaderboard')}
             </Link>
             <Link
               href="https://placenta.opensyntropy.earth"

@@ -25,7 +25,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/sobre" className="text-sm transition-colors hover:text-white hover:underline">
+                <Link href="/about" className="text-sm transition-colors hover:text-white hover:underline">
                   Sobre
                 </Link>
               </li>

@@ -5,16 +5,20 @@
     "home": "Home",
     "about": "About",
     "contribute": "Contribute",
+    "participate": "Participate",
+    "contributions": "Contributions",
+    "reviews": "Reviews",
+    "leaderboard": "Contributors",
     "login": "Login",
     "createAccount": "Create Account",
     "myContributions": "My Contributions",
-    "reviews": "Review Queue",
     "myAccount": "My Account",
     "settings": "Settings",
     "logOut": "Log out",
-    "forum": "Forum",
+    "forum": "Community",
     "becomeReviewer": "Become Reviewer",
-    "admin": "Admin"
+    "admin": "Admin",
+    "manageUsers": "Manage Users"
   },
   "stratum": {
     "EMERGENT": "Emergent",
@@ -208,7 +212,7 @@
     "description": "Open source encyclopedia of plant species for syntropic agriculture",
     "quickLinks": "Quick Links",
     "community": "Community",
-    "forum": "Forum",
+    "forum": "Community",
     "discord": "Discord",
     "github": "GitHub",
     "legal": "Legal",
@@ -297,7 +301,12 @@
     "newSubmissions": "New",
     "revisionRequests": "Revisions",
     "new": "New",
-    "revision": "Revision"
+    "revision": "Revision",
+    "photos": "Photos",
+    "noPhotos": "No photo contributions yet",
+    "approved": "Approved",
+    "pending": "Pending",
+    "rejected": "Rejected"
   },
   "speciesForm": {
     "nomenclature": "Nomenclature",
@@ -430,6 +439,9 @@
     "years": "years",
     "fruitsAt": "Fruits at",
     "propagation": "Propagation",
+    "germinationTime": "Germination Time",
+    "days": "days",
+    "upTo": "up to",
     "propagationMethod": {
       "SEED": "Seeds",
       "CUTTING": "Stem Cuttings",
@@ -524,6 +536,36 @@
     "speciesReviewQueue": "Species Review Queue",
     "speciesReviewQueueHint": "Review species submissions awaiting approval"
   },
+  "adminUsers": {
+    "title": "User Management",
+    "description": "View, search, and manage all users.",
+    "searchPlaceholder": "Search by name or email...",
+    "search": "Search",
+    "allRoles": "All Roles",
+    "roleUser": "User",
+    "roleReviewer": "Reviewer",
+    "roleAdmin": "Admin",
+    "allStatus": "All Status",
+    "statusActive": "Active",
+    "statusBlocked": "Blocked",
+    "sortNewest": "Newest First",
+    "sortOldest": "Oldest First",
+    "sortName": "Name (A-Z)",
+    "sortXP": "Highest XP",
+    "showingResults": "Showing {count} of {total} users",
+    "noUsers": "No users found.",
+    "anonymous": "Anonymous",
+    "level": "Level",
+    "species": "species",
+    "reviews": "reviews",
+    "joined": "Joined",
+    "block": "Block",
+    "unblock": "Unblock",
+    "blockReasonPrompt": "Enter reason for blocking (optional):",
+    "unblockConfirm": "Are you sure you want to unblock this user?",
+    "roleChangeConfirm": "Change user role to {role}?",
+    "pageOf": "Page {page} of {total}"
+  },
   "reviewQueue": {
     "title": "Review Queue",
     "description": "Species submissions awaiting your review",
@@ -536,5 +578,173 @@
     "review": "Review",
     "newSubmissions": "New Submissions",
     "revisionRequests": "Revision Requests"
+  },
+  "reviewPhotos": {
+    "title": "Photo Review",
+    "description": "User-submitted photos awaiting approval",
+    "photos": "Photos"
+  },
+  "gamification": {
+    "leaderboard": "Contributors",
+    "contributors": "Contributors",
+    "profile": "Profile",
+    "xpLeaders": "XP Leaders",
+    "topContributors": "Top Contributors",
+    "topReviewers": "Top Reviewers",
+    "allTime": "All Time",
+    "thisMonth": "This Month",
+    "level": "Level",
+    "xp": "XP",
+    "badges": "Badges",
+    "noBadges": "No badges earned yet",
+    "memberSince": "Member since",
+    "published": "Published",
+    "contributed": "Contributed",
+    "reviews": "Reviews",
+    "photos": "Photos",
+    "earnXpHint": "Earn XP by contributing species, reviewing submissions, and uploading photos.",
+    "startContributing": "Start contributing",
+    "viewAll": "View all",
+    "recentActivity": "Recent Activity",
+    "publishedSpecies": "Published Species",
+    "allBadges": "All Badges",
+    "recognizing": "Recognizing our top contributors and reviewers"
+  },
+  "titles": {
+    "1": "Seedling",
+    "2": "Sprout",
+    "3": "Sapling",
+    "4": "Green Thumb",
+    "5": "Cultivator",
+    "6": "Gardener",
+    "7": "Horticulturist",
+    "8": "Botanist",
+    "9": "Forest Keeper",
+    "10": "Master Syntropist"
+  },
+  "badges": {
+    "FIRST_STEPS": {
+      "name": "First Steps",
+      "description": "Submit your first species"
+    },
+    "PUBLISHED_AUTHOR": {
+      "name": "Published Author",
+      "description": "Get your first species published"
+    },
+    "PROLIFIC_CONTRIBUTOR": {
+      "name": "Prolific Contributor",
+      "description": "Have 10 species published"
+    },
+    "ENCYCLOPEDIA_BUILDER": {
+      "name": "Encyclopedia Builder",
+      "description": "Have 50 species published"
+    },
+    "PHOTOGRAPHER": {
+      "name": "Photographer",
+      "description": "Upload 10 photos"
+    },
+    "DETAIL_MASTER": {
+      "name": "Detail Master",
+      "description": "Submit a species with all optional fields filled"
+    },
+    "FIRST_REVIEW": {
+      "name": "First Review",
+      "description": "Complete your first review"
+    },
+    "QUALITY_GUARDIAN": {
+      "name": "Quality Guardian",
+      "description": "Complete 10 reviews"
+    },
+    "SENIOR_REVIEWER": {
+      "name": "Senior Reviewer",
+      "description": "Complete 50 reviews"
+    },
+    "MASTER_CURATOR": {
+      "name": "Master Curator",
+      "description": "Complete 100 reviews"
+    },
+    "SHARP_EYE": {
+      "name": "Sharp Eye",
+      "description": "Maintain 90%+ approval accuracy"
+    },
+    "VERIFIED_REVIEWER": {
+      "name": "Verified Reviewer",
+      "description": "Become a verified reviewer"
+    },
+    "EARLY_ADOPTER": {
+      "name": "Early Adopter",
+      "description": "Join during the early days"
+    },
+    "STREAK_7": {
+      "name": "Week Warrior",
+      "description": "Be active 7 days in a row"
+    },
+    "STREAK_30": {
+      "name": "Monthly Master",
+      "description": "Be active 30 days in a row"
+    }
+  },
+  "contributePage": {
+    "hero": {
+      "title": "Build the Encyclopedia Together",
+      "subtitle": "Join our community of practitioners, researchers, and enthusiasts building the world's most comprehensive open encyclopedia for syntropic agriculture.",
+      "cta": "Start Contributing",
+      "myContributions": "My Contributions"
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "Syntropedia is a collaborative project to document and share knowledge about syntropic species. We believe that open, peer-reviewed knowledge accelerates the adoption of regenerative practices worldwide.",
+      "open": {
+        "title": "Open Knowledge",
+        "description": "All content is freely available under open licenses for anyone to use and share."
+      },
+      "community": {
+        "title": "Community-Driven",
+        "description": "Built by practitioners around the world sharing real experiences with species."
+      },
+      "verified": {
+        "title": "Peer-Reviewed",
+        "description": "Every submission is reviewed by experienced practitioners before publishing."
+      }
+    },
+    "stats": {
+      "title": "A Growing Community",
+      "species": "Species Published",
+      "contributors": "Contributors",
+      "reviews": "Reviews Completed"
+    },
+    "participate": {
+      "title": "Ways to Participate",
+      "share": {
+        "title": "Share Your Knowledge",
+        "description": "Know a species used in syntropic systems? Submit it to help others learn and benefit from your experience.",
+        "cta": "Submit a Species"
+      },
+      "photos": {
+        "title": "Add Photos",
+        "description": "Upload photos of species in their natural habitat or in syntropic systems to help others identify them.",
+        "cta": "Browse Catalog"
+      },
+      "review": {
+        "title": "Become a Reviewer",
+        "description": "Help curate the encyclopedia by reviewing submissions and ensuring quality content.",
+        "cta": "Apply to Review"
+      },
+      "report": {
+        "title": "Report Errors",
+        "description": "Found incorrect information on a species page? Report it so our community can fix it.",
+        "cta": "Browse Species"
+      }
+    },
+    "cta": {
+      "title": "Ready to Contribute?",
+      "subtitle": "Your knowledge can help farmers around the world build more resilient food systems.",
+      "button": "Start Contributing Now"
+    },
+    "ecosystem": {
+      "title": "Part of the OpenSyntropy Ecosystem",
+      "description": "Syntropedia is one of the tools we're building to support the syntropic agriculture community worldwide.",
+      "createdBy": "Created by"
+    }
   }
 }

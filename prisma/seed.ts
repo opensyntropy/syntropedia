@@ -1,69 +1,87 @@
-import { PrismaClient, Stratum, SuccessionalStage, LifeCycle, CanopyShape, FoliageType, GrowthRate, RootSystem, BiomassProduction, PlantUse, UserRole } from '@prisma/client'
+import { PrismaClient, Stratum, SuccessionalStage, LifeCycle, CanopyShape, FoliageType, GrowthRate, RootSystem, BiomassProduction, PlantUse, UserRole, BadgeCategory } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 async function main() {
   console.log('🌱 Starting database seed...')
 
-  // Create users
+  // Create users with gamification data
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@syntropedia.org' },
-    update: {},
+    update: { xp: 5000, level: 7, title: 'Horticulturist' },
     create: {
       name: 'Admin User',
       email: 'admin@syntropedia.org',
       role: UserRole.ADMIN,
+      xp: 5000,
+      level: 7,
+      title: 'Horticulturist',
     },
   })
 
   const user1 = await prisma.user.upsert({
     where: { email: 'maria.silva@syntropedia.org' },
-    update: {},
+    update: { xp: 1200, level: 4, title: 'Green Thumb' },
     create: {
       name: 'Maria Silva',
       email: 'maria.silva@syntropedia.org',
       role: UserRole.USER,
+      xp: 1200,
+      level: 4,
+      title: 'Green Thumb',
     },
   })
 
   const user2 = await prisma.user.upsert({
     where: { email: 'joao.santos@syntropedia.org' },
-    update: {},
+    update: { xp: 450, level: 3, title: 'Sapling' },
     create: {
       name: 'João Santos',
       email: 'joao.santos@syntropedia.org',
       role: UserRole.USER,
+      xp: 450,
+      level: 3,
+      title: 'Sapling',
     },
   })
 
-  // Create reviewers
+  // Create reviewers with gamification data
   const reviewer1 = await prisma.user.upsert({
     where: { email: 'dr.botanica@syntropedia.org' },
-    update: {},
+    update: { xp: 8500, level: 8, title: 'Botanist' },
     create: {
       name: 'Dr. Ana Botânica',
       email: 'dr.botanica@syntropedia.org',
       role: UserRole.REVIEWER,
+      xp: 8500,
+      level: 8,
+      title: 'Botanist',
     },
   })
 
   const reviewer2 = await prisma.user.upsert({
     where: { email: 'prof.agroforestry@syntropedia.org' },
-    update: {},
+    update: { xp: 3200, level: 6, title: 'Gardener' },
     create: {
       name: 'Prof. Carlos Agroflorestas',
       email: 'prof.agroforestry@syntropedia.org',
       role: UserRole.REVIEWER,
+      xp: 3200,
+      level: 6,
+      title: 'Gardener',
     },
   })
 
   const reviewer3 = await prisma.user.upsert({
     where: { email: 'researcher.ecology@syntropedia.org' },
-    update: {},
+    update: { xp: 2100, level: 5, title: 'Cultivator' },
     create: {
       name: 'Dra. Fernanda Ecologia',
       email: 'researcher.ecology@syntropedia.org',
       role: UserRole.REVIEWER,
+      xp: 2100,
+      level: 5,
+      title: 'Cultivator',
     },
   })
 
@@ -105,6 +123,7 @@ async function main() {
       fruitingAgeStart: 10, fruitingAgeEnd: 15,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.TIMBER, PlantUse.MEDICINAL, PlantUse.SHADE],
       propagationMethods: ['Seeds', 'Seedlings'],
+      germinationDaysMin: 30, germinationDaysMax: 90,
       observations: 'Large tree valued for its noble wood and edible fruits.',
       status: 'IN_REVIEW' as const,
     },
@@ -136,6 +155,7 @@ async function main() {
       fruitingAgeStart: 12, fruitingAgeEnd: 15,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.TIMBER, PlantUse.OIL],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 120, germinationDaysMax: 365,
       observations: 'One of the tallest trees in the Amazon. Requires specific pollinators.',
       status: 'IN_REVIEW' as const,
     },
@@ -167,6 +187,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.FIBER, PlantUse.TIMBER, PlantUse.SHADE],
       propagationMethods: ['Seeds', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Sacred tree in many cultures. Fiber used for stuffing.',
       status: 'IN_REVIEW' as const,
     },
@@ -197,6 +218,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.TIMBER, PlantUse.SHADE],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Premium timber species. CITES protected.',
       status: 'PUBLISHED' as const,
     },
@@ -227,6 +249,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.TIMBER, PlantUse.MEDICINAL, PlantUse.SHADE],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Resistant to mahogany shoot borer. Alternative to native mahogany.',
       status: 'PUBLISHED' as const,
     },
@@ -260,6 +283,7 @@ async function main() {
       fruitingAgeStart: 7, fruitingAgeEnd: 10,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.ORNAMENTAL],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Endangered species. Important for fauna. Fruits produce açaí.',
       status: 'PUBLISHED' as const,
     },
@@ -291,6 +315,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.TIMBER, PlantUse.MEDICINAL, PlantUse.ORNAMENTAL, PlantUse.HONEY],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Iconic tree with spectacular flowering. Noble wood highly valued.',
       status: 'PUBLISHED' as const,
     },
@@ -322,6 +347,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.TIMBER, PlantUse.ORNAMENTAL, PlantUse.HONEY],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Brazil national tree. Beautiful yellow flowering.',
       status: 'PUBLISHED' as const,
     },
@@ -353,6 +379,7 @@ async function main() {
       fruitingAgeStart: 4, fruitingAgeEnd: 6,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.OIL, PlantUse.SHADE],
       propagationMethods: ['Seeds', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'High nutritional value fruit. Many cultivated varieties.',
       status: 'PUBLISHED' as const,
     },
@@ -384,6 +411,7 @@ async function main() {
       fruitingAgeStart: 5, fruitingAgeEnd: 8,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.SHADE, PlantUse.TIMBER],
       propagationMethods: ['Seeds', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'King of fruits. Hundreds of cultivars available.',
       status: 'PUBLISHED' as const,
     },
@@ -415,6 +443,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.TIMBER, PlantUse.SHADE, PlantUse.ANIMAL_FOOD],
       propagationMethods: ['Seeds', 'Grafting', 'Air layering'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Largest tree-borne fruit. Seeds also edible.',
       status: 'PUBLISHED' as const,
     },
@@ -446,6 +475,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.TIMBER, PlantUse.SHADE],
       propagationMethods: ['Root cuttings', 'Air layering'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Staple food in Pacific islands. High carbohydrate content.',
       status: 'PUBLISHED' as const,
     },
@@ -477,6 +507,7 @@ async function main() {
       fruitingAgeStart: 4, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 30, germinationDaysMax: 90,
       observations: 'Clumping palm. Superfood with high antioxidants. Tolerates flooding.',
       status: 'PUBLISHED' as const,
     },
@@ -508,6 +539,7 @@ async function main() {
       fruitingAgeStart: 5, fruitingAgeEnd: 7,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.OIL, PlantUse.FIBER, PlantUse.TIMBER, PlantUse.HANDICRAFT],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 90, germinationDaysMax: 180,
       observations: 'Tree of life. Every part is useful. Salt tolerant.',
       status: 'PUBLISHED' as const,
     },
@@ -539,6 +571,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 4,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD],
       propagationMethods: ['Seeds', 'Suckers'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Clumping palm. Fruits high in beta-carotene. Hearts of palm source.',
       status: 'PUBLISHED' as const,
     },
@@ -569,6 +602,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.MEDICINAL, PlantUse.TIMBER, PlantUse.SHADE, PlantUse.FIREWOOD],
       propagationMethods: ['Seeds', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Natural pesticide. Drought tolerant. Many medicinal uses.',
       status: 'PUBLISHED' as const,
     },
@@ -600,6 +634,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 2,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.MEDICINAL, PlantUse.OIL],
       propagationMethods: ['Seeds', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Superfood. Leaves extremely nutritious. Drought tolerant.',
       status: 'PUBLISHED' as const,
     },
@@ -631,6 +666,7 @@ async function main() {
       fruitingAgeStart: 6, fruitingAgeEnd: 8,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL, PlantUse.TIMBER, PlantUse.SHADE],
       propagationMethods: ['Seeds', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Long-lived tree. Pods used in cooking and medicine.',
       status: 'PUBLISHED' as const,
     },
@@ -664,6 +700,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 1,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.GROUND_COVER],
       propagationMethods: ['Rhizome division', 'Suckers'],
+      germinationDaysMin: 14, germinationDaysMax: 21,
       observations: 'Fast growing. Excellent for agroforestry systems.',
       status: 'PUBLISHED' as const,
     },
@@ -695,6 +732,7 @@ async function main() {
       fruitingAgeStart: 2, fruitingAgeEnd: 3,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.SHADE, PlantUse.GROUND_COVER],
       propagationMethods: ['Seeds', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Excellent nitrogen fixer. Fast growing. Great for shading.',
       status: 'PUBLISHED' as const,
     },
@@ -727,6 +765,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 1,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 10, germinationDaysMax: 21,
       observations: 'Fast growing. Fruits early. Excellent for pioneer systems.',
       status: 'PUBLISHED' as const,
     },
@@ -758,6 +797,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL, PlantUse.ORNAMENTAL],
       propagationMethods: ['Grafting', 'Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Most popular citrus fruit. Many cultivars available.',
       status: 'PUBLISHED' as const,
     },
@@ -789,6 +829,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 4,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Grafting', 'Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'High vitamin C content. Used in cooking and cleaning.',
       status: 'PUBLISHED' as const,
     },
@@ -820,6 +861,7 @@ async function main() {
       fruitingAgeStart: 2, fruitingAgeEnd: 4,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL, PlantUse.TIMBER],
       propagationMethods: ['Seeds', 'Cuttings', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Rich in vitamin C. Fruits year-round in tropics.',
       status: 'PUBLISHED' as const,
     },
@@ -851,6 +893,7 @@ async function main() {
       fruitingAgeStart: 8, fruitingAgeEnd: 15,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ORNAMENTAL],
       propagationMethods: ['Seeds', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Cauliflorous fruiting. Fruits grow directly on trunk.',
       status: 'PUBLISHED' as const,
     },
@@ -882,6 +925,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Seeds', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Delicious fruit. Used in juices and ice creams.',
       status: 'PUBLISHED' as const,
     },
@@ -913,6 +957,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD],
       propagationMethods: ['Seeds', 'Grafting', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Shade-loving. Source of chocolate. Cauliflorous.',
       status: 'PUBLISHED' as const,
     },
@@ -944,6 +989,7 @@ async function main() {
       fruitingAgeStart: 4, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD],
       propagationMethods: ['Seeds', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Related to cacao. Aromatic pulp used in juices and desserts.',
       status: 'PUBLISHED' as const,
     },
@@ -975,6 +1021,7 @@ async function main() {
       fruitingAgeStart: 4, fruitingAgeEnd: 5,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ORNAMENTAL],
       propagationMethods: ['Seeds', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Star-shaped fruit cross-section. Fruits year-round.',
       status: 'PUBLISHED' as const,
     },
@@ -1006,6 +1053,7 @@ async function main() {
       fruitingAgeStart: 5, fruitingAgeEnd: 10,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ORNAMENTAL, PlantUse.HONEY],
       propagationMethods: ['Air layering', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Prized fruit. Needs cool period for flowering.',
       status: 'PUBLISHED' as const,
     },
@@ -1037,6 +1085,7 @@ async function main() {
       fruitingAgeStart: 5, fruitingAgeEnd: 6,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ORNAMENTAL],
       propagationMethods: ['Seeds', 'Grafting', 'Air layering'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Related to lychee. Hairy red fruit.',
       status: 'PUBLISHED' as const,
     },
@@ -1067,6 +1116,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.ANIMAL_FOOD, PlantUse.SHADE, PlantUse.FIREWOOD, PlantUse.HEDGING],
       propagationMethods: ['Cuttings', 'Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Excellent nitrogen fixer. Living fence. Forage for livestock.',
       status: 'PUBLISHED' as const,
     },
@@ -1097,6 +1147,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.ANIMAL_FOOD, PlantUse.SHADE, PlantUse.FIREWOOD, PlantUse.TIMBER],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'High-protein forage. Excellent nitrogen fixer. Can be invasive.',
       status: 'PUBLISHED' as const,
     },
@@ -1128,6 +1179,7 @@ async function main() {
       fruitingAgeStart: 2, fruitingAgeEnd: 3,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Cuttings', 'Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Delicious fruit. Leaves feed silkworms. Fast establishment.',
       status: 'PUBLISHED' as const,
     },
@@ -1161,6 +1213,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 4,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ORNAMENTAL],
       propagationMethods: ['Seeds', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Shade plant. Ideal for cultivation under tree canopy.',
       status: 'PUBLISHED' as const,
     },
@@ -1192,6 +1245,7 @@ async function main() {
       fruitingAgeStart: 2, fruitingAgeEnd: 3,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL, PlantUse.ORNAMENTAL],
       propagationMethods: ['Seeds', 'Cuttings', 'Grafting'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Rich in vitamin C. Fruits year-round in ideal conditions.',
       status: 'PUBLISHED' as const,
     },
@@ -1222,6 +1276,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Seeds', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Traditional beverage. Shade-tolerant. Native forest understory.',
       status: 'PUBLISHED' as const,
     },
@@ -1252,6 +1307,7 @@ async function main() {
       edibleFruit: true,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL, PlantUse.FIBER],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Calyces used for tea and food coloring. Annual replanting.',
       status: 'PUBLISHED' as const,
     },
@@ -1284,6 +1340,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 1,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.FIREWOOD],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Nitrogen fixer. Drought tolerant. Deep rooting for soil improvement.',
       status: 'PUBLISHED' as const,
     },
@@ -1315,6 +1372,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 4,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Seeds', 'Rhizome division'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Expensive spice. Shade-loving. Requires humid conditions.',
       status: 'PUBLISHED' as const,
     },
@@ -1346,6 +1404,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 4,
       uses: [PlantUse.HUMAN_FOOD],
       propagationMethods: ['Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Climbing orchid. Hand pollination required. Valuable spice.',
       status: 'PUBLISHED' as const,
     },
@@ -1377,6 +1436,7 @@ async function main() {
       fruitingAgeStart: 3, fruitingAgeEnd: 4,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Climbing vine. King of spices. Needs support tree.',
       status: 'PUBLISHED' as const,
     },
@@ -1408,6 +1468,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 2,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ORNAMENTAL],
       propagationMethods: ['Cuttings', 'Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Climbing cactus. Needs support. Night-blooming flowers.',
       status: 'PUBLISHED' as const,
     },
@@ -1440,6 +1501,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 2,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL, PlantUse.ORNAMENTAL],
       propagationMethods: ['Seeds', 'Cuttings'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Climbing vine. Spectacular flowers. Fast fruiting.',
       status: 'PUBLISHED' as const,
     },
@@ -1473,6 +1535,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 1,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.FIBER],
       propagationMethods: ['Crowns', 'Slips', 'Suckers'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Excellent ground cover between rows. Drought tolerant.',
       status: 'PUBLISHED' as const,
     },
@@ -1503,6 +1566,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Rhizome division'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Shade-tolerant. Harvested 8-10 months after planting.',
       status: 'PUBLISHED' as const,
     },
@@ -1533,6 +1597,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL],
       propagationMethods: ['Rhizome division'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Anti-inflammatory properties. Used in cooking and medicine.',
       status: 'PUBLISHED' as const,
     },
@@ -1563,6 +1628,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD],
       propagationMethods: ['Corm division'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Tolerates wet conditions. Corms and leaves edible when cooked.',
       status: 'PUBLISHED' as const,
     },
@@ -1593,6 +1659,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD],
       propagationMethods: ['Vine cuttings', 'Slips'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Excellent ground cover. Tubers and leaves edible.',
       status: 'PUBLISHED' as const,
     },
@@ -1623,6 +1690,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD],
       propagationMethods: ['Stem cuttings'],
+      germinationDaysMin: null, germinationDaysMax: null,
       observations: 'Staple food for millions. Drought tolerant. Tuberous roots.',
       status: 'PUBLISHED' as const,
     },
@@ -1653,6 +1721,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.MEDICINAL, PlantUse.OIL],
       propagationMethods: ['Division'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Aromatic grass. Insect repellent. Used in teas and cooking.',
       status: 'PUBLISHED' as const,
     },
@@ -1684,6 +1753,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 1,
       uses: [PlantUse.HUMAN_FOOD, PlantUse.ANIMAL_FOOD, PlantUse.OIL],
       propagationMethods: ['Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Nitrogen fixer. Geocarpic - fruits underground.',
       status: 'PUBLISHED' as const,
     },
@@ -1714,6 +1784,7 @@ async function main() {
       edibleFruit: false,
       uses: [PlantUse.ANIMAL_FOOD, PlantUse.GROUND_COVER],
       propagationMethods: ['Stolons', 'Seeds'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Excellent living mulch. Nitrogen fixer. Suppresses weeds.',
       status: 'PUBLISHED' as const,
     },
@@ -1745,6 +1816,7 @@ async function main() {
       fruitingAgeStart: 1, fruitingAgeEnd: 1,
       uses: [PlantUse.HUMAN_FOOD],
       propagationMethods: ['Runners', 'Division'],
+      germinationDaysMin: 14, germinationDaysMax: 60,
       observations: 'Popular berry. Spreads by stolons. Needs cooler climates.',
       status: 'PUBLISHED' as const,
     },
@@ -1786,11 +1858,246 @@ async function main() {
     console.log(`  ✅ ${species.scientificName} (${species.slug})`)
   }
 
+  // Seed badges
+  console.log('\n🏅 Creating badges...')
+
+  const badgesData = [
+    // Contributor badges
+    {
+      code: 'FIRST_STEPS',
+      name: 'First Steps',
+      description: 'Submit your first species for review',
+      icon: '🌱',
+      category: BadgeCategory.CONTRIBUTOR,
+      requirement: { type: 'species_submitted', count: 1 },
+      xpReward: 10,
+    },
+    {
+      code: 'PUBLISHED_AUTHOR',
+      name: 'Published Author',
+      description: 'Get your first species published',
+      icon: '📗',
+      category: BadgeCategory.CONTRIBUTOR,
+      requirement: { type: 'species_published', count: 1 },
+      xpReward: 25,
+    },
+    {
+      code: 'PROLIFIC_CONTRIBUTOR',
+      name: 'Prolific Contributor',
+      description: 'Get 10 species published',
+      icon: '📚',
+      category: BadgeCategory.CONTRIBUTOR,
+      requirement: { type: 'species_published', count: 10 },
+      xpReward: 100,
+    },
+    {
+      code: 'ENCYCLOPEDIA_BUILDER',
+      name: 'Encyclopedia Builder',
+      description: 'Get 50 species published',
+      icon: '🏛️',
+      category: BadgeCategory.CONTRIBUTOR,
+      requirement: { type: 'species_published', count: 50 },
+      xpReward: 500,
+    },
+    {
+      code: 'PHOTOGRAPHER',
+      name: 'Photographer',
+      description: 'Upload 10 approved photos',
+      icon: '📷',
+      category: BadgeCategory.CONTRIBUTOR,
+      requirement: { type: 'photos_approved', count: 10 },
+      xpReward: 25,
+    },
+    {
+      code: 'DETAIL_MASTER',
+      name: 'Detail Master',
+      description: 'Submit a species with all optional fields filled',
+      icon: '🔍',
+      category: BadgeCategory.CONTRIBUTOR,
+      requirement: { type: 'complete_species', count: 1 },
+      xpReward: 50,
+    },
+
+    // Reviewer badges
+    {
+      code: 'FIRST_REVIEW',
+      name: 'First Review',
+      description: 'Complete your first review',
+      icon: '✅',
+      category: BadgeCategory.REVIEWER,
+      requirement: { type: 'reviews_given', count: 1 },
+      xpReward: 10,
+    },
+    {
+      code: 'QUALITY_GUARDIAN',
+      name: 'Quality Guardian',
+      description: 'Complete 10 reviews',
+      icon: '🛡️',
+      category: BadgeCategory.REVIEWER,
+      requirement: { type: 'reviews_given', count: 10 },
+      xpReward: 50,
+    },
+    {
+      code: 'SENIOR_REVIEWER',
+      name: 'Senior Reviewer',
+      description: 'Complete 50 reviews',
+      icon: '⭐',
+      category: BadgeCategory.REVIEWER,
+      requirement: { type: 'reviews_given', count: 50 },
+      xpReward: 200,
+    },
+    {
+      code: 'MASTER_CURATOR',
+      name: 'Master Curator',
+      description: 'Complete 100 reviews',
+      icon: '👑',
+      category: BadgeCategory.REVIEWER,
+      requirement: { type: 'reviews_given', count: 100 },
+      xpReward: 500,
+    },
+    {
+      code: 'SHARP_EYE',
+      name: 'Sharp Eye',
+      description: 'Maintain 90%+ approval accuracy with at least 20 reviews',
+      icon: '🎯',
+      category: BadgeCategory.REVIEWER,
+      requirement: { type: 'approval_accuracy', minReviews: 20, accuracy: 90 },
+      xpReward: 100,
+    },
+
+    // Community badges
+    {
+      code: 'VERIFIED_REVIEWER',
+      name: 'Verified Reviewer',
+      description: 'Become an approved reviewer',
+      icon: '✓',
+      category: BadgeCategory.COMMUNITY,
+      requirement: { type: 'role', role: 'REVIEWER' },
+      xpReward: 25,
+    },
+    {
+      code: 'EARLY_ADOPTER',
+      name: 'Early Adopter',
+      description: 'Join Syntropedia in its early days',
+      icon: '🚀',
+      category: BadgeCategory.SPECIAL,
+      requirement: { type: 'joined_before', date: '2025-12-31' },
+      xpReward: 50,
+    },
+    {
+      code: 'STREAK_7',
+      name: 'Week Warrior',
+      description: 'Be active 7 days in a row',
+      icon: '🔥',
+      category: BadgeCategory.COMMUNITY,
+      requirement: { type: 'streak', days: 7 },
+      xpReward: 25,
+    },
+    {
+      code: 'STREAK_30',
+      name: 'Monthly Master',
+      description: 'Be active 30 days in a row',
+      icon: '💫',
+      category: BadgeCategory.COMMUNITY,
+      requirement: { type: 'streak', days: 30 },
+      xpReward: 100,
+    },
+  ]
+
+  for (const badge of badgesData) {
+    await prisma.badge.upsert({
+      where: { code: badge.code },
+      update: badge,
+      create: badge,
+    })
+    console.log(`  ✅ ${badge.name} (${badge.code})`)
+  }
+
+  // Assign badges to users
+  console.log('\n🎖️ Assigning badges to users...')
+
+  // Helper function to award badge to user
+  async function awardBadge(userEmail: string, badgeCode: string) {
+    const user = await prisma.user.findUnique({ where: { email: userEmail } })
+    const badge = await prisma.badge.findUnique({ where: { code: badgeCode } })
+    if (user && badge) {
+      await prisma.userBadge.upsert({
+        where: { userId_badgeId: { userId: user.id, badgeId: badge.id } },
+        update: {},
+        create: { userId: user.id, badgeId: badge.id },
+      })
+    }
+  }
+
+  // Admin - lots of badges (Horticulturist level 7)
+  await awardBadge('admin@syntropedia.org', 'FIRST_STEPS')
+  await awardBadge('admin@syntropedia.org', 'PUBLISHED_AUTHOR')
+  await awardBadge('admin@syntropedia.org', 'PROLIFIC_CONTRIBUTOR')
+  await awardBadge('admin@syntropedia.org', 'PHOTOGRAPHER')
+  await awardBadge('admin@syntropedia.org', 'FIRST_REVIEW')
+  await awardBadge('admin@syntropedia.org', 'QUALITY_GUARDIAN')
+  await awardBadge('admin@syntropedia.org', 'SENIOR_REVIEWER')
+  await awardBadge('admin@syntropedia.org', 'VERIFIED_REVIEWER')
+  await awardBadge('admin@syntropedia.org', 'EARLY_ADOPTER')
+  console.log('  ✅ Admin badges assigned')
+
+  // Maria Silva - Green Thumb level 4
+  await awardBadge('maria.silva@syntropedia.org', 'FIRST_STEPS')
+  await awardBadge('maria.silva@syntropedia.org', 'PUBLISHED_AUTHOR')
+  await awardBadge('maria.silva@syntropedia.org', 'PROLIFIC_CONTRIBUTOR')
+  await awardBadge('maria.silva@syntropedia.org', 'PHOTOGRAPHER')
+  await awardBadge('maria.silva@syntropedia.org', 'EARLY_ADOPTER')
+  console.log('  ✅ Maria Silva badges assigned')
+
+  // João Santos - Sapling level 3
+  await awardBadge('joao.santos@syntropedia.org', 'FIRST_STEPS')
+  await awardBadge('joao.santos@syntropedia.org', 'PUBLISHED_AUTHOR')
+  await awardBadge('joao.santos@syntropedia.org', 'EARLY_ADOPTER')
+  console.log('  ✅ João Santos badges assigned')
+
+  // Dr. Ana Botânica - Botanist level 8 (top reviewer)
+  await awardBadge('dr.botanica@syntropedia.org', 'FIRST_STEPS')
+  await awardBadge('dr.botanica@syntropedia.org', 'PUBLISHED_AUTHOR')
+  await awardBadge('dr.botanica@syntropedia.org', 'PROLIFIC_CONTRIBUTOR')
+  await awardBadge('dr.botanica@syntropedia.org', 'PHOTOGRAPHER')
+  await awardBadge('dr.botanica@syntropedia.org', 'DETAIL_MASTER')
+  await awardBadge('dr.botanica@syntropedia.org', 'FIRST_REVIEW')
+  await awardBadge('dr.botanica@syntropedia.org', 'QUALITY_GUARDIAN')
+  await awardBadge('dr.botanica@syntropedia.org', 'SENIOR_REVIEWER')
+  await awardBadge('dr.botanica@syntropedia.org', 'MASTER_CURATOR')
+  await awardBadge('dr.botanica@syntropedia.org', 'SHARP_EYE')
+  await awardBadge('dr.botanica@syntropedia.org', 'VERIFIED_REVIEWER')
+  await awardBadge('dr.botanica@syntropedia.org', 'EARLY_ADOPTER')
+  await awardBadge('dr.botanica@syntropedia.org', 'STREAK_7')
+  console.log('  ✅ Dr. Ana Botânica badges assigned')
+
+  // Prof. Carlos - Gardener level 6
+  await awardBadge('prof.agroforestry@syntropedia.org', 'FIRST_STEPS')
+  await awardBadge('prof.agroforestry@syntropedia.org', 'PUBLISHED_AUTHOR')
+  await awardBadge('prof.agroforestry@syntropedia.org', 'PROLIFIC_CONTRIBUTOR')
+  await awardBadge('prof.agroforestry@syntropedia.org', 'FIRST_REVIEW')
+  await awardBadge('prof.agroforestry@syntropedia.org', 'QUALITY_GUARDIAN')
+  await awardBadge('prof.agroforestry@syntropedia.org', 'SENIOR_REVIEWER')
+  await awardBadge('prof.agroforestry@syntropedia.org', 'VERIFIED_REVIEWER')
+  await awardBadge('prof.agroforestry@syntropedia.org', 'EARLY_ADOPTER')
+  console.log('  ✅ Prof. Carlos badges assigned')
+
+  // Dra. Fernanda - Cultivator level 5
+  await awardBadge('researcher.ecology@syntropedia.org', 'FIRST_STEPS')
+  await awardBadge('researcher.ecology@syntropedia.org', 'PUBLISHED_AUTHOR')
+  await awardBadge('researcher.ecology@syntropedia.org', 'FIRST_REVIEW')
+  await awardBadge('researcher.ecology@syntropedia.org', 'QUALITY_GUARDIAN')
+  await awardBadge('researcher.ecology@syntropedia.org', 'VERIFIED_REVIEWER')
+  await awardBadge('researcher.ecology@syntropedia.org', 'EARLY_ADOPTER')
+  console.log('  ✅ Dra. Fernanda badges assigned')
+
   console.log('\n🎉 Seed completed successfully!')
   console.log(`\n📊 Summary:`)
   console.log(`   Users: ${await prisma.user.count()}`)
   console.log(`   Species: ${await prisma.species.count()}`)
   console.log(`   Photos: ${await prisma.photo.count()}`)
+  console.log(`   Badges: ${await prisma.badge.count()}`)
+  console.log(`   User Badges: ${await prisma.userBadge.count()}`)
 }
 
 main()

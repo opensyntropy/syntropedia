@@ -29,6 +29,8 @@ export const authOptions: NextAuthOptions = {
                 where: { email: credentials.email },
               })
               if (!user) return null
+              // Check if user is blocked
+              if (user.status === 'BLOCKED') return null
               // Transform null to undefined for NextAuth compatibility
               return {
                 id: user.id,
@@ -53,6 +55,19 @@ export const authOptions: NextAuthOptions = {
     verifyRequest: '/auth/verify',
   },
   callbacks: {
+    async signIn({ user }) {
+      // Check if user is blocked
+      if (user?.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { status: true },
+        })
+        if (dbUser?.status === 'BLOCKED') {
+          return '/auth/error?error=blocked'
+        }
+      }
+      return true
+    },
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id

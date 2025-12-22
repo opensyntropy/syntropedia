@@ -5,16 +5,20 @@
     "home": "Inicio",
     "about": "Acerca de",
     "contribute": "Contribuir",
+    "participate": "Participar",
+    "contributions": "Contribuciones",
+    "reviews": "Revisiones",
+    "leaderboard": "Colaboradores",
     "login": "Iniciar sesión",
     "createAccount": "Crear Cuenta",
     "myContributions": "Mis Contribuciones",
-    "reviews": "Cola de Revisión",
     "myAccount": "Mi Cuenta",
     "settings": "Configuración",
     "logOut": "Cerrar sesión",
-    "forum": "Foro",
+    "forum": "Comunidad",
     "becomeReviewer": "Ser Revisor",
-    "admin": "Admin"
+    "admin": "Admin",
+    "manageUsers": "Gestionar Usuarios"
   },
   "stratum": {
     "EMERGENT": "Emergente",
@@ -208,7 +212,7 @@
     "description": "Enciclopedia de código abierto de especies vegetales para agricultura sintrópica",
     "quickLinks": "Enlaces Rápidos",
     "community": "Comunidad",
-    "forum": "Foro",
+    "forum": "Comunidad",
     "discord": "Discord",
     "github": "GitHub",
     "legal": "Legal",
@@ -301,6 +305,9 @@
     "years": "años",
     "fruitsAt": "Fructifica a los",
     "propagation": "Propagación",
+    "germinationTime": "Tiempo de Germinación",
+    "days": "días",
+    "upTo": "hasta",
     "propagationMethod": {
       "SEED": "Semillas",
       "CUTTING": "Esquejes",
@@ -358,7 +365,12 @@
     "newSubmissions": "Nuevas",
     "revisionRequests": "Revisiones",
     "new": "Nueva",
-    "revision": "Revisión"
+    "revision": "Revisión",
+    "photos": "Fotos",
+    "noPhotos": "No hay contribuciones de fotos todavía",
+    "approved": "Aprobada",
+    "pending": "Pendiente",
+    "rejected": "Rechazada"
   },
   "speciesForm": {
     "nomenclature": "Nomenclatura",
@@ -524,6 +536,36 @@
     "speciesReviewQueue": "Cola de Revisión de Especies",
     "speciesReviewQueueHint": "Revisa especies esperando aprobación"
   },
+  "adminUsers": {
+    "title": "Gestión de Usuarios",
+    "description": "Ver, buscar y gestionar todos los usuarios.",
+    "searchPlaceholder": "Buscar por nombre o email...",
+    "search": "Buscar",
+    "allRoles": "Todos los Roles",
+    "roleUser": "Usuario",
+    "roleReviewer": "Revisor",
+    "roleAdmin": "Admin",
+    "allStatus": "Todos los Estados",
+    "statusActive": "Activo",
+    "statusBlocked": "Bloqueado",
+    "sortNewest": "Más Recientes",
+    "sortOldest": "Más Antiguos",
+    "sortName": "Nombre (A-Z)",
+    "sortXP": "Mayor XP",
+    "showingResults": "Mostrando {count} de {total} usuarios",
+    "noUsers": "No se encontraron usuarios.",
+    "anonymous": "Anónimo",
+    "level": "Nivel",
+    "species": "especies",
+    "reviews": "revisiones",
+    "joined": "Se unió",
+    "block": "Bloquear",
+    "unblock": "Desbloquear",
+    "blockReasonPrompt": "Razón del bloqueo (opcional):",
+    "unblockConfirm": "¿Estás seguro de que quieres desbloquear a este usuario?",
+    "roleChangeConfirm": "¿Cambiar rol del usuario a {role}?",
+    "pageOf": "Página {page} de {total}"
+  },
   "reviewQueue": {
     "title": "Cola de Revisión",
     "description": "Especies esperando tu revisión",
@@ -536,5 +578,173 @@
     "review": "Revisar",
     "newSubmissions": "Nuevas Especies",
     "revisionRequests": "Solicitudes de Revisión"
+  },
+  "reviewPhotos": {
+    "title": "Revisión de Fotos",
+    "description": "Fotos enviadas por usuarios esperando aprobación",
+    "photos": "Fotos"
+  },
+  "gamification": {
+    "leaderboard": "Colaboradores",
+    "contributors": "Contribuyentes",
+    "profile": "Perfil",
+    "xpLeaders": "Líderes en XP",
+    "topContributors": "Top Contribuyentes",
+    "topReviewers": "Top Revisores",
+    "allTime": "Todo el Tiempo",
+    "thisMonth": "Este Mes",
+    "level": "Nivel",
+    "xp": "XP",
+    "badges": "Logros",
+    "noBadges": "Sin logros aún",
+    "memberSince": "Miembro desde",
+    "published": "Publicadas",
+    "contributed": "Contribuidas",
+    "reviews": "Revisiones",
+    "photos": "Fotos",
+    "earnXpHint": "Gana XP contribuyendo especies, revisando envíos y subiendo fotos.",
+    "startContributing": "Empieza a contribuir",
+    "viewAll": "Ver todas",
+    "recentActivity": "Actividad Reciente",
+    "publishedSpecies": "Especies Publicadas",
+    "allBadges": "Todos los Logros",
+    "recognizing": "Reconociendo a nuestros mayores contribuyentes y revisores"
+  },
+  "titles": {
+    "1": "Semilla",
+    "2": "Brote",
+    "3": "Plántula",
+    "4": "Mano Verde",
+    "5": "Cultivador",
+    "6": "Jardinero",
+    "7": "Horticultor",
+    "8": "Botánico",
+    "9": "Guardián del Bosque",
+    "10": "Maestro Sintropista"
+  },
+  "badges": {
+    "FIRST_STEPS": {
+      "name": "Primeros Pasos",
+      "description": "Envía tu primera especie"
+    },
+    "PUBLISHED_AUTHOR": {
+      "name": "Autor Publicado",
+      "description": "Consigue publicar tu primera especie"
+    },
+    "PROLIFIC_CONTRIBUTOR": {
+      "name": "Contribuyente Prolífico",
+      "description": "Ten 10 especies publicadas"
+    },
+    "ENCYCLOPEDIA_BUILDER": {
+      "name": "Constructor de Enciclopedia",
+      "description": "Ten 50 especies publicadas"
+    },
+    "PHOTOGRAPHER": {
+      "name": "Fotógrafo",
+      "description": "Sube 10 fotos"
+    },
+    "DETAIL_MASTER": {
+      "name": "Maestro del Detalle",
+      "description": "Envía una especie con todos los campos opcionales completos"
+    },
+    "FIRST_REVIEW": {
+      "name": "Primera Revisión",
+      "description": "Completa tu primera revisión"
+    },
+    "QUALITY_GUARDIAN": {
+      "name": "Guardián de Calidad",
+      "description": "Completa 10 revisiones"
+    },
+    "SENIOR_REVIEWER": {
+      "name": "Revisor Senior",
+      "description": "Completa 50 revisiones"
+    },
+    "MASTER_CURATOR": {
+      "name": "Curador Maestro",
+      "description": "Completa 100 revisiones"
+    },
+    "SHARP_EYE": {
+      "name": "Ojo Agudo",
+      "description": "Mantén 90%+ de precisión en aprobaciones"
+    },
+    "VERIFIED_REVIEWER": {
+      "name": "Revisor Verificado",
+      "description": "Conviértete en revisor verificado"
+    },
+    "EARLY_ADOPTER": {
+      "name": "Pionero",
+      "description": "Únete en los primeros días"
+    },
+    "STREAK_7": {
+      "name": "Guerrero Semanal",
+      "description": "Sé activo 7 días seguidos"
+    },
+    "STREAK_30": {
+      "name": "Maestro Mensual",
+      "description": "Sé activo 30 días seguidos"
+    }
+  },
+  "contributePage": {
+    "hero": {
+      "title": "Construye la Enciclopedia Juntos",
+      "subtitle": "Únete a nuestra comunidad de practicantes, investigadores y entusiastas construyendo la enciclopedia abierta más completa del mundo para la agricultura sintrópica.",
+      "cta": "Empezar a Contribuir",
+      "myContributions": "Mis Contribuciones"
+    },
+    "mission": {
+      "title": "Nuestra Misión",
+      "description": "Syntropedia es un proyecto colaborativo para documentar y compartir conocimiento sobre especies sintrópicas. Creemos que el conocimiento abierto y revisado por pares acelera la adopción de prácticas regenerativas en todo el mundo.",
+      "open": {
+        "title": "Conocimiento Abierto",
+        "description": "Todo el contenido está disponible gratuitamente bajo licencias abiertas para que cualquiera lo use y comparta."
+      },
+      "community": {
+        "title": "Impulsado por la Comunidad",
+        "description": "Construido por practicantes de todo el mundo compartiendo experiencias reales con especies."
+      },
+      "verified": {
+        "title": "Revisado por Pares",
+        "description": "Cada envío es revisado por practicantes experimentados antes de su publicación."
+      }
+    },
+    "stats": {
+      "title": "Una Comunidad en Crecimiento",
+      "species": "Especies Publicadas",
+      "contributors": "Contribuyentes",
+      "reviews": "Revisiones Completadas"
+    },
+    "participate": {
+      "title": "Formas de Participar",
+      "share": {
+        "title": "Comparte tu Conocimiento",
+        "description": "¿Conoces una especie usada en sistemas sintrópicos? Envíala para ayudar a otros a aprender y beneficiarse de tu experiencia.",
+        "cta": "Enviar una Especie"
+      },
+      "photos": {
+        "title": "Agregar Fotos",
+        "description": "Sube fotos de especies en su hábitat natural o en sistemas sintrópicos para ayudar a otros a identificarlas.",
+        "cta": "Explorar Catálogo"
+      },
+      "review": {
+        "title": "Conviértete en Revisor",
+        "description": "Ayuda a curar la enciclopedia revisando envíos y asegurando contenido de calidad.",
+        "cta": "Solicitar para Revisar"
+      },
+      "report": {
+        "title": "Reportar Errores",
+        "description": "¿Encontraste información incorrecta en una página de especie? Repórtalo para que nuestra comunidad pueda corregirlo.",
+        "cta": "Explorar Especies"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Contribuir?",
+      "subtitle": "Tu conocimiento puede ayudar a agricultores de todo el mundo a construir sistemas alimentarios más resilientes.",
+      "button": "Empezar a Contribuir Ahora"
+    },
+    "ecosystem": {
+      "title": "Parte del Ecosistema OpenSyntropy",
+      "description": "Syntropedia es una de las herramientas que estamos construyendo para apoyar a la comunidad de agricultura sintrópica en todo el mundo.",
+      "createdBy": "Creado por"
+    }
   }
 }

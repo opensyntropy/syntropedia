@@ -70,6 +70,8 @@ export const speciesFormSchema = z.object({
 
   // Propagation
   propagationMethods: z.array(z.string()).optional(),
+  germinationDaysMin: optionalNumber.pipe(z.number().min(1).max(365).optional()),
+  germinationDaysMax: optionalNumber.pipe(z.number().min(1).max(365).optional()),
 
   // Other
   observations: z.string().optional(),

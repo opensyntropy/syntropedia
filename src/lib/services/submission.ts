@@ -3,6 +3,7 @@ import { SpeciesStatus, UserRole, ActivityAction, Prisma } from '@prisma/client'
 import { logActivity } from './activity'
 import { sendSubmissionNotification } from './email'
 import { SPECIES_EDITABLE_FIELDS, type SpeciesFormData } from '@/lib/validations/species'
+import { awardXP, checkBadges } from './gamification'
 
 // Transform form data arrays to Prisma-compatible types
 function transformFormData(data: Partial<SpeciesFormData>) {
@@ -145,6 +146,10 @@ export async function submitForReview(speciesId: string, userId: string) {
     userId,
     speciesId,
   })
+
+  // Award XP for submission
+  await awardXP(userId, 'SPECIES_SUBMITTED')
+  await checkBadges(userId)
 
   // Notify reviewers
   const reviewers = await prisma.user.findMany({
@@ -599,6 +604,10 @@ export async function requestRevision(params: RequestRevisionParams) {
     speciesId,
     details: { reason },
   })
+
+  // Award XP for reporting an issue
+  await awardXP(userId, 'ISSUE_REPORTED')
+  await checkBadges(userId)
 
   // Notify reviewers
   const reviewers = await prisma.user.findMany({

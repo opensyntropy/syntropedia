@@ -93,6 +93,9 @@ interface FormTranslations {
   // Propagation
   propagationMethods: string
   addPropagationMethod: string
+  germinationDays: string
+  germinationDaysMin: string
+  germinationDaysMax: string
   // Actions
   cancel: string
   saveAsDraft: string
@@ -165,6 +168,9 @@ const defaultFormTranslations: FormTranslations = {
   fruitingAgeEnd: 'Fruiting End (years)',
   propagationMethods: 'Propagation Methods',
   addPropagationMethod: 'Add a propagation method',
+  germinationDays: 'Germination Time',
+  germinationDaysMin: 'Min (days)',
+  germinationDaysMax: 'Max (days)',
   cancel: 'Cancel',
   saveAsDraft: 'Save as Draft',
   submitForReview: 'Submit for Review',
@@ -236,6 +242,9 @@ const ptBRTranslations: FormTranslations = {
   fruitingAgeEnd: 'Frutificação Fim (anos)',
   propagationMethods: 'Métodos de Propagação',
   addPropagationMethod: 'Adicionar método de propagação',
+  germinationDays: 'Tempo de Germinação',
+  germinationDaysMin: 'Mín (dias)',
+  germinationDaysMax: 'Máx (dias)',
   cancel: 'Cancelar',
   saveAsDraft: 'Salvar como Rascunho',
   submitForReview: 'Submeter para Revisão',
@@ -307,6 +316,9 @@ const esTranslations: FormTranslations = {
   fruitingAgeEnd: 'Fructificación Fin (años)',
   propagationMethods: 'Métodos de Propagación',
   addPropagationMethod: 'Agregar método de propagación',
+  germinationDays: 'Tiempo de Germinación',
+  germinationDaysMin: 'Mín (días)',
+  germinationDaysMax: 'Máx (días)',
   cancel: 'Cancelar',
   saveAsDraft: 'Guardar como Borrador',
   submitForReview: 'Enviar para Revisión',
@@ -1461,6 +1473,35 @@ export function SpeciesForm({ defaultValues, defaultPhotos = [], speciesId, mode
                 <span className="text-sm">{tPropagation[method.value] || method.label}</span>
               </label>
             ))}
+          </div>
+
+          {/* Germination Days Range */}
+          <div className="mt-6">
+            <label className="block text-sm font-medium mb-2">{t.germinationDays}</label>
+            <div className="grid grid-cols-2 gap-4 max-w-xs">
+              <div>
+                <label className="block text-xs text-muted-foreground mb-1">{t.germinationDaysMin}</label>
+                <input
+                  type="number"
+                  {...register('germinationDaysMin')}
+                  min="1"
+                  max="365"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="7"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-muted-foreground mb-1">{t.germinationDaysMax}</label>
+                <input
+                  type="number"
+                  {...register('germinationDaysMax')}
+                  min="1"
+                  max="365"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="21"
+                />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

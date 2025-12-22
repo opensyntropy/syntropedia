@@ -195,6 +195,8 @@ export interface SpeciesDetail {
 
   // Propagation
   propagationMethods?: string[]
+  germinationDaysMin?: number | null
+  germinationDaysMax?: number | null
 
   // Other
   observations?: string | null
