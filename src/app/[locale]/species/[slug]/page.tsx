@@ -18,7 +18,9 @@ import {
   TrendingUp,
   FlaskConical,
   Camera,
-  AlertCircle
+  AlertCircle,
+  Users,
+  UserCheck
 } from 'lucide-react'
 import { type SpeciesDetail } from '@/types/species'
 import { getTranslations } from '@/lib/getTranslations'
@@ -86,11 +88,26 @@ export async function generateMetadata({
   }
 }
 
+// Contributor info
+interface ContributorInfo {
+  id: string
+  name: string | null
+  avatar: string | null
+}
+
+interface ReviewerInfo extends ContributorInfo {
+  reviewedAt: Date
+}
+
 // Extended type to include status for revision button check
 interface SpeciesDetailWithStatus extends SpeciesDetail {
   status: string
   isUnderRevision: boolean
   discourseTopicUrl: string | null
+  createdBy: ContributorInfo | null
+  createdAt: Date
+  publishedAt: Date | null
+  reviewers: ReviewerInfo[]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1245,6 +1262,20 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus |
         where: { approved: true },
         orderBy: { primary: 'desc' },
         select: { url: true, tags: true }
+      },
+      createdBy: {
+        select: { id: true, name: true, avatar: true }
+      },
+      reviews: {
+        where: { decision: 'APPROVED' },
+        select: {
+          reviewedAt: true,
+          reviewer: {
+            select: { id: true, name: true, avatar: true }
+          }
+        },
+        orderBy: { reviewedAt: 'desc' },
+        distinct: ['reviewerId']
       }
     }
   })
@@ -1309,7 +1340,14 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus |
     photos: photos.length > 0 ? photos : undefined,
     status: dbSpecies.status,
     isUnderRevision: dbSpecies.status === 'IN_REVIEW' && !!dbSpecies.revisionRequestedById,
-    discourseTopicUrl: dbSpecies.discourseTopicUrl
+    discourseTopicUrl: dbSpecies.discourseTopicUrl,
+    createdBy: dbSpecies.createdBy,
+    createdAt: dbSpecies.createdAt,
+    publishedAt: dbSpecies.publishedAt,
+    reviewers: dbSpecies.reviews.map(r => ({
+      ...r.reviewer,
+      reviewedAt: r.reviewedAt
+    }))
   }
 }
 
@@ -1830,6 +1868,98 @@ export default async function SpeciesDetailPage({
                     </span>
                   </div>
                 )}
+              </Card>
+            )}
+
+            {/* History */}
+            {(species.createdBy || species.reviewers.length > 0) && (
+              <Card className="p-6">
+                <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900">
+                  <Users className="h-5 w-5 text-gray-400" />
+                  {t('history')}
+                </h2>
+                <div className="max-h-64 overflow-y-auto pr-2 space-y-3">
+                  {/* Published */}
+                  {species.publishedAt && (
+                    <div className="flex items-start gap-3 pb-3 border-b border-gray-100">
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                        <Sprout className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{t('published')}</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(species.publishedAt).toLocaleDateString(undefined, {
+                            year: 'numeric', month: 'short', day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Reviewers */}
+                  {species.reviewers.map((reviewer) => (
+                    <div key={reviewer.id} className="flex items-start gap-3 pb-3 border-b border-gray-100">
+                      <div className="flex-shrink-0">
+                        {reviewer.avatar ? (
+                          <img
+                            src={reviewer.avatar}
+                            alt={reviewer.name || 'Reviewer'}
+                            className="w-8 h-8 rounded-full"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <span className="text-blue-700 text-xs font-medium">
+                              {(reviewer.name || 'R')[0].toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-900">
+                          <span className="font-medium">{reviewer.name || t('anonymous')}</span>
+                          <span className="text-gray-500"> {t('approved')}</span>
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(reviewer.reviewedAt).toLocaleDateString(undefined, {
+                            year: 'numeric', month: 'short', day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Creator */}
+                  {species.createdBy && (
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0">
+                        {species.createdBy.avatar ? (
+                          <img
+                            src={species.createdBy.avatar}
+                            alt={species.createdBy.name || 'Creator'}
+                            className="w-8 h-8 rounded-full"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                            <span className="text-green-700 text-xs font-medium">
+                              {(species.createdBy.name || 'A')[0].toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-900">
+                          <span className="font-medium">{species.createdBy.name || t('anonymous')}</span>
+                          <span className="text-gray-500"> {t('created')}</span>
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(species.createdAt).toLocaleDateString(undefined, {
+                            year: 'numeric', month: 'short', day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </Card>
             )}
           </div>

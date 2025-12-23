@@ -8,7 +8,7 @@
     "participate": "Participar",
     "contributions": "Contribuciones",
     "reviews": "Revisiones",
-    "leaderboard": "Colaboradores",
+    "leaderboard": "Colaboración",
     "login": "Iniciar sesión",
     "createAccount": "Crear Cuenta",
     "myContributions": "Mis Contribuciones",
@@ -325,7 +325,15 @@
       "BUDDING": "Injerto de Yema"
     },
     "underRevisionTitle": "Esta especie está en revisión",
-    "underRevisionMessage": "Se está revisando una solicitud de revisión. Puede solicitar una nueva revisión después de que se complete esta revisión."
+    "underRevisionMessage": "Se está revisando una solicitud de revisión. Puede solicitar una nueva revisión después de que se complete esta revisión.",
+    "contributors": "Contribuyentes",
+    "creator": "Creador",
+    "reviewedBy": "Revisado por",
+    "anonymous": "Anónimo",
+    "history": "Historial",
+    "published": "Publicado",
+    "approved": "aprobó",
+    "created": "creó"
   },
   "species": {
     "discussion": {
@@ -597,7 +605,7 @@
     "photos": "Fotos"
   },
   "gamification": {
-    "leaderboard": "Colaboradores",
+    "leaderboard": "Colaboración",
     "contributors": "Contribuyentes",
     "profile": "Perfil",
     "xpLeaders": "Líderes en XP",
@@ -621,6 +629,17 @@
     "publishedSpecies": "Especies Publicadas",
     "allBadges": "Todos los Logros",
     "recognizing": "Reconociendo a nuestros mayores contribuyentes y revisores"
+  },
+  "collaboration": {
+    "title": "Colaboración",
+    "subtitle": "Construyendo conocimiento juntos - reconociendo a nuestros contribuyentes",
+    "xpLeaders": "Líderes en XP",
+    "topContributors": "Top Contribuyentes",
+    "topReviewers": "Top Revisores",
+    "allTime": "Todo el Tiempo",
+    "thisMonth": "Este Mes",
+    "earnXpHint": "Gana XP contribuyendo especies, revisando envíos y subiendo fotos.",
+    "startContributing": "Empieza a contribuir"
   },
   "titles": {
     "1": "Semilla",

@@ -8,7 +8,7 @@
     "participate": "Participate",
     "contributions": "Contributions",
     "reviews": "Reviews",
-    "leaderboard": "Contributors",
+    "leaderboard": "Collaboration",
     "login": "Login",
     "createAccount": "Create Account",
     "myContributions": "My Contributions",
@@ -459,7 +459,15 @@
       "BUDDING": "Budding"
     },
     "underRevisionTitle": "This species is under revision",
-    "underRevisionMessage": "A revision request is currently being reviewed. You can request a new revision after this review is complete."
+    "underRevisionMessage": "A revision request is currently being reviewed. You can request a new revision after this review is complete.",
+    "contributors": "Contributors",
+    "creator": "Creator",
+    "reviewedBy": "Reviewed by",
+    "anonymous": "Anonymous",
+    "history": "History",
+    "published": "Published",
+    "approved": "approved",
+    "created": "created"
   },
   "species": {
     "discussion": {
@@ -597,7 +605,7 @@
     "photos": "Photos"
   },
   "gamification": {
-    "leaderboard": "Contributors",
+    "leaderboard": "Collaboration",
     "contributors": "Contributors",
     "profile": "Profile",
     "xpLeaders": "XP Leaders",
@@ -621,6 +629,17 @@
     "publishedSpecies": "Published Species",
     "allBadges": "All Badges",
     "recognizing": "Recognizing our top contributors and reviewers"
+  },
+  "collaboration": {
+    "title": "Collaboration",
+    "subtitle": "Building knowledge together - recognizing our community contributors",
+    "xpLeaders": "XP Leaders",
+    "topContributors": "Top Contributors",
+    "topReviewers": "Top Reviewers",
+    "allTime": "All Time",
+    "thisMonth": "This Month",
+    "earnXpHint": "Earn XP by contributing species, reviewing submissions, and uploading photos.",
+    "startContributing": "Start contributing"
   },
   "titles": {
     "1": "Seedling",

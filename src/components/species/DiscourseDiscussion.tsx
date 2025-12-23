@@ -150,7 +150,7 @@ export function DiscourseDiscussion({ topicUrl, speciesName }: DiscourseDiscussi
 
                 {posts.length > 3 && (
                   <p className="text-sm text-gray-500 text-center">
-                    {t('andMorePosts', { count: posts.length - 3 })}
+                    {t('andMorePosts').replace('{count}', String(posts.length - 3))}
                   </p>
                 )}
               </div>

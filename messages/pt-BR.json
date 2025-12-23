@@ -8,7 +8,7 @@
     "participate": "Participar",
     "contributions": "Contribuições",
     "reviews": "Revisões",
-    "leaderboard": "Colaboradores",
+    "leaderboard": "Colaboração",
     "login": "Entrar",
     "createAccount": "Criar Conta",
     "myContributions": "Minhas Contribuições",
@@ -459,7 +459,15 @@
       "BUDDING": "Borbulhia"
     },
     "underRevisionTitle": "Esta espécie está em revisão",
-    "underRevisionMessage": "Uma solicitação de revisão está sendo analisada. Você pode solicitar uma nova revisão após a conclusão desta análise."
+    "underRevisionMessage": "Uma solicitação de revisão está sendo analisada. Você pode solicitar uma nova revisão após a conclusão desta análise.",
+    "contributors": "Contribuidores",
+    "creator": "Criador",
+    "reviewedBy": "Revisado por",
+    "anonymous": "Anônimo",
+    "history": "Histórico",
+    "published": "Publicado",
+    "approved": "aprovou",
+    "created": "criou"
   },
   "species": {
     "discussion": {
@@ -597,7 +605,7 @@
     "photos": "Fotos"
   },
   "gamification": {
-    "leaderboard": "Colaboradores",
+    "leaderboard": "Colaboração",
     "contributors": "Contribuidores",
     "profile": "Perfil",
     "xpLeaders": "Líderes em XP",
@@ -621,6 +629,17 @@
     "publishedSpecies": "Espécies Publicadas",
     "allBadges": "Todas as Conquistas",
     "recognizing": "Reconhecendo nossos maiores contribuidores e revisores"
+  },
+  "collaboration": {
+    "title": "Colaboração",
+    "subtitle": "Construindo conhecimento juntos - reconhecendo nossos contribuidores",
+    "xpLeaders": "Líderes em XP",
+    "topContributors": "Top Contribuidores",
+    "topReviewers": "Top Revisores",
+    "allTime": "Todos os Tempos",
+    "thisMonth": "Este Mês",
+    "earnXpHint": "Ganhe XP contribuindo espécies, revisando submissões e enviando fotos.",
+    "startContributing": "Comece a contribuir"
   },
   "titles": {
     "1": "Semente",

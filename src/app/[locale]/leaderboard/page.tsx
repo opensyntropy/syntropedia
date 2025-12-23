@@ -2,6 +2,7 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { LeaderboardTable } from '@/components/gamification/LeaderboardTable'
 import { getLeaderboard } from '@/lib/services/gamification'
+import { getTranslations } from '@/lib/getTranslations'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
@@ -14,21 +15,23 @@ type LeaderboardTab = 'xp' | 'contributors' | 'reviewers'
 type LeaderboardPeriod = 'all_time' | 'month'
 
 export default async function LeaderboardPage({ params, searchParams }: LeaderboardPageProps) {
+  const { locale } = await params
   const sp = await searchParams
   const activeTab = (sp.tab as LeaderboardTab) || 'xp'
   const activePeriod = (sp.period as LeaderboardPeriod) || 'all_time'
 
+  const t = await getTranslations(locale)
   const entries = await getLeaderboard(activeTab, activePeriod, 25)
 
-  const tabs: { id: LeaderboardTab; label: string; icon: string }[] = [
-    { id: 'xp', label: 'XP Leaders', icon: '⭐' },
-    { id: 'contributors', label: 'Top Contributors', icon: '🌱' },
-    { id: 'reviewers', label: 'Top Reviewers', icon: '🔍' },
+  const tabs: { id: LeaderboardTab; labelKey: string; icon: string }[] = [
+    { id: 'xp', labelKey: 'xpLeaders', icon: '⭐' },
+    { id: 'contributors', labelKey: 'topContributors', icon: '🌱' },
+    { id: 'reviewers', labelKey: 'topReviewers', icon: '🔍' },
   ]
 
-  const periods: { id: LeaderboardPeriod; label: string }[] = [
-    { id: 'all_time', label: 'All Time' },
-    { id: 'month', label: 'This Month' },
+  const periods: { id: LeaderboardPeriod; labelKey: string }[] = [
+    { id: 'all_time', labelKey: 'allTime' },
+    { id: 'month', labelKey: 'thisMonth' },
   ]
 
   return (
@@ -39,9 +42,9 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
         <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 max-w-3xl">
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Leaderboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('collaboration.title')}</h1>
             <p className="mt-2 text-muted-foreground">
-              Recognizing our top contributors and reviewers
+              {t('collaboration.subtitle')}
             </p>
           </div>
 
@@ -60,7 +63,7 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
                   )}
                 >
                   <span className="mr-1.5">{tab.icon}</span>
-                  {tab.label}
+                  {t(`collaboration.${tab.labelKey}`)}
                 </Link>
               ))}
             </div>
@@ -78,7 +81,7 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
                       : 'bg-white text-gray-600 hover:bg-gray-100 border'
                   )}
                 >
-                  {period.label}
+                  {t(`collaboration.${period.labelKey}`)}
                 </Link>
               ))}
             </div>
@@ -92,13 +95,13 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
           {/* Footer note */}
           <div className="mt-6 text-center text-sm text-muted-foreground">
             <p>
-              Earn XP by contributing species, reviewing submissions, and uploading photos.
+              {t('collaboration.earnXpHint')}
             </p>
             <Link
               href="/contributions/new"
               className="inline-block mt-2 text-green-600 hover:text-green-700 font-medium"
             >
-              Start contributing
+              {t('collaboration.startContributing')}
             </Link>
           </div>
         </div>
