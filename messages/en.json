@@ -461,6 +461,18 @@
     "underRevisionTitle": "This species is under revision",
     "underRevisionMessage": "A revision request is currently being reviewed. You can request a new revision after this review is complete."
   },
+  "species": {
+    "discussion": {
+      "title": "Forum Discussion",
+      "comingSoon": "Discussion coming soon",
+      "post": "post",
+      "posts": "posts",
+      "joinDiscussion": "Join the Discussion",
+      "errorLoading": "Failed to load discussion",
+      "noPosts": "No posts yet. Be the first to start the conversation!",
+      "andMorePosts": "and {count} more posts..."
+    }
+  },
   "becomeReviewer": {
     "title": "Become a Reviewer",
     "description": "Help build our plant database by reviewing species submissions from the community.",

@@ -461,6 +461,18 @@
     "underRevisionTitle": "Esta espécie está em revisão",
     "underRevisionMessage": "Uma solicitação de revisão está sendo analisada. Você pode solicitar uma nova revisão após a conclusão desta análise."
   },
+  "species": {
+    "discussion": {
+      "title": "Discussão do Fórum",
+      "comingSoon": "Discussão em breve",
+      "post": "post",
+      "posts": "posts",
+      "joinDiscussion": "Participar da Discussão",
+      "errorLoading": "Erro ao carregar discussão",
+      "noPosts": "Ainda não há posts. Seja o primeiro a iniciar a conversa!",
+      "andMorePosts": "e mais {count} posts..."
+    }
+  },
   "becomeReviewer": {
     "title": "Seja um Revisor",
     "description": "Ajude a construir nosso banco de dados de plantas revisando contribuições da comunidade.",

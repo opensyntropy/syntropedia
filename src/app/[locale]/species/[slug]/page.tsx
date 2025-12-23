@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
@@ -26,11 +27,70 @@ import { getSession } from '@/lib/auth/server'
 import { RequestRevisionButton } from '@/components/species/RequestRevisionButton'
 import { SubmitPhotoButton } from '@/components/species/SubmitPhotoButton'
 import { ImageGallery } from '@/components/species/ImageGallery'
+import { DiscourseDiscussion } from '@/components/species/DiscourseDiscussion'
+
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+// Generate metadata with oEmbed discovery for rich embeds
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; locale: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+
+  const species = await prisma.species.findUnique({
+    where: { slug },
+    select: {
+      scientificName: true,
+      commonNames: true,
+      photos: {
+        where: { primary: true },
+        take: 1,
+        select: { url: true },
+      },
+    },
+  })
+
+  if (!species) {
+    return { title: 'Species Not Found' }
+  }
+
+  const title = species.commonNames[0]
+    ? `${species.scientificName} (${species.commonNames[0]})`
+    : species.scientificName
+  const photoUrl = species.photos[0]?.url || `${SITE_URL}/images/species-placeholder.png`
+  const speciesUrl = `${SITE_URL}/species/${slug}`
+  const oembedUrl = `${SITE_URL}/api/oembed?url=${encodeURIComponent(speciesUrl)}`
+
+  return {
+    title,
+    description: `Learn about ${species.scientificName} - ${species.commonNames.join(', ')}`,
+    openGraph: {
+      title,
+      description: `Learn about ${species.scientificName} on Syntropedia`,
+      images: [photoUrl],
+      url: speciesUrl,
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      images: [photoUrl],
+    },
+    alternates: {
+      types: {
+        'application/json+oembed': oembedUrl,
+      },
+    },
+  }
+}
 
 // Extended type to include status for revision button check
 interface SpeciesDetailWithStatus extends SpeciesDetail {
   status: string
   isUnderRevision: boolean
+  discourseTopicUrl: string | null
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1248,7 +1308,8 @@ async function getSpeciesFromDb(slug: string): Promise<SpeciesDetailWithStatus |
     imageUrl,
     photos: photos.length > 0 ? photos : undefined,
     status: dbSpecies.status,
-    isUnderRevision: dbSpecies.status === 'IN_REVIEW' && !!dbSpecies.revisionRequestedById
+    isUnderRevision: dbSpecies.status === 'IN_REVIEW' && !!dbSpecies.revisionRequestedById,
+    discourseTopicUrl: dbSpecies.discourseTopicUrl
   }
 }
 
@@ -1772,6 +1833,14 @@ export default async function SpeciesDetailPage({
               </Card>
             )}
           </div>
+        </div>
+
+        {/* Forum Discussion */}
+        <div className="mt-8">
+          <DiscourseDiscussion
+            topicUrl={species.discourseTopicUrl}
+            speciesName={species.scientificName}
+          />
         </div>
       </div>
     </div>

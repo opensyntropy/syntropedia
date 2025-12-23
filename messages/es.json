@@ -327,6 +327,18 @@
     "underRevisionTitle": "Esta especie está en revisión",
     "underRevisionMessage": "Se está revisando una solicitud de revisión. Puede solicitar una nueva revisión después de que se complete esta revisión."
   },
+  "species": {
+    "discussion": {
+      "title": "Discusión del Foro",
+      "comingSoon": "Discusión próximamente",
+      "post": "publicación",
+      "posts": "publicaciones",
+      "joinDiscussion": "Unirse a la Discusión",
+      "errorLoading": "Error al cargar la discusión",
+      "noPosts": "Aún no hay publicaciones. ¡Sé el primero en iniciar la conversación!",
+      "andMorePosts": "y {count} publicaciones más..."
+    }
+  },
   "contributions": {
     "title": "Mis Contribuciones",
     "allContributions": "Todas las contribuciones de especies",

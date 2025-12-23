@@ -4,6 +4,7 @@ import { logActivity } from './activity'
 import { sendSubmissionNotification } from './email'
 import { SPECIES_EDITABLE_FIELDS, type SpeciesFormData } from '@/lib/validations/species'
 import { awardXP, checkBadges } from './gamification'
+import { createSpeciesDiscourseTopic } from './discourse'
 
 // Transform form data arrays to Prisma-compatible types
 function transformFormData(data: Partial<SpeciesFormData>) {
@@ -150,6 +151,32 @@ export async function submitForReview(speciesId: string, userId: string) {
   // Award XP for submission
   await awardXP(userId, 'SPECIES_SUBMITTED')
   await checkBadges(userId)
+
+  // Create Discourse topic for discussion (fire-and-forget, don't block submission)
+  // Only create topic if species doesn't already have one
+  if (!species.discourseTopicUrl) {
+    createSpeciesDiscourseTopic({
+      id: species.id,
+      slug: species.slug,
+      scientificName: species.scientificName,
+      commonNames: species.commonNames,
+      stratum: species.stratum,
+      successionalStage: species.successionalStage,
+      growthRate: species.growthRate,
+      heightMeters: species.heightMeters ? Number(species.heightMeters) : null,
+      uses: species.uses,
+    }).then(async (result) => {
+      if (result) {
+        // Update species with Discourse topic URL
+        await prisma.species.update({
+          where: { id: speciesId },
+          data: { discourseTopicUrl: result.topicUrl },
+        })
+      }
+    }).catch((error) => {
+      console.error('[Discourse] Failed to create topic for species:', speciesId, error)
+    })
+  }
 
   // Notify reviewers
   const reviewers = await prisma.user.findMany({

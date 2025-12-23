@@ -85,8 +85,9 @@ export const config = {
   // - /api (API routes)
   // - /auth (Auth routes - not locale-aware)
   // - /account (Account routes - not locale-aware)
+  // - /embed (Embed routes for oEmbed - not locale-aware)
   // - /_next (Next.js internals)
   // - /_static (inside /public)
   // - all root files inside /public (e.g. /favicon.ico)
-  matcher: ['/((?!api|auth|account|_next|_static|favicon.ico|.*\\..*).*)'],
+  matcher: ['/((?!api|auth|account|embed|_next|_static|favicon.ico|.*\\..*).*)'],
 }
