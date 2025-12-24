@@ -1423,30 +1423,30 @@ export default async function SpeciesDetailPage({
 
                 {/* Quick Badges */}
                 <div className="mb-6 flex flex-wrap gap-2">
-                  <Badge className="bg-green-100 text-green-700">
+                  <Badge className="badge-gradient">
                     {tStratum(species.stratum)}
                   </Badge>
-                  <Badge className="bg-blue-100 text-blue-700">
+                  <Badge className="badge-gradient">
                     {tStage(species.successionalStage)}
                   </Badge>
                   {species.lifeCycle && (
-                    <Badge className="bg-purple-100 text-purple-700">
+                    <Badge className="badge-gradient">
                       {tLifeCycle(species.lifeCycle)}
                     </Badge>
                   )}
                   {species.nitrogenFixer && (
-                    <Badge className="bg-emerald-100 text-emerald-700">
+                    <Badge className="badge-gradient">
                       <FlaskConical className="mr-1 h-3 w-3" />
                       {t('nitrogenFixer')}
                     </Badge>
                   )}
                   {species.serviceSpecies && (
-                    <Badge className="bg-cyan-100 text-cyan-700">
+                    <Badge className="badge-gradient">
                       {tCatalog('service')}
                     </Badge>
                   )}
                   {species.edibleFruit && (
-                    <Badge className="bg-rose-100 text-rose-700">
+                    <Badge className="badge-gradient">
                       <Apple className="mr-1 h-3 w-3" />
                       {tCatalog('edibleFruit')}
                     </Badge>
@@ -1597,7 +1597,7 @@ export default async function SpeciesDetailPage({
                 <div className="flex border-b pb-3">
                   <dt className="w-1/3 text-sm font-medium text-gray-600">{t('stratum')}</dt>
                   <dd className="w-2/3">
-                    <Badge className="bg-green-100 text-green-700">
+                    <Badge className="badge-gradient">
                       {tStratum(species.stratum)}
                     </Badge>
                   </dd>
@@ -1605,7 +1605,7 @@ export default async function SpeciesDetailPage({
                 <div className="flex border-b pb-3">
                   <dt className="w-1/3 text-sm font-medium text-gray-600">{t('successionalStage')}</dt>
                   <dd className="w-2/3">
-                    <Badge className="bg-blue-100 text-blue-700">
+                    <Badge className="badge-gradient">
                       {tStage(species.successionalStage)}
                     </Badge>
                   </dd>
@@ -1614,7 +1614,7 @@ export default async function SpeciesDetailPage({
                   <div className="flex border-b pb-3">
                     <dt className="w-1/3 text-sm font-medium text-gray-600">{t('growthRate')}</dt>
                     <dd className="w-2/3">
-                      <Badge className="bg-orange-100 text-orange-700">
+                      <Badge className="badge-gradient">
                         {tGrowth(species.growthRate)}
                       </Badge>
                     </dd>
@@ -1624,7 +1624,7 @@ export default async function SpeciesDetailPage({
                   <div className="flex border-b pb-3">
                     <dt className="w-1/3 text-sm font-medium text-gray-600">{t('biomassProduction')}</dt>
                     <dd className="w-2/3">
-                      <Badge className="bg-lime-100 text-lime-700">
+                      <Badge className="badge-gradient">
                         {tBiomass(species.biomassProduction)}
                       </Badge>
                     </dd>
@@ -1634,7 +1634,7 @@ export default async function SpeciesDetailPage({
                   <div className="flex border-b pb-3">
                     <dt className="w-1/3 text-sm font-medium text-gray-600">{t('pruningSprout')}</dt>
                     <dd className="w-2/3">
-                      <Badge className="bg-yellow-100 text-yellow-700">
+                      <Badge className="badge-gradient">
                         {tPruningSprout(species.pruningSprout)}
                       </Badge>
                     </dd>
@@ -1644,7 +1644,7 @@ export default async function SpeciesDetailPage({
                   <div className="flex border-b pb-3">
                     <dt className="w-1/3 text-sm font-medium text-gray-600">{t('seedlingShade')}</dt>
                     <dd className="w-2/3">
-                      <Badge className="bg-indigo-100 text-indigo-700">
+                      <Badge className="badge-gradient">
                         {tSeedlingShade(species.seedlingShade)}
                       </Badge>
                     </dd>
@@ -1694,7 +1694,7 @@ export default async function SpeciesDetailPage({
                   <div className="flex border-b pb-3">
                     <dt className="w-1/3 text-sm font-medium text-gray-600">{t('canopyShape')}</dt>
                     <dd className="w-2/3">
-                      <Badge className="bg-teal-100 text-teal-700">
+                      <Badge className="badge-gradient">
                         {tCanopy(species.canopyShape)}
                       </Badge>
                     </dd>
@@ -1704,7 +1704,7 @@ export default async function SpeciesDetailPage({
                   <div className="flex border-b pb-3">
                     <dt className="w-1/3 text-sm font-medium text-gray-600">{t('rootSystem')}</dt>
                     <dd className="w-2/3">
-                      <Badge className="bg-amber-100 text-amber-700">
+                      <Badge className="badge-gradient">
                         {tRoot(species.rootSystem)}
                       </Badge>
                     </dd>
@@ -1714,7 +1714,7 @@ export default async function SpeciesDetailPage({
                   <div className="flex border-b pb-3">
                     <dt className="w-1/3 text-sm font-medium text-gray-600">{t('foliageType')}</dt>
                     <dd className="w-2/3">
-                      <Badge className="bg-green-100 text-green-700">
+                      <Badge className="badge-gradient">
                         {tFoliage(species.foliageType)}
                       </Badge>
                     </dd>
@@ -1760,7 +1760,7 @@ export default async function SpeciesDetailPage({
                   {species.globalBiome && (
                     <div>
                       <p className="mb-2 text-xs font-medium text-gray-600">{t('globalBiome')}</p>
-                      <Badge className="bg-sky-100 text-sky-700">
+                      <Badge className="badge-gradient">
                         {tBiome(species.globalBiome)}
                       </Badge>
                     </div>
@@ -1770,7 +1770,7 @@ export default async function SpeciesDetailPage({
                       <p className="mb-2 text-xs font-medium text-gray-600">{t('regionalBiomes')}</p>
                       <div className="flex flex-wrap gap-2">
                         {species.regionalBiome.map((biome) => (
-                          <Badge key={biome} className="bg-emerald-100 text-emerald-700">
+                          <Badge key={biome} className="badge-gradient">
                             {tBiome(biome)}
                           </Badge>
                         ))}
@@ -1790,7 +1790,7 @@ export default async function SpeciesDetailPage({
                 </h2>
                 <div className="flex flex-wrap gap-2">
                   {species.uses.map((use) => (
-                    <Badge key={use} className="bg-violet-100 text-violet-700">
+                    <Badge key={use} className="badge-gradient">
                       {tUse(use)}
                     </Badge>
                   ))}
@@ -1809,7 +1809,7 @@ export default async function SpeciesDetailPage({
                   {species.lifeCycle && (
                     <div>
                       <p className="mb-1 text-xs font-medium text-gray-600">{t('type')}</p>
-                      <Badge className="bg-purple-100 text-purple-700">
+                      <Badge className="badge-gradient">
                         {tLifeCycle(species.lifeCycle)}
                       </Badge>
                     </div>
@@ -1849,7 +1849,7 @@ export default async function SpeciesDetailPage({
                   <ul className="space-y-2 mb-4">
                     {species.propagationMethods.map((method, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                        <Sprout className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+                        <Sprout className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary-500" />
                         {method}
                       </li>
                     ))}
@@ -1882,8 +1882,8 @@ export default async function SpeciesDetailPage({
                   {/* Published */}
                   {species.publishedAt && (
                     <div className="flex items-start gap-3 pb-3 border-b border-gray-100">
-                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <Sprout className="h-4 w-4 text-green-600" />
+                      <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+                        <Sprout className="h-4 w-4 text-primary-600" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">{t('published')}</p>
@@ -1899,7 +1899,7 @@ export default async function SpeciesDetailPage({
                   {/* Reviewers */}
                   {species.reviewers.map((reviewer) => (
                     <div key={reviewer.id} className="flex items-start gap-3 pb-3 border-b border-gray-100">
-                      <div className="flex-shrink-0">
+                      <Link href={`/contributors/${reviewer.id}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
                         {reviewer.avatar ? (
                           <img
                             src={reviewer.avatar}
@@ -1913,10 +1913,12 @@ export default async function SpeciesDetailPage({
                             </span>
                           </div>
                         )}
-                      </div>
+                      </Link>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-gray-900">
-                          <span className="font-medium">{reviewer.name || t('anonymous')}</span>
+                          <Link href={`/contributors/${reviewer.id}`} className="font-medium hover:text-primary-600 transition-colors">
+                            {reviewer.name || t('anonymous')}
+                          </Link>
                           <span className="text-gray-500"> {t('approved')}</span>
                         </p>
                         <p className="text-xs text-gray-500">
@@ -1931,7 +1933,7 @@ export default async function SpeciesDetailPage({
                   {/* Creator */}
                   {species.createdBy && (
                     <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0">
+                      <Link href={`/contributors/${species.createdBy.id}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
                         {species.createdBy.avatar ? (
                           <img
                             src={species.createdBy.avatar}
@@ -1939,16 +1941,18 @@ export default async function SpeciesDetailPage({
                             className="w-8 h-8 rounded-full"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                            <span className="text-green-700 text-xs font-medium">
+                          <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                            <span className="text-primary-700 text-xs font-medium">
                               {(species.createdBy.name || 'A')[0].toUpperCase()}
                             </span>
                           </div>
                         )}
-                      </div>
+                      </Link>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-gray-900">
-                          <span className="font-medium">{species.createdBy.name || t('anonymous')}</span>
+                          <Link href={`/contributors/${species.createdBy.id}`} className="font-medium hover:text-primary-600 transition-colors">
+                            {species.createdBy.name || t('anonymous')}
+                          </Link>
                           <span className="text-gray-500"> {t('created')}</span>
                         </p>
                         <p className="text-xs text-gray-500">

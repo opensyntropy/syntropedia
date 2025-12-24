@@ -30,10 +30,19 @@ export function useTranslations(namespace?: string) {
   const messages = useMessages()
 
   return (key: string) => {
-    if (namespace) {
-      return messages[namespace]?.[key] || key
+    // Support dot notation for nested keys (e.g., 'gamification.published')
+    const fullKey = namespace ? `${namespace}.${key}` : key
+    const parts = fullKey.split('.')
+
+    let value: any = messages
+    for (const part of parts) {
+      value = value?.[part]
+      if (value === undefined) {
+        return fullKey // Return the key if not found
+      }
     }
-    return messages[key] || key
+
+    return value || fullKey
   }
 }
 

@@ -1,51 +1,93 @@
 import Link from 'next/link'
-import { Sprout } from 'lucide-react'
+import Image from 'next/image'
 
-export function Footer() {
+export interface FooterProps {
+  labels?: {
+    description?: string
+    project?: string
+    about?: string
+    catalog?: string
+    contribute?: string
+    community?: string
+    forum?: string
+    github?: string
+    discussions?: string
+    legal?: string
+    mitLicense?: string
+    ccLicense?: string
+    privacy?: string
+    copyright?: string
+  }
+}
+
+const defaultLabels = {
+  description: 'Open source encyclopedia of plant species for syntropic agriculture',
+  project: 'Project',
+  about: 'About',
+  catalog: 'Catalog',
+  contribute: 'Contribute',
+  community: 'Community',
+  forum: 'Forum',
+  github: 'GitHub',
+  discussions: 'Discussions',
+  legal: 'Legal',
+  mitLicense: 'MIT License',
+  ccLicense: 'CC BY-SA 4.0',
+  privacy: 'Privacy',
+  copyright: 'Made with love by the community',
+}
+
+export function Footer({ labels = {} }: FooterProps) {
+  const l = { ...defaultLabels, ...labels }
   return (
-    <footer className="border-t border-gray-200 bg-gray-900 py-12 text-gray-300 sm:py-16">
+    <footer className="border-t border-primary-600 bg-gradient-to-br from-primary-700 to-primary-900 py-12 text-primary-100 sm:py-16">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Logo and Description */}
         <div className="mb-10">
-          <div className="mb-4 flex items-center gap-2">
-            <Sprout className="h-5 w-5 text-primary-500" />
-            <span className="text-lg font-semibold text-white">Syntropedia</span>
+          <div className="mb-4">
+            <Image
+              src="/logo.svg"
+              alt="Syntropedia"
+              width={180}
+              height={40}
+              className="h-8 w-auto brightness-0 invert"
+            />
           </div>
-          <p className="max-w-md text-sm text-gray-400">
-            Sistema open-source para agricultura sintrópica e agrofloresta
+          <p className="max-w-md text-sm text-primary-200">
+            {l.description}
           </p>
         </div>
 
         {/* Links Grid */}
         <div className="mb-10 grid gap-8 sm:grid-cols-3">
-          {/* Projeto */}
+          {/* Project */}
           <div>
-            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-400">
-              Projeto
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-primary-300">
+              {l.project}
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/about" className="text-sm transition-colors hover:text-white hover:underline">
-                  Sobre
+                  {l.about}
                 </Link>
               </li>
               <li>
                 <Link href="/catalog" className="text-sm transition-colors hover:text-white hover:underline">
-                  Catálogo
+                  {l.catalog}
                 </Link>
               </li>
               <li>
-                <Link href="/sobre#contribuir" className="text-sm transition-colors hover:text-white hover:underline">
-                  Contribuir
+                <Link href="/about#contribute" className="text-sm transition-colors hover:text-white hover:underline">
+                  {l.contribute}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Comunidade */}
+          {/* Community */}
           <div>
-            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-400">
-              Comunidade
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-primary-300">
+              {l.community}
             </h3>
             <ul className="space-y-2">
               <li>
@@ -55,7 +97,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="text-sm transition-colors hover:text-white hover:underline"
                 >
-                  Fórum
+                  {l.forum}
                 </a>
               </li>
               <li>
@@ -65,7 +107,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="text-sm transition-colors hover:text-white hover:underline"
                 >
-                  GitHub
+                  {l.github}
                 </a>
               </li>
               <li>
@@ -75,7 +117,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="text-sm transition-colors hover:text-white hover:underline"
                 >
-                  Discussões
+                  {l.discussions}
                 </a>
               </li>
             </ul>
@@ -83,8 +125,8 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-400">
-              Legal
+            <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-primary-300">
+              {l.legal}
             </h3>
             <ul className="space-y-2">
               <li>
@@ -94,7 +136,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="text-sm transition-colors hover:text-white hover:underline"
                 >
-                  Licença MIT
+                  {l.mitLicense}
                 </a>
               </li>
               <li>
@@ -104,12 +146,12 @@ export function Footer() {
                   rel="noopener noreferrer"
                   className="text-sm transition-colors hover:text-white hover:underline"
                 >
-                  CC BY-SA 4.0
+                  {l.ccLicense}
                 </a>
               </li>
               <li>
-                <Link href="/privacidade" className="text-sm transition-colors hover:text-white hover:underline">
-                  Privacidade
+                <Link href="/privacy" className="text-sm transition-colors hover:text-white hover:underline">
+                  {l.privacy}
                 </Link>
               </li>
             </ul>
@@ -117,9 +159,9 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-gray-800 pt-8 text-center">
-          <p className="text-xs text-gray-500">
-            © {new Date().getFullYear()} OpenSyntropy • Feito com ❤️ pela comunidade
+        <div className="border-t border-primary-600 pt-8 text-center">
+          <p className="text-xs text-primary-300">
+            © {new Date().getFullYear()} OpenSyntropy • {l.copyright}
           </p>
         </div>
       </div>

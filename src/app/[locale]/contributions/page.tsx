@@ -69,6 +69,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
   }) : []
 
   const t = await getTranslations(locale, 'contributions')
+  const tFooter = await getTranslations(locale, 'footer')
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -357,7 +358,24 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
         )}
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

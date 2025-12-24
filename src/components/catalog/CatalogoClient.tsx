@@ -315,7 +315,7 @@ export function CatalogoClient({
               </div>
 
               {/* Contribute CTA */}
-              <div className="bg-gradient-to-br from-primary-50 to-emerald-50 border border-primary-200 rounded-lg p-6">
+              <div className="bg-gradient-to-br from-primary-50 to-syntropy-50 border border-primary-200 rounded-lg p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
                     <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

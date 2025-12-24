@@ -60,6 +60,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
   const tBiomass = await getTranslations(locale, 'biomassProduction')
   const tGlobalBiome = await getTranslations(locale, 'globalBiome')
   const tDetail = await getTranslations(locale, 'speciesDetail')
+  const tFooter = await getTranslations(locale, 'footer')
 
   const canEdit = canEditSubmission(session, submission)
   const canDelete = canDeleteSubmission(session, submission)
@@ -203,7 +204,24 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
           </div>
         </main>
 
-        <Footer />
+        <Footer
+          labels={{
+            description: tFooter('description'),
+            project: tFooter('project'),
+            about: tFooter('about'),
+            catalog: tFooter('catalog'),
+            contribute: tFooter('contribute'),
+            community: tFooter('community'),
+            forum: tFooter('forum'),
+            github: tFooter('github'),
+            discussions: tFooter('discussions'),
+            legal: tFooter('legal'),
+            mitLicense: tFooter('mitLicense'),
+            ccLicense: tFooter('ccLicense'),
+            privacy: tFooter('privacy'),
+            copyright: tFooter('copyright'),
+          }}
+        />
       </div>
     )
   }
@@ -621,7 +639,24 @@ export default async function SubmissionDetailPage({ params, searchParams }: Sub
         </div>
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

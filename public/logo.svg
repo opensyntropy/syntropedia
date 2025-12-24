@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 466 60" fill="none">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#E89830"/>
+      <stop offset="100%" style="stop-color:#4DB6AC"/>
+    </linearGradient>
+  </defs>
+  <text x="233" y="48" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="400" fill="url(#logoGradient)">Syntropedia</text>
+</svg>

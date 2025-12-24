@@ -4,6 +4,7 @@ import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useRef, useMemo, useEffect, startTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { debounce } from '@/lib/debounce'
@@ -183,10 +184,17 @@ export function Hero({ locale, translations, searchTranslations }: HeroProps) {
   return (
     <section className="relative bg-gradient-to-b from-primary-50/30 to-white py-20 sm:py-32">
       <div className="container mx-auto px-6 text-center lg:px-12">
-        {/* Title */}
-        <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-          {translations.title}
-        </h1>
+        {/* Logo */}
+        <div className="mb-6 flex items-center justify-center">
+          <Image
+            src="/logo.svg"
+            alt="Syntropedia"
+            width={466}
+            height={60}
+            className="mx-auto h-12 w-auto sm:h-16 lg:h-20"
+            priority
+          />
+        </div>
 
         {/* Subtitle */}
         <p className="mx-auto mb-12 max-w-2xl text-base text-gray-600 sm:text-lg lg:text-xl">

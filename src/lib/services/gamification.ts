@@ -1,18 +1,19 @@
 import prisma from '@/lib/prisma'
 import { BadgeCategory, UserRole } from '@prisma/client'
 
-// Level progression thresholds (total XP required for each level)
+// Level progression thresholds (total XP/Abundance required for each level)
+// Titles follow successional stages from syntropic agriculture
 export const LEVEL_THRESHOLDS = [
-  { level: 1, xpRequired: 0, title: 'Seedling' },
-  { level: 2, xpRequired: 100, title: 'Sprout' },
-  { level: 3, xpRequired: 350, title: 'Sapling' },
-  { level: 4, xpRequired: 850, title: 'Green Thumb' },
-  { level: 5, xpRequired: 1600, title: 'Cultivator' },
-  { level: 6, xpRequired: 2600, title: 'Gardener' },
-  { level: 7, xpRequired: 4100, title: 'Horticulturist' },
-  { level: 8, xpRequired: 6100, title: 'Botanist' },
-  { level: 9, xpRequired: 9100, title: 'Forest Keeper' },
-  { level: 10, xpRequired: 14100, title: 'Master Syntropist' },
+  { level: 1, xpRequired: 0, title: 'Pioneer Seed' },
+  { level: 2, xpRequired: 100, title: 'Pioneer Sprout' },
+  { level: 3, xpRequired: 350, title: 'Early Secondary' },
+  { level: 4, xpRequired: 850, title: 'Secondary Growth' },
+  { level: 5, xpRequired: 1600, title: 'Mid Secondary' },
+  { level: 6, xpRequired: 2600, title: 'Late Secondary' },
+  { level: 7, xpRequired: 4100, title: 'Pre-Climax' },
+  { level: 8, xpRequired: 6100, title: 'Climax Pioneer' },
+  { level: 9, xpRequired: 9100, title: 'Climax Builder' },
+  { level: 10, xpRequired: 14100, title: 'Climax Master' },
 ] as const
 
 // XP rewards for various actions
@@ -83,7 +84,7 @@ export function getLevelForXP(xp: number): { level: number; title: string } {
       }
     }
   }
-  return { level: 1, title: 'Seedling' }
+  return { level: 1, title: 'Pioneer Seed' }
 }
 
 /**
@@ -369,7 +370,7 @@ export async function getUserGamificationProfile(userId: string) {
     gamification: {
       xp: user.xp,
       level: user.level,
-      title: user.title ?? 'Seedling',
+      title: user.title ?? 'Pioneer Seed',
       xpProgress,
     },
     stats: {
@@ -428,7 +429,7 @@ export async function getLeaderboard(
         name: user?.name,
         avatar: user?.avatar,
         level: user?.level ?? 1,
-        title: user?.title ?? 'Seedling',
+        title: user?.title ?? 'Pioneer Seed',
         value: c._count,
         metric: 'species published',
       }
@@ -465,7 +466,7 @@ export async function getLeaderboard(
         name: user?.name,
         avatar: user?.avatar,
         level: user?.level ?? 1,
-        title: user?.title ?? 'Seedling',
+        title: user?.title ?? 'Pioneer Seed',
         value: r._count,
         metric: 'reviews',
       }
@@ -493,8 +494,8 @@ export async function getLeaderboard(
     name: user.name,
     avatar: user.avatar,
     level: user.level,
-    title: user.title ?? 'Seedling',
+    title: user.title ?? 'Pioneer Seed',
     value: user.xp,
-    metric: 'XP',
+    metric: 'Abundance',
   }))
 }

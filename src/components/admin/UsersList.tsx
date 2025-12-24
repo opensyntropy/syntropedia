@@ -276,7 +276,7 @@ export function UsersList({ users, total, page, totalPages, locale }: UsersListP
                     <p className="text-sm text-muted-foreground">{user.email}</p>
                     <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
                       <span>
-                        {t('level')} {user.level} • {user.xp} XP
+                        {t('level')} {user.level} • {user.xp} Abundance
                       </span>
                       <span>
                         {user._count.speciesCreated} {t('species')}

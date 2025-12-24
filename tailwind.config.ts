@@ -10,15 +10,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Syntropedia Green Palette
+        // Syntropedia Teal Palette (from logo gradient end) - Primary for buttons/tags
         primary: {
-          50: '#F0FDF4',
-          100: '#DCFCE7',
-          500: '#22C55E',
-          600: '#16A34A',
-          700: '#15803D',
+          50: '#E8F8F5',
+          100: '#D0F0EA',
+          200: '#A0E0D5',
+          300: '#70D0C0',
+          400: '#4DB6AC',
+          500: '#3DA89E',
+          600: '#308880',
+          700: '#256860',
+          800: '#1A4840',
+          900: '#102820',
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+        },
+        // Syntropedia Orange/Amber Palette (from logo gradient start)
+        syntropy: {
+          50: '#FFF8ED',
+          100: '#FFEDCC',
+          200: '#FFDB99',
+          300: '#FFC966',
+          400: '#F0A830',
+          500: '#E89830',
+          600: '#D08020',
+          700: '#A86818',
+          800: '#805010',
+          900: '#583808',
         },
         // shadcn/ui colors using CSS variables
         border: 'hsl(var(--border))',

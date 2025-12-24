@@ -109,6 +109,7 @@ export default async function AdminUsersPage({ params, searchParams }: AdminUser
   const { locale } = await params
   const sp = await searchParams
   const t = await getTranslations(locale, 'adminUsers')
+  const tFooter = await getTranslations(locale, 'footer')
 
   const { users, total, page, totalPages } = await getUsers({
     search: sp.search,
@@ -146,7 +147,24 @@ export default async function AdminUsersPage({ params, searchParams }: AdminUser
         />
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

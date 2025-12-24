@@ -83,8 +83,8 @@ export function LeaderboardTable({ entries, isLoading = false }: LeaderboardTabl
                 className="rounded-full"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <span className="text-green-600 font-medium">
+              <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+                <span className="text-primary-600 font-medium">
                   {entry.name?.charAt(0) || '?'}
                 </span>
               </div>
@@ -102,7 +102,7 @@ export function LeaderboardTable({ entries, isLoading = false }: LeaderboardTabl
 
           {/* Value */}
           <div className="text-right">
-            <div className="font-bold text-green-600">{entry.value.toLocaleString()}</div>
+            <div className="font-bold text-primary-500">{entry.value.toLocaleString()}</div>
             <div className="text-xs text-muted-foreground">{entry.metric}</div>
           </div>
         </Link>

@@ -21,13 +21,16 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
   const activePeriod = (sp.period as LeaderboardPeriod) || 'all_time'
 
   const t = await getTranslations(locale)
+  const tFooter = await getTranslations(locale, 'footer')
   const entries = await getLeaderboard(activeTab, activePeriod, 25)
 
-  const tabs: { id: LeaderboardTab; labelKey: string; icon: string }[] = [
-    { id: 'xp', labelKey: 'xpLeaders', icon: '⭐' },
-    { id: 'contributors', labelKey: 'topContributors', icon: '🌱' },
-    { id: 'reviewers', labelKey: 'topReviewers', icon: '🔍' },
+  const tabs: { id: LeaderboardTab; labelKey: string; descKey: string; icon: string }[] = [
+    { id: 'xp', labelKey: 'abundanceLeaders', descKey: 'abundanceLeadersDesc', icon: '⭐' },
+    { id: 'contributors', labelKey: 'topPlanters', descKey: 'topPlantersDesc', icon: '🌱' },
+    { id: 'reviewers', labelKey: 'successionGuides', descKey: 'successionGuidesDesc', icon: '🔍' },
   ]
+
+  const activeTabData = tabs.find(tab => tab.id === activeTab)
 
   const periods: { id: LeaderboardPeriod; labelKey: string }[] = [
     { id: 'all_time', labelKey: 'allTime' },
@@ -56,13 +59,13 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
                   key={tab.id}
                   href={`/leaderboard?tab=${tab.id}&period=${activePeriod}`}
                   className={cn(
-                    'flex-1 py-3 px-4 text-center text-sm font-medium transition-colors',
+                    'flex-1 py-3 px-2 sm:px-4 text-center text-xs sm:text-sm font-medium transition-colors whitespace-nowrap',
                     activeTab === tab.id
-                      ? 'border-b-2 border-green-500 text-green-600 bg-green-50/50'
+                      ? 'border-b-2 border-primary-500 text-primary-600 bg-primary-50/50'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   )}
                 >
-                  <span className="mr-1.5">{tab.icon}</span>
+                  <span className="mr-1">{tab.icon}</span>
                   {t(`collaboration.${tab.labelKey}`)}
                 </Link>
               ))}
@@ -77,7 +80,7 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
                   className={cn(
                     'px-4 py-1.5 text-sm rounded-full transition-colors',
                     activePeriod === period.id
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-primary-500 text-white'
                       : 'bg-white text-gray-600 hover:bg-gray-100 border'
                   )}
                 >
@@ -85,6 +88,13 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
                 </Link>
               ))}
             </div>
+
+            {/* Active Tab Description */}
+            {activeTabData && (
+              <div className="px-4 py-3 text-center text-sm text-muted-foreground border-t">
+                {t(`collaboration.${activeTabData.descKey}`)}
+              </div>
+            )}
           </div>
 
           {/* Leaderboard Table */}
@@ -95,11 +105,11 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
           {/* Footer note */}
           <div className="mt-6 text-center text-sm text-muted-foreground">
             <p>
-              {t('collaboration.earnXpHint')}
+              {t('collaboration.earnAbundanceHint')}
             </p>
             <Link
               href="/contributions/new"
-              className="inline-block mt-2 text-green-600 hover:text-green-700 font-medium"
+              className="inline-block mt-2 text-primary-600 hover:text-primary-700 font-medium"
             >
               {t('collaboration.startContributing')}
             </Link>
@@ -107,7 +117,24 @@ export default async function LeaderboardPage({ params, searchParams }: Leaderbo
         </div>
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

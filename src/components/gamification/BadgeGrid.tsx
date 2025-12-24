@@ -27,10 +27,10 @@ const sizeClasses = {
 }
 
 const categoryColors: Record<string, string> = {
-  CONTRIBUTOR: 'from-green-100 to-green-200 border-green-300',
-  REVIEWER: 'from-blue-100 to-blue-200 border-blue-300',
-  COMMUNITY: 'from-purple-100 to-purple-200 border-purple-300',
-  SPECIAL: 'from-amber-100 to-amber-200 border-amber-300',
+  CONTRIBUTOR: 'bg-primary-100 border-primary-200',
+  REVIEWER: 'bg-syntropy-100 border-syntropy-200',
+  COMMUNITY: 'bg-gray-100 border-gray-200',
+  SPECIAL: 'bg-amber-100 border-amber-200',
 }
 
 export function BadgeGrid({
@@ -60,7 +60,7 @@ export function BadgeGrid({
         >
           <div
             className={cn(
-              'flex items-center justify-center rounded-full bg-gradient-to-br border-2 shadow-sm transition-transform hover:scale-110 cursor-pointer',
+              'flex items-center justify-center rounded-full border-2 shadow-sm transition-transform hover:scale-110 cursor-pointer',
               sizeClasses[size],
               categoryColors[badge.category] || categoryColors.CONTRIBUTOR
             )}

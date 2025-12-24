@@ -22,6 +22,7 @@ export default async function AdminApplicationsPage({ params, searchParams }: Ad
   const { locale } = await params
   const { tab = 'applications', status } = await searchParams
   const t = await getTranslations(locale, 'admin')
+  const tFooter = await getTranslations(locale, 'footer')
 
   // Fetch data based on active tab
   const applicationsResult = await getApplications({
@@ -48,7 +49,24 @@ export default async function AdminApplicationsPage({ params, searchParams }: Ad
         />
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

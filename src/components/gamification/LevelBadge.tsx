@@ -10,16 +10,16 @@ interface LevelBadgeProps {
 }
 
 const levelColors: Record<number, string> = {
-  1: 'from-green-300 to-green-400',
-  2: 'from-green-400 to-green-500',
-  3: 'from-green-500 to-green-600',
-  4: 'from-emerald-400 to-emerald-500',
-  5: 'from-emerald-500 to-emerald-600',
-  6: 'from-teal-400 to-teal-500',
-  7: 'from-teal-500 to-cyan-500',
-  8: 'from-cyan-500 to-blue-500',
-  9: 'from-blue-500 to-indigo-500',
-  10: 'from-indigo-500 to-purple-500',
+  1: 'from-primary-300 to-primary-400',
+  2: 'from-primary-400 to-primary-500',
+  3: 'from-primary-500 to-primary-600',
+  4: 'from-primary-500 to-syntropy-400',
+  5: 'from-primary-400 to-syntropy-400',
+  6: 'from-syntropy-300 to-syntropy-400',
+  7: 'from-syntropy-400 to-syntropy-500',
+  8: 'from-syntropy-500 to-syntropy-600',
+  9: 'from-syntropy-600 to-syntropy-700',
+  10: 'from-syntropy-700 to-syntropy-800',
 }
 
 const sizeClasses = {

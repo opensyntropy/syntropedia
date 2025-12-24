@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useTranslations } from '@/lib/IntlProvider'
 
 interface XPProgressBarProps {
   currentXP: number
@@ -27,6 +28,7 @@ export function XPProgressBar({
   showLabels = true,
   size = 'md',
 }: XPProgressBarProps) {
+  const t = useTranslations()
   const isMaxLevel = level >= 10
   const xpInLevel = currentXP - currentLevelXP
   const xpNeeded = nextLevelXP - currentLevelXP
@@ -35,12 +37,12 @@ export function XPProgressBar({
     <div className="w-full">
       {showLabels && (
         <div className="flex justify-between text-xs text-muted-foreground mb-1">
-          <span>{currentXP.toLocaleString()} XP</span>
+          <span>{currentXP.toLocaleString()} {t('gamification.abundance')}</span>
           {isMaxLevel ? (
-            <span>Max Level</span>
+            <span>{t('gamification.maxLevel')}</span>
           ) : (
             <span>
-              {xpInLevel.toLocaleString()} / {xpNeeded.toLocaleString()} to Level {level + 1}
+              {xpInLevel.toLocaleString()} / {xpNeeded.toLocaleString()} {t('gamification.toLevel')} {level + 1}
             </span>
           )}
         </div>
@@ -48,8 +50,8 @@ export function XPProgressBar({
       <div className={cn('w-full bg-gray-200 rounded-full overflow-hidden', sizeClasses[size])}>
         <div
           className={cn(
-            'h-full bg-gradient-to-r from-green-400 to-green-600 transition-all duration-500 ease-out rounded-full',
-            isMaxLevel && 'from-indigo-500 to-purple-500'
+            'h-full bg-gradient-to-r from-primary-400 to-syntropy-400 transition-all duration-500 ease-out rounded-full',
+            isMaxLevel && 'from-syntropy-500 to-syntropy-700'
           )}
           style={{ width: `${Math.min(progress, 100)}%` }}
         />

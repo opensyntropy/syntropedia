@@ -32,7 +32,7 @@ export function SubmitPhotoButton({
     if (isLoggedIn) {
       setIsModalOpen(true)
     } else {
-      router.push('/contribute')
+      router.push('/participate')
     }
   }
 
@@ -42,7 +42,7 @@ export function SubmitPhotoButton({
         variant="outline"
         size="sm"
         onClick={handleClick}
-        className="border-green-300 text-green-700 hover:bg-green-50"
+        className="border-primary-300 text-primary-700 hover:bg-primary-100 hover:text-primary-800"
       >
         <Camera className="h-4 w-4 mr-2" />
         {buttonLabels[locale] || buttonLabels.en}

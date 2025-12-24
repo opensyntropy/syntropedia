@@ -7,15 +7,19 @@ import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
+import { ArrowLeft } from 'lucide-react'
+import { getTranslations } from '@/lib/getTranslations'
 
 interface ContributorPageProps {
   params: Promise<{ id: string; locale: string }>
 }
 
 export default async function ContributorPage({ params }: ContributorPageProps) {
-  const { id } = await params
+  const { id, locale } = await params
 
   const profile = await getUserGamificationProfile(id)
+  const t = await getTranslations(locale)
+  const tFooter = await getTranslations(locale, 'footer')
 
   if (!profile) {
     notFound()
@@ -48,26 +52,21 @@ export default async function ContributorPage({ params }: ContributorPageProps) 
     take: 6,
   })
 
-  const activityLabels: Record<string, string> = {
-    SPECIES_CREATED: 'Created species',
-    SPECIES_UPDATED: 'Updated species',
-    SPECIES_SUBMITTED: 'Submitted for review',
-    SPECIES_RESUBMITTED: 'Resubmitted for review',
-    REVIEW_APPROVED: 'Approved',
-    REVIEW_REJECTED: 'Requested changes',
-    SPECIES_PUBLISHED: 'Published',
-    REVISION_REQUESTED: 'Requested revision',
-    REVIEWER_APPLICATION_SUBMITTED: 'Applied to become reviewer',
-    REVIEWER_APPLICATION_APPROVED: 'Became a reviewer',
-    REVIEWER_APPLICATION_REJECTED: 'Application declined',
-  }
-
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
 
       <main className="flex-1 bg-gray-50">
         <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 max-w-4xl">
+          {/* Back Button */}
+          <Link
+            href="/leaderboard"
+            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t('common.back')}
+          </Link>
+
           {/* Profile Card */}
           <UserStatsCard
             user={{
@@ -87,7 +86,7 @@ export default async function ContributorPage({ params }: ContributorPageProps) 
           {profile.badges.length > 0 && (
             <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
               <h2 className="text-lg font-semibold mb-4">
-                All Badges ({profile.badges.length})
+                {t('gamification.allBadges')} ({profile.badges.length})
               </h2>
               <BadgeGrid
                 badges={profile.badges.map(b => ({
@@ -105,14 +104,14 @@ export default async function ContributorPage({ params }: ContributorPageProps) 
             <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">
-                  Published Species ({profile.stats.speciesPublished})
+                  {t('gamification.publishedSpecies')} ({profile.stats.speciesPublished})
                 </h2>
                 {profile.stats.speciesPublished > 6 && (
                   <Link
                     href={`/catalog?contributor=${id}`}
-                    className="text-sm text-green-600 hover:text-green-700"
+                    className="text-sm text-primary-600 hover:text-primary-700"
                   >
-                    View all
+                    {t('gamification.viewAll')}
                   </Link>
                 )}
               </div>
@@ -132,12 +131,12 @@ export default async function ContributorPage({ params }: ContributorPageProps) 
                           className="object-cover w-full h-full group-hover:scale-105 transition-transform"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600 text-white text-xs">
-                          No Image
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-400 to-syntropy-400 text-white text-xs">
+                          {t('activity.noImage')}
                         </div>
                       )}
                     </div>
-                    <p className="mt-2 text-sm font-medium text-gray-900 group-hover:text-green-600 truncate">
+                    <p className="mt-2 text-sm font-medium text-gray-900 group-hover:text-primary-600 truncate">
                       {species.scientificName}
                     </p>
                   </Link>
@@ -149,7 +148,7 @@ export default async function ContributorPage({ params }: ContributorPageProps) 
           {/* Recent Activity */}
           {recentActivity.length > 0 && (
             <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+              <h2 className="text-lg font-semibold mb-4">{t('gamification.recentActivity')}</h2>
               <div className="space-y-3">
                 {recentActivity.map((activity) => (
                   <div
@@ -160,12 +159,12 @@ export default async function ContributorPage({ params }: ContributorPageProps) 
                       {formatDistanceToNow(activity.createdAt, { addSuffix: true })}
                     </span>
                     <span>
-                      {activityLabels[activity.action] || activity.action}
+                      {t(`activity.${activity.action}`) || activity.action}
                     </span>
                     {activity.species && (
                       <Link
                         href={`/species/${activity.species.slug}`}
-                        className="text-green-600 hover:text-green-700 font-medium truncate"
+                        className="text-primary-600 hover:text-primary-700 font-medium truncate"
                       >
                         {activity.species.scientificName}
                       </Link>
@@ -178,12 +177,29 @@ export default async function ContributorPage({ params }: ContributorPageProps) 
 
           {/* Member Since */}
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            Member since {formatDistanceToNow(profile.user.joinedAt, { addSuffix: true })}
+            {t('gamification.memberSince')} {formatDistanceToNow(profile.user.joinedAt, { addSuffix: true })}
           </div>
         </div>
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

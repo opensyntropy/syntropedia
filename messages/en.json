@@ -18,7 +18,8 @@
     "forum": "Community",
     "becomeReviewer": "Become Reviewer",
     "admin": "Admin",
-    "manageUsers": "Manage Users"
+    "manageUsers": "Manage Users",
+    "back": "Back"
   },
   "stratum": {
     "EMERGENT": "Emergent",
@@ -206,20 +207,96 @@
       "species": "Species Cataloged",
       "photos": "Photos Contributed",
       "contributors": "Active Contributors"
+    },
+    "recentlyAdded": {
+      "title": "Recently Added",
+      "description": "Latest species added to our encyclopedia",
+      "viewAll": "View all in catalog →"
+    },
+    "community": {
+      "title": "Community Highlights",
+      "description": "Meet the knowledge planters building the encyclopedia",
+      "speciesPublished": "{count} species",
+      "viewLeaderboard": "View collaboration page →"
+    },
+    "participate": {
+      "title": "Help Build the Encyclopedia",
+      "description": "Join our community of knowledge planters. Share your expertise about syntropic species and help create the most comprehensive open-source database for regenerative agriculture.",
+      "cta": "Start Contributing"
     }
   },
   "footer": {
     "description": "Open source encyclopedia of plant species for syntropic agriculture",
-    "quickLinks": "Quick Links",
+    "project": "Project",
+    "about": "About",
+    "catalog": "Catalog",
+    "contribute": "Contribute",
     "community": "Community",
-    "forum": "Community",
-    "discord": "Discord",
+    "forum": "Forum",
     "github": "GitHub",
+    "discussions": "Discussions",
     "legal": "Legal",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
-    "license": "License",
-    "rights": "All data is licensed under Creative Commons BY-SA 4.0"
+    "mitLicense": "MIT License",
+    "ccLicense": "CC BY-SA 4.0",
+    "privacy": "Privacy",
+    "copyright": "Made with love by the community"
+  },
+  "aboutPage": {
+    "title": "About Syntropedia",
+    "subtitle": "Building the world's most comprehensive open encyclopedia for syntropic agriculture and regenerative agroforestry.",
+    "mission": {
+      "title": "Our Mission",
+      "p1": "Syntropedia is an open-source project dedicated to documenting and sharing knowledge about plant species used in syntropic agriculture systems. We believe that free, accessible, and peer-reviewed knowledge accelerates the adoption of regenerative practices worldwide.",
+      "p2": "By creating a comprehensive database of species with detailed information about their roles in agroforestry systems, we aim to empower farmers, researchers, and practitioners to design more resilient and productive ecosystems.",
+      "openKnowledge": {
+        "title": "Open Knowledge",
+        "description": "All content is freely available under Creative Commons license, ensuring knowledge remains accessible to everyone."
+      },
+      "communityDriven": {
+        "title": "Community-Driven",
+        "description": "Built by practitioners, researchers, and enthusiasts who contribute their expertise and field observations."
+      },
+      "regenerativeFocus": {
+        "title": "Regenerative Focus",
+        "description": "Centered on syntropic agriculture principles that restore ecosystems while producing food abundance."
+      },
+      "globalImpact": {
+        "title": "Global Impact",
+        "description": "Supporting regenerative agriculture adoption across different climates, biomes, and cultural contexts."
+      }
+    },
+    "founder": {
+      "title": "About the Founder",
+      "name": "Michel Bottan",
+      "role": "Tech Entrepreneur turned Soil Developer",
+      "bio1": "A tech entrepreneur and software developer who traded code for soil. In 2016, a life-changing 3-month trainee-for-trainers program with Ernst Götsch sparked a complete transformation. I sold my company, bought degraded land, and became a regenerative farmer.",
+      "bio2": "This journey gave birth to Desperto - Regenerative Culture Centre, located in Caçapava, just 1h30 from São Paulo. What started as personal transformation became a school for others seeking the transition to a regenerative lifestyle. Syntropedia is an extension of this mission: making syntropic knowledge accessible to everyone, everywhere."
+    },
+    "oasis": {
+      "title": "The Oasis Ecosystem Vision",
+      "p1": "Syntropedia is part of a larger vision called the Oasis Ecosystem — an interconnected suite of open-source tools designed to support regenerative communities and ecological restoration projects.",
+      "p2": "Just as a natural oasis serves as a hub of life in challenging environments, the Oasis Ecosystem aims to be a digital hub that nurtures regenerative initiatives by providing the tools, knowledge, and community connections they need to thrive.",
+      "p3": "Our vision is to create a world where technology serves nature, where knowledge flows freely, and where communities are empowered to regenerate their local ecosystems while building resilient, abundant food systems.",
+      "includes": "The Oasis Ecosystem includes:",
+      "syntropedia": {
+        "name": "Syntropedia",
+        "description": "Open encyclopedia of species for syntropic agriculture and agroforestry systems."
+      },
+      "placenta": {
+        "name": "Placenta",
+        "description": "Community forum for knowledge sharing, discussions, and collaborative learning."
+      },
+      "moreToCome": {
+        "name": "More to come...",
+        "description": "Additional tools for project management, mapping, and community coordination."
+      }
+    },
+    "cta": {
+      "title": "Join the Movement",
+      "description": "Whether you're a farmer, researcher, developer, or simply passionate about regenerative agriculture, there's a place for you in our community.",
+      "startContributing": "Start Contributing",
+      "viewOnGitHub": "View on GitHub"
+    }
   },
   "canopyShape": {
     "CONICAL": "Conical",
@@ -384,7 +461,19 @@
     "resubmitted": "Resubmitted for review",
     "approved": "Approved",
     "rejected": "Rejected",
-    "published": "Published"
+    "published": "Published",
+    "SPECIES_CREATED": "Created species",
+    "SPECIES_UPDATED": "Updated species",
+    "SPECIES_SUBMITTED": "Submitted for review",
+    "SPECIES_RESUBMITTED": "Resubmitted for review",
+    "REVIEW_APPROVED": "Approved",
+    "REVIEW_REJECTED": "Requested changes",
+    "SPECIES_PUBLISHED": "Published",
+    "REVISION_REQUESTED": "Requested revision",
+    "REVIEWER_APPLICATION_SUBMITTED": "Applied to become reviewer",
+    "REVIEWER_APPLICATION_APPROVED": "Became a reviewer",
+    "REVIEWER_APPLICATION_REJECTED": "Application declined",
+    "noImage": "No Image"
   },
   "photoTags": {
     "title": "Photos",
@@ -571,7 +660,7 @@
     "sortNewest": "Newest First",
     "sortOldest": "Oldest First",
     "sortName": "Name (A-Z)",
-    "sortXP": "Highest XP",
+    "sortXP": "Highest Abundance",
     "showingResults": "Showing {count} of {total} users",
     "noUsers": "No users found.",
     "anonymous": "Anonymous",
@@ -608,13 +697,13 @@
     "leaderboard": "Collaboration",
     "contributors": "Contributors",
     "profile": "Profile",
-    "xpLeaders": "XP Leaders",
-    "topContributors": "Top Contributors",
-    "topReviewers": "Top Reviewers",
+    "abundanceLeaders": "Abundance Leaders",
+    "topPlanters": "Knowledge Planters",
+    "successionGuides": "Forest Guardians",
     "allTime": "All Time",
     "thisMonth": "This Month",
     "level": "Level",
-    "xp": "XP",
+    "abundance": "Abundance",
     "badges": "Badges",
     "noBadges": "No badges earned yet",
     "memberSince": "Member since",
@@ -622,96 +711,101 @@
     "contributed": "Contributed",
     "reviews": "Reviews",
     "photos": "Photos",
-    "earnXpHint": "Earn XP by contributing species, reviewing submissions, and uploading photos.",
+    "earnAbundanceHint": "Earn abundance by contributing species, reviewing submissions, and uploading photos.",
     "startContributing": "Start contributing",
     "viewAll": "View all",
+    "maxLevel": "Max Level",
+    "toLevel": "to Level",
     "recentActivity": "Recent Activity",
     "publishedSpecies": "Published Species",
     "allBadges": "All Badges",
-    "recognizing": "Recognizing our top contributors and reviewers"
+    "recognizing": "Recognizing our knowledge planters and forest guardians"
   },
   "collaboration": {
     "title": "Collaboration",
-    "subtitle": "Building knowledge together - recognizing our community contributors",
-    "xpLeaders": "XP Leaders",
-    "topContributors": "Top Contributors",
-    "topReviewers": "Top Reviewers",
+    "subtitle": "Building abundance together - recognizing our community contributors",
+    "abundanceLeaders": "Abundance Leaders",
+    "abundanceLeadersDesc": "Members with the most overall engagement and contributions",
+    "topPlanters": "Knowledge Planters",
+    "topPlantersDesc": "Members who planted the most species in the encyclopedia",
+    "successionGuides": "Forest Guardians",
+    "successionGuidesDesc": "Members who review and ensure quality of contributions",
     "allTime": "All Time",
     "thisMonth": "This Month",
-    "earnXpHint": "Earn XP by contributing species, reviewing submissions, and uploading photos.",
+    "earnAbundanceHint": "Earn abundance by contributing species, reviewing submissions, and uploading photos.",
     "startContributing": "Start contributing"
   },
   "titles": {
-    "1": "Seedling",
-    "2": "Sprout",
-    "3": "Sapling",
-    "4": "Green Thumb",
-    "5": "Cultivator",
-    "6": "Gardener",
-    "7": "Horticulturist",
-    "8": "Botanist",
-    "9": "Forest Keeper",
-    "10": "Master Syntropist"
+    "1": "Pioneer Seed",
+    "2": "Pioneer Sprout",
+    "3": "Early Secondary",
+    "4": "Secondary Growth",
+    "5": "Mid Secondary",
+    "6": "Late Secondary",
+    "7": "Pre-Climax",
+    "8": "Climax Pioneer",
+    "9": "Climax Builder",
+    "10": "Climax Master"
   },
   "badges": {
     "FIRST_STEPS": {
-      "name": "First Steps",
-      "description": "Submit your first species"
+      "name": "First Seed",
+      "description": "Plant your first species"
     },
     "PUBLISHED_AUTHOR": {
-      "name": "Published Author",
-      "description": "Get your first species published"
+      "name": "Germinated",
+      "description": "Your first species has germinated in the encyclopedia"
     },
     "PROLIFIC_CONTRIBUTOR": {
-      "name": "Prolific Contributor",
+      "name": "Abundant Planter",
       "description": "Have 10 species published"
     },
     "ENCYCLOPEDIA_BUILDER": {
-      "name": "Encyclopedia Builder",
+      "name": "Consortium Architect",
       "description": "Have 50 species published"
     },
     "PHOTOGRAPHER": {
-      "name": "Photographer",
-      "description": "Upload 10 photos"
+      "name": "Light Capturer",
+      "description": "Capture the light of 10 species"
     },
     "DETAIL_MASTER": {
-      "name": "Detail Master",
+      "name": "Complete Planting",
       "description": "Submit a species with all optional fields filled"
     },
     "FIRST_REVIEW": {
-      "name": "First Review",
+      "name": "First Pruning",
       "description": "Complete your first review"
     },
     "QUALITY_GUARDIAN": {
-      "name": "Quality Guardian",
+      "name": "Succession Guardian",
       "description": "Complete 10 reviews"
     },
     "SENIOR_REVIEWER": {
-      "name": "Senior Reviewer",
+      "name": "Master Pruner",
       "description": "Complete 50 reviews"
     },
     "MASTER_CURATOR": {
-      "name": "Master Curator",
+      "name": "Ecosystem Curator",
       "description": "Complete 100 reviews"
     },
     "SHARP_EYE": {
-      "name": "Sharp Eye",
+      "name": "Keen Observer",
       "description": "Maintain 90%+ approval accuracy"
     },
     "VERIFIED_REVIEWER": {
-      "name": "Verified Reviewer",
-      "description": "Become a verified reviewer"
+      "name": "Verified Guide",
+      "description": "Become a verified succession guide"
     },
     "EARLY_ADOPTER": {
-      "name": "Early Adopter",
-      "description": "Join during the early days"
+      "name": "Pioneer",
+      "description": "Join during the pioneer days"
     },
     "STREAK_7": {
-      "name": "Week Warrior",
+      "name": "Weekly Rhythm",
       "description": "Be active 7 days in a row"
     },
     "STREAK_30": {
-      "name": "Monthly Master",
+      "name": "Monthly Cycle",
       "description": "Be active 30 days in a row"
     }
   },
@@ -775,7 +869,20 @@
     "ecosystem": {
       "title": "Part of the OpenSyntropy Ecosystem",
       "description": "Syntropedia is one of the tools we're building to support the syntropic agriculture community worldwide.",
-      "createdBy": "Created by"
+      "createdBy": "Created by",
+      "tagline": "Open source tools for regenerative communities",
+      "youAreHere": "You are here",
+      "visitForum": "Visit forum",
+      "explore": "Explore",
+      "syntropedia": {
+        "description": "Open encyclopedia of species for syntropic agriculture and agroforestry systems."
+      },
+      "placenta": {
+        "description": "Community forum for knowledge sharing, discussions, and collaborative learning."
+      },
+      "oasis": {
+        "description": "Project management and coordination tools for regenerative communities."
+      }
     }
   }
 }

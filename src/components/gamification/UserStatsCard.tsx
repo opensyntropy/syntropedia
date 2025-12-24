@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { LevelBadge } from './LevelBadge'
 import { XPProgressBar } from './XPProgressBar'
 import { BadgeGrid } from './BadgeGrid'
+import { useTranslations } from '@/lib/IntlProvider'
 import Image from 'next/image'
 
 interface UserStats {
@@ -53,6 +54,8 @@ export function UserStatsCard({
   badges,
   compact = false,
 }: UserStatsCardProps) {
+  const t = useTranslations()
+
   if (compact) {
     return (
       <div className="flex items-center gap-3">
@@ -66,8 +69,8 @@ export function UserStatsCard({
               className="rounded-full"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-              <span className="text-green-600 font-medium">
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+              <span className="text-primary-600 font-medium">
                 {user.name?.charAt(0) || '?'}
               </span>
             </div>
@@ -99,8 +102,8 @@ export function UserStatsCard({
                 className="rounded-full"
               />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                <span className="text-green-600 font-bold text-2xl">
+              <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center">
+                <span className="text-primary-600 font-bold text-2xl">
                   {user.name?.charAt(0) || '?'}
                 </span>
               </div>
@@ -115,12 +118,12 @@ export function UserStatsCard({
             <div className="flex items-center gap-2 mt-1">
               {user.role === 'ADMIN' && (
                 <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">
-                  Admin
+                  {t('adminUsers.roleAdmin')}
                 </span>
               )}
               {user.role === 'REVIEWER' && (
                 <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
-                  Reviewer
+                  {t('adminUsers.roleReviewer')}
                 </span>
               )}
             </div>
@@ -141,27 +144,27 @@ export function UserStatsCard({
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{stats.speciesPublished}</div>
-            <div className="text-xs text-muted-foreground">Published</div>
+            <div className="text-2xl font-bold text-primary-500">{stats.speciesPublished}</div>
+            <div className="text-xs text-muted-foreground">{t('gamification.published')}</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{stats.speciesContributed}</div>
-            <div className="text-xs text-muted-foreground">Contributed</div>
+            <div className="text-2xl font-bold text-syntropy-500">{stats.speciesContributed}</div>
+            <div className="text-xs text-muted-foreground">{t('gamification.contributed')}</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-amber-600">{stats.reviewsGiven}</div>
-            <div className="text-xs text-muted-foreground">Reviews</div>
+            <div className="text-2xl font-bold text-primary-400">{stats.reviewsGiven}</div>
+            <div className="text-xs text-muted-foreground">{t('gamification.reviews')}</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">{stats.photosUploaded}</div>
-            <div className="text-xs text-muted-foreground">Photos</div>
+            <div className="text-2xl font-bold text-syntropy-400">{stats.photosUploaded}</div>
+            <div className="text-xs text-muted-foreground">{t('gamification.photos')}</div>
           </div>
         </div>
 
         {/* Badges */}
         {badges.length > 0 && (
           <div>
-            <h4 className="font-medium text-sm mb-3">Badges ({badges.length})</h4>
+            <h4 className="font-medium text-sm mb-3">{t('gamification.badges')} ({badges.length})</h4>
             <BadgeGrid badges={badges} showEarnedDate size="md" maxDisplay={8} />
           </div>
         )}

@@ -18,7 +18,8 @@
     "forum": "Comunidade",
     "becomeReviewer": "Seja Revisor",
     "admin": "Admin",
-    "manageUsers": "Gerenciar Usuários"
+    "manageUsers": "Gerenciar Usuários",
+    "back": "Voltar"
   },
   "stratum": {
     "EMERGENT": "Emergente",
@@ -206,20 +207,96 @@
       "species": "Espécies Catalogadas",
       "photos": "Fotos Contribuídas",
       "contributors": "Contribuidores Ativos"
+    },
+    "recentlyAdded": {
+      "title": "Adicionadas Recentemente",
+      "description": "Últimas espécies adicionadas à nossa enciclopédia",
+      "viewAll": "Ver todas no catálogo →"
+    },
+    "community": {
+      "title": "Destaques da Comunidade",
+      "description": "Conheça os plantadores de conhecimento construindo a enciclopédia",
+      "speciesPublished": "{count} espécies",
+      "viewLeaderboard": "Ver página de colaboração →"
+    },
+    "participate": {
+      "title": "Ajude a Construir a Enciclopédia",
+      "description": "Junte-se à nossa comunidade de plantadores de conhecimento. Compartilhe sua experiência sobre espécies sintrópicas e ajude a criar o banco de dados open-source mais completo para agricultura regenerativa.",
+      "cta": "Começar a Contribuir"
     }
   },
   "footer": {
     "description": "Enciclopédia open source de espécies vegetais para agricultura sintrópica",
-    "quickLinks": "Links Rápidos",
+    "project": "Projeto",
+    "about": "Sobre",
+    "catalog": "Catálogo",
+    "contribute": "Participar",
     "community": "Comunidade",
-    "forum": "Comunidade",
-    "discord": "Discord",
+    "forum": "Fórum",
     "github": "GitHub",
+    "discussions": "Discussões",
     "legal": "Legal",
-    "privacy": "Política de Privacidade",
-    "terms": "Termos de Serviço",
-    "license": "Licença",
-    "rights": "Todos os dados são licenciados sob Creative Commons BY-SA 4.0"
+    "mitLicense": "Licença MIT",
+    "ccLicense": "CC BY-SA 4.0",
+    "privacy": "Privacidade",
+    "copyright": "Feito com amor pela comunidade"
+  },
+  "aboutPage": {
+    "title": "Sobre a Syntropedia",
+    "subtitle": "Construindo a enciclopédia aberta mais completa do mundo para agricultura sintrópica e agrofloresta regenerativa.",
+    "mission": {
+      "title": "Nossa Missão",
+      "p1": "Syntropedia é um projeto open-source dedicado a documentar e compartilhar conhecimento sobre espécies vegetais usadas em sistemas de agricultura sintrópica. Acreditamos que conhecimento livre, acessível e revisado por pares acelera a adoção de práticas regenerativas em todo o mundo.",
+      "p2": "Ao criar um banco de dados abrangente de espécies com informações detalhadas sobre seus papéis em sistemas agroflorestais, nosso objetivo é capacitar agricultores, pesquisadores e praticantes a projetar ecossistemas mais resilientes e produtivos.",
+      "openKnowledge": {
+        "title": "Conhecimento Aberto",
+        "description": "Todo o conteúdo está disponível gratuitamente sob licença Creative Commons, garantindo que o conhecimento permaneça acessível a todos."
+      },
+      "communityDriven": {
+        "title": "Impulsionado pela Comunidade",
+        "description": "Construído por praticantes, pesquisadores e entusiastas que contribuem com sua expertise e observações de campo."
+      },
+      "regenerativeFocus": {
+        "title": "Foco Regenerativo",
+        "description": "Centrado nos princípios da agricultura sintrópica que restauram ecossistemas enquanto produzem abundância de alimentos."
+      },
+      "globalImpact": {
+        "title": "Impacto Global",
+        "description": "Apoiando a adoção da agricultura regenerativa em diferentes climas, biomas e contextos culturais."
+      }
+    },
+    "founder": {
+      "title": "Sobre o Fundador",
+      "name": "Michel Bottan",
+      "role": "Empreendedor Tech que virou Desenvolvedor de Solo",
+      "bio1": "Um empreendedor de tecnologia e desenvolvedor de software que trocou código por solo. Em 2016, uma transformadora formação de 3 meses como formador de formadores com Ernst Götsch despertou uma mudança completa. Vendi minha empresa, comprei uma terra degradada e me tornei agricultor regenerativo.",
+      "bio2": "Dessa jornada nasceu o Desperto - Centro de Cultura Regenerativa, localizado em Caçapava, a apenas 1h30 de São Paulo. O que começou como transformação pessoal se tornou uma escola para outros que buscam a transição para um estilo de vida regenerativo. Syntropedia é uma extensão dessa missão: tornar o conhecimento sintrópico acessível a todos, em todos os lugares."
+    },
+    "oasis": {
+      "title": "A Visão do Ecossistema Oasis",
+      "p1": "Syntropedia faz parte de uma visão maior chamada Ecossistema Oasis — um conjunto interconectado de ferramentas open-source projetadas para apoiar comunidades regenerativas e projetos de restauração ecológica.",
+      "p2": "Assim como um oásis natural serve como um centro de vida em ambientes desafiadores, o Ecossistema Oasis visa ser um hub digital que nutre iniciativas regenerativas fornecendo as ferramentas, conhecimento e conexões comunitárias de que precisam para prosperar.",
+      "p3": "Nossa visão é criar um mundo onde a tecnologia serve à natureza, onde o conhecimento flui livremente, e onde as comunidades são capacitadas a regenerar seus ecossistemas locais enquanto constroem sistemas alimentares resilientes e abundantes.",
+      "includes": "O Ecossistema Oasis inclui:",
+      "syntropedia": {
+        "name": "Syntropedia",
+        "description": "Enciclopédia aberta de espécies para agricultura sintrópica e sistemas agroflorestais."
+      },
+      "placenta": {
+        "name": "Placenta",
+        "description": "Fórum da comunidade para compartilhamento de conhecimento, discussões e aprendizado colaborativo."
+      },
+      "moreToCome": {
+        "name": "Mais por vir...",
+        "description": "Ferramentas adicionais para gestão de projetos, mapeamento e coordenação comunitária."
+      }
+    },
+    "cta": {
+      "title": "Junte-se ao Movimento",
+      "description": "Seja você agricultor, pesquisador, desenvolvedor ou simplesmente apaixonado por agricultura regenerativa, há um lugar para você em nossa comunidade.",
+      "startContributing": "Comece a Contribuir",
+      "viewOnGitHub": "Ver no GitHub"
+    }
   },
   "canopyShape": {
     "CONICAL": "Cônica",
@@ -384,7 +461,19 @@
     "resubmitted": "Reenviou para revisão",
     "approved": "Aprovou",
     "rejected": "Rejeitou",
-    "published": "Publicou"
+    "published": "Publicou",
+    "SPECIES_CREATED": "Criou espécie",
+    "SPECIES_UPDATED": "Atualizou espécie",
+    "SPECIES_SUBMITTED": "Enviou para revisão",
+    "SPECIES_RESUBMITTED": "Reenviou para revisão",
+    "REVIEW_APPROVED": "Aprovou",
+    "REVIEW_REJECTED": "Solicitou alterações",
+    "SPECIES_PUBLISHED": "Publicou",
+    "REVISION_REQUESTED": "Solicitou revisão",
+    "REVIEWER_APPLICATION_SUBMITTED": "Candidatou-se a revisor",
+    "REVIEWER_APPLICATION_APPROVED": "Tornou-se revisor",
+    "REVIEWER_APPLICATION_REJECTED": "Candidatura recusada",
+    "noImage": "Sem Imagem"
   },
   "photoTags": {
     "title": "Fotos",
@@ -571,7 +660,7 @@
     "sortNewest": "Mais Recentes",
     "sortOldest": "Mais Antigos",
     "sortName": "Nome (A-Z)",
-    "sortXP": "Maior XP",
+    "sortXP": "Maior Abundância",
     "showingResults": "Mostrando {count} de {total} usuários",
     "noUsers": "Nenhum usuário encontrado.",
     "anonymous": "Anônimo",
@@ -608,13 +697,13 @@
     "leaderboard": "Colaboração",
     "contributors": "Contribuidores",
     "profile": "Perfil",
-    "xpLeaders": "Líderes em XP",
-    "topContributors": "Top Contribuidores",
-    "topReviewers": "Top Revisores",
+    "abundanceLeaders": "Líderes em Abundância",
+    "topPlanters": "Plantadores de Conhecimento",
+    "successionGuides": "Guardiões da Floresta",
     "allTime": "Todos os Tempos",
     "thisMonth": "Este Mês",
     "level": "Nível",
-    "xp": "XP",
+    "abundance": "Abundância",
     "badges": "Conquistas",
     "noBadges": "Nenhuma conquista ainda",
     "memberSince": "Membro desde",
@@ -622,96 +711,101 @@
     "contributed": "Contribuídas",
     "reviews": "Revisões",
     "photos": "Fotos",
-    "earnXpHint": "Ganhe XP contribuindo espécies, revisando submissões e enviando fotos.",
+    "earnAbundanceHint": "Ganhe abundância contribuindo espécies, revisando submissões e enviando fotos.",
     "startContributing": "Comece a contribuir",
     "viewAll": "Ver todas",
+    "maxLevel": "Nível Máximo",
+    "toLevel": "para Nível",
     "recentActivity": "Atividade Recente",
     "publishedSpecies": "Espécies Publicadas",
     "allBadges": "Todas as Conquistas",
-    "recognizing": "Reconhecendo nossos maiores contribuidores e revisores"
+    "recognizing": "Reconhecendo nossos plantadores de conhecimento e guardiões da floresta"
   },
   "collaboration": {
     "title": "Colaboração",
-    "subtitle": "Construindo conhecimento juntos - reconhecendo nossos contribuidores",
-    "xpLeaders": "Líderes em XP",
-    "topContributors": "Top Contribuidores",
-    "topReviewers": "Top Revisores",
+    "subtitle": "Construindo abundância juntos - reconhecendo nossos contribuidores",
+    "abundanceLeaders": "Líderes em Abundância",
+    "abundanceLeadersDesc": "Membros com maior engajamento e contribuições gerais",
+    "topPlanters": "Plantadores de Conhecimento",
+    "topPlantersDesc": "Membros que plantaram mais espécies na enciclopédia",
+    "successionGuides": "Guardiões da Floresta",
+    "successionGuidesDesc": "Membros que revisam e garantem a qualidade das contribuições",
     "allTime": "Todos os Tempos",
     "thisMonth": "Este Mês",
-    "earnXpHint": "Ganhe XP contribuindo espécies, revisando submissões e enviando fotos.",
+    "earnAbundanceHint": "Ganhe abundância contribuindo espécies, revisando submissões e enviando fotos.",
     "startContributing": "Comece a contribuir"
   },
   "titles": {
-    "1": "Semente",
-    "2": "Broto",
-    "3": "Muda",
-    "4": "Mão Verde",
-    "5": "Cultivador",
-    "6": "Jardineiro",
-    "7": "Horticultor",
-    "8": "Botânico",
-    "9": "Guardião da Floresta",
-    "10": "Mestre Sintropista"
+    "1": "Semente Pioneira",
+    "2": "Broto Pioneiro",
+    "3": "Secundária Inicial",
+    "4": "Crescimento Secundário",
+    "5": "Secundária Média",
+    "6": "Secundária Tardia",
+    "7": "Pré-Clímax",
+    "8": "Pioneiro do Clímax",
+    "9": "Construtor do Clímax",
+    "10": "Mestre do Clímax"
   },
   "badges": {
     "FIRST_STEPS": {
-      "name": "Primeiros Passos",
-      "description": "Envie sua primeira espécie"
+      "name": "Primeira Semente",
+      "description": "Plante sua primeira espécie"
     },
     "PUBLISHED_AUTHOR": {
-      "name": "Autor Publicado",
-      "description": "Tenha sua primeira espécie publicada"
+      "name": "Germinado",
+      "description": "Sua primeira espécie germinou na enciclopédia"
     },
     "PROLIFIC_CONTRIBUTOR": {
-      "name": "Contribuidor Prolífico",
+      "name": "Plantador Abundante",
       "description": "Tenha 10 espécies publicadas"
     },
     "ENCYCLOPEDIA_BUILDER": {
-      "name": "Construtor de Enciclopédia",
+      "name": "Arquiteto do Consórcio",
       "description": "Tenha 50 espécies publicadas"
     },
     "PHOTOGRAPHER": {
-      "name": "Fotógrafo",
-      "description": "Envie 10 fotos"
+      "name": "Capturador de Luz",
+      "description": "Capture a luz de 10 espécies"
     },
     "DETAIL_MASTER": {
-      "name": "Mestre dos Detalhes",
+      "name": "Plantio Completo",
       "description": "Envie uma espécie com todos os campos opcionais preenchidos"
     },
     "FIRST_REVIEW": {
-      "name": "Primeira Revisão",
+      "name": "Primeira Poda",
       "description": "Complete sua primeira revisão"
     },
     "QUALITY_GUARDIAN": {
-      "name": "Guardião da Qualidade",
+      "name": "Guardião da Sucessão",
       "description": "Complete 10 revisões"
     },
     "SENIOR_REVIEWER": {
-      "name": "Revisor Sênior",
+      "name": "Podador Mestre",
       "description": "Complete 50 revisões"
     },
     "MASTER_CURATOR": {
-      "name": "Curador Mestre",
+      "name": "Curador do Ecossistema",
       "description": "Complete 100 revisões"
     },
     "SHARP_EYE": {
-      "name": "Olho Afiado",
+      "name": "Observador Atento",
       "description": "Mantenha 90%+ de precisão nas aprovações"
     },
     "VERIFIED_REVIEWER": {
-      "name": "Revisor Verificado",
-      "description": "Torne-se um revisor verificado"
+      "name": "Guia Verificado",
+      "description": "Torne-se um guia de sucessão verificado"
     },
     "EARLY_ADOPTER": {
       "name": "Pioneiro",
-      "description": "Junte-se nos primeiros dias"
+      "description": "Junte-se nos dias pioneiros"
     },
     "STREAK_7": {
-      "name": "Guerreiro Semanal",
+      "name": "Ritmo Semanal",
       "description": "Seja ativo por 7 dias seguidos"
     },
     "STREAK_30": {
-      "name": "Mestre Mensal",
+      "name": "Ciclo Mensal",
       "description": "Seja ativo por 30 dias seguidos"
     }
   },
@@ -775,7 +869,20 @@
     "ecosystem": {
       "title": "Parte do Ecossistema OpenSyntropy",
       "description": "Syntropedia é uma das ferramentas que estamos construindo para apoiar a comunidade de agricultura sintrópica em todo o mundo.",
-      "createdBy": "Criado por"
+      "createdBy": "Criado por",
+      "tagline": "Ferramentas open source para comunidades regenerativas",
+      "youAreHere": "Você está aqui",
+      "visitForum": "Visitar fórum",
+      "explore": "Explorar",
+      "syntropedia": {
+        "description": "Enciclopédia aberta de espécies para agricultura sintrópica e sistemas agroflorestais."
+      },
+      "placenta": {
+        "description": "Fórum da comunidade para compartilhamento de conhecimento, discussões e aprendizado colaborativo."
+      },
+      "oasis": {
+        "description": "Ferramentas de gestão de projetos e coordenação para comunidades regenerativas."
+      }
     }
   }
 }

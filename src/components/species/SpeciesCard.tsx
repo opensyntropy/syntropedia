@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 
 export interface SpeciesCardProps {
@@ -10,21 +9,6 @@ export interface SpeciesCardProps {
   stratum: string
   successionalStage: string
   imageUrl?: string
-}
-
-const stratumColors: Record<string, string> = {
-  EMERGENT: 'bg-green-100 text-green-700 hover:bg-green-200',
-  CANOPY: 'bg-green-100 text-green-700 hover:bg-green-200',
-  SUBCANOPY: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200',
-  UNDERSTORY: 'bg-lime-100 text-lime-700 hover:bg-lime-200',
-  GROUND_COVER: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200',
-}
-
-const successionalStageColors: Record<string, string> = {
-  PIONEER: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
-  EARLY_SECONDARY: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200',
-  LATE_SECONDARY: 'bg-purple-100 text-purple-700 hover:bg-purple-200',
-  CLIMAX: 'bg-violet-100 text-violet-700 hover:bg-violet-200',
 }
 
 const stratumLabels: Record<string, string> = {
@@ -81,18 +65,12 @@ export function SpeciesCard({
 
           {/* Badges */}
           <div className="flex flex-wrap gap-2">
-            <Badge
-              variant="secondary"
-              className={`rounded-full text-xs font-medium ${stratumColors[stratum] || 'bg-gray-100 text-gray-700'}`}
-            >
+            <span className="badge-gradient-hover">
               {stratumLabels[stratum] || stratum}
-            </Badge>
-            <Badge
-              variant="secondary"
-              className={`rounded-full text-xs font-medium ${successionalStageColors[successionalStage] || 'bg-gray-100 text-gray-700'}`}
-            >
+            </span>
+            <span className="badge-gradient-hover">
               {successionalStageLabels[successionalStage] || successionalStage}
-            </Badge>
+            </span>
           </div>
         </CardContent>
       </Card>

@@ -18,7 +18,7 @@ export function ImageGallery({ photos, alt }: ImageGalleryProps) {
 
   if (!photos || photos.length === 0) {
     return (
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-gradient-to-br from-primary-400 to-syntropy-400 flex items-center justify-center">
         <span className="text-white text-lg">No Image</span>
       </div>
     )
@@ -62,7 +62,7 @@ export function ImageGallery({ photos, alt }: ImageGalleryProps) {
               onClick={() => setSelectedIndex(index)}
               className={`group relative flex-shrink-0 w-16 h-16 rounded-md overflow-hidden transition-all ${
                 selectedIndex === index
-                  ? 'ring-2 ring-green-500 ring-offset-2'
+                  ? 'ring-2 ring-primary-500 ring-offset-2'
                   : 'opacity-70 hover:opacity-100'
               }`}
               title={photo.tags?.join(', ') || ''}

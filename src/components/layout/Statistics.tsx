@@ -27,12 +27,18 @@ export interface StatisticsProps {
   speciesCount?: number
   photosCount?: number
   contributorsCount?: number
+  labels: {
+    species: string
+    photos: string
+    contributors: string
+  }
 }
 
 export function Statistics({
   speciesCount = 0,
   photosCount = 0,
   contributorsCount = 0,
+  labels,
 }: StatisticsProps) {
   const formatNumber = (num: number) => {
     if (num >= 1000) {
@@ -48,17 +54,17 @@ export function Statistics({
           <StatCard
             icon={<Sprout className="h-12 w-12" />}
             value={formatNumber(speciesCount)}
-            label="Espécies"
+            label={labels.species}
           />
           <StatCard
             icon={<Camera className="h-12 w-12" />}
             value={formatNumber(photosCount)}
-            label="Fotos"
+            label={labels.photos}
           />
           <StatCard
             icon={<Users className="h-12 w-12" />}
             value={formatNumber(contributorsCount)}
-            label="Contribuidores"
+            label={labels.contributors}
           />
         </div>
       </div>

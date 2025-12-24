@@ -26,6 +26,7 @@ export default async function PhotosReviewPage({ params }: PhotosReviewPageProps
   const { locale } = await params
   const t = await getTranslations(locale, 'reviewQueue')
   const tPhotos = await getTranslations(locale, 'reviewPhotos')
+  const tFooter = await getTranslations(locale, 'footer')
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -76,7 +77,24 @@ export default async function PhotosReviewPage({ params }: PhotosReviewPageProps
         <PendingPhotosList locale={locale} />
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

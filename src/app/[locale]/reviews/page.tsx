@@ -28,6 +28,7 @@ export default async function ReviewsPage({ params, searchParams }: ReviewsPageP
   const { locale } = await params
   const { type } = await searchParams
   const t = await getTranslations(locale, 'reviewQueue')
+  const tFooter = await getTranslations(locale, 'footer')
 
   // Default to 'new' if no type specified
   const submissionType = (type as SubmissionType) || 'new'
@@ -89,7 +90,24 @@ export default async function ReviewsPage({ params, searchParams }: ReviewsPageP
         <ReviewQueueList submissions={queue} locale={locale} />
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

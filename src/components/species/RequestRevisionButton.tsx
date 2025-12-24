@@ -32,7 +32,7 @@ export function RequestRevisionButton({
     if (isLoggedIn) {
       setIsModalOpen(true)
     } else {
-      router.push('/contribute')
+      router.push('/participate')
     }
   }
 

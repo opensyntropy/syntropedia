@@ -90,7 +90,7 @@ export function DiscourseDiscussion({ topicUrl, speciesName }: DiscourseDiscussi
           <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-green-600" />
+                <MessageSquare className="h-5 w-5 text-primary-600" />
                 <span className="font-medium">{t('title')}</span>
                 {postsCount > 0 && (
                   <span className="text-sm text-gray-500">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Search, ChevronDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -16,98 +16,39 @@ interface FilterSidebarProps {
   onFilterChange: (filters: SpeciesFilters) => void
 }
 
-const stratumOptions: { value: Stratum; color: string }[] = [
-  { value: 'EMERGENT', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'HIGH', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'MEDIUM', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { value: 'LOW', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  { value: 'GROUND', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+const stratumOptions: Stratum[] = ['EMERGENT', 'HIGH', 'MEDIUM', 'LOW', 'GROUND']
+
+const successionalStageOptions: SuccessionalStage[] = ['PIONEER', 'EARLY_SECONDARY', 'LATE_SECONDARY', 'CLIMAX']
+
+const lifeCycleOptions: LifeCycle[] = ['ANNUAL', 'BIENNIAL', 'PERENNIAL']
+
+const regionalBiomeOptions: RegionalBiome[] = [
+  'AMAZON', 'ATLANTIC_FOREST', 'TROPICAL_RAINFOREST', 'TROPICAL_DRY_FOREST',
+  'TROPICAL_SAVANNA', 'CERRADO', 'CAATINGA', 'PANTANAL', 'MANGROVE',
+  'SUBTROPICAL_FOREST', 'SUBTROPICAL_GRASSLAND',
+  'TEMPERATE_FOREST', 'TEMPERATE_GRASSLAND', 'PAMPA', 'MEDITERRANEAN', 'CHAPARRAL',
+  'BOREAL_FOREST', 'TAIGA', 'TUNDRA', 'ALPINE', 'DESERT', 'SEMI_ARID'
 ]
 
-const successionalStageOptions: { value: SuccessionalStage; color: string }[] = [
-  { value: 'PIONEER', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
-  { value: 'EARLY_SECONDARY', color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' },
-  { value: 'LATE_SECONDARY', color: 'bg-purple-100 text-purple-700 hover:bg-purple-200' },
-  { value: 'CLIMAX', color: 'bg-violet-100 text-violet-700 hover:bg-violet-200' },
+const globalBiomeOptions: GlobalBiome[] = [
+  'TROPICAL_RAINFOREST', 'TROPICAL_DRY_FOREST', 'TROPICAL_SAVANNA',
+  'SUBTROPICAL_FOREST', 'SUBTROPICAL_GRASSLAND',
+  'TEMPERATE_FOREST', 'TEMPERATE_GRASSLAND', 'MEDITERRANEAN',
+  'BOREAL_FOREST', 'TUNDRA', 'DESERT', 'MANGROVE'
 ]
 
-const lifeCycleOptions: { value: LifeCycle; color: string }[] = [
-  { value: 'ANNUAL', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
-  { value: 'BIENNIAL', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-  { value: 'PERENNIAL', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
+const foliageTypeOptions: FoliageType[] = ['EVERGREEN', 'SEMI_EVERGREEN', 'DECIDUOUS', 'SEMI_DECIDUOUS']
+
+const growthRateOptions: GrowthRate[] = ['VERY_FAST', 'FAST', 'MEDIUM', 'SLOW', 'VERY_SLOW']
+
+const plantUseOptions: PlantUse[] = [
+  'HUMAN_FOOD', 'ANIMAL_FOOD', 'TIMBER', 'MEDICINAL',
+  'ORNAMENTAL', 'SHADE', 'HONEY', 'FIREWOOD'
 ]
 
-const regionalBiomeOptions: { value: RegionalBiome; color: string }[] = [
-  // Tropical
-  { value: 'AMAZON', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'ATLANTIC_FOREST', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { value: 'TROPICAL_RAINFOREST', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'TROPICAL_DRY_FOREST', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-  { value: 'TROPICAL_SAVANNA', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-  { value: 'CERRADO', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-  { value: 'CAATINGA', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
-  { value: 'PANTANAL', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
-  { value: 'MANGROVE', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
-  // Subtropical
-  { value: 'SUBTROPICAL_FOREST', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { value: 'SUBTROPICAL_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  // Temperate
-  { value: 'TEMPERATE_FOREST', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
-  { value: 'TEMPERATE_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  { value: 'PAMPA', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  { value: 'MEDITERRANEAN', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
-  { value: 'CHAPARRAL', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-  // Boreal
-  { value: 'BOREAL_FOREST', color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' },
-  { value: 'TAIGA', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
-  // Cold
-  { value: 'TUNDRA', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200' },
-  { value: 'ALPINE', color: 'bg-gray-100 text-gray-700 hover:bg-gray-200' },
-  // Arid
-  { value: 'DESERT', color: 'bg-red-100 text-red-700 hover:bg-red-200' },
-  { value: 'SEMI_ARID', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
-]
-
-const globalBiomeOptions: { value: GlobalBiome; color: string }[] = [
-  { value: 'TROPICAL_RAINFOREST', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'TROPICAL_DRY_FOREST', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-  { value: 'TROPICAL_SAVANNA', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-  { value: 'SUBTROPICAL_FOREST', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { value: 'SUBTROPICAL_GRASSLAND', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  { value: 'TEMPERATE_FOREST', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
-  { value: 'TEMPERATE_GRASSLAND', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'MEDITERRANEAN', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
-  { value: 'BOREAL_FOREST', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
-  { value: 'TUNDRA', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200' },
-  { value: 'DESERT', color: 'bg-red-100 text-red-700 hover:bg-red-200' },
-  { value: 'MANGROVE', color: 'bg-cyan-100 text-cyan-700 hover:bg-cyan-200' },
-]
-
-const foliageTypeOptions: { value: FoliageType; color: string }[] = [
-  { value: 'EVERGREEN', color: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' },
-  { value: 'SEMI_EVERGREEN', color: 'bg-teal-100 text-teal-700 hover:bg-teal-200' },
-  { value: 'DECIDUOUS', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-  { value: 'SEMI_DECIDUOUS', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-]
-
-const growthRateOptions: { value: GrowthRate; color: string }[] = [
-  { value: 'VERY_FAST', color: 'bg-red-100 text-red-700 hover:bg-red-200' },
-  { value: 'FAST', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
-  { value: 'MEDIUM', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-  { value: 'SLOW', color: 'bg-blue-100 text-blue-700 hover:bg-blue-200' },
-  { value: 'VERY_SLOW', color: 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' },
-]
-
-const plantUseOptions: { value: PlantUse; color: string }[] = [
-  { value: 'HUMAN_FOOD', color: 'bg-green-100 text-green-700 hover:bg-green-200' },
-  { value: 'ANIMAL_FOOD', color: 'bg-lime-100 text-lime-700 hover:bg-lime-200' },
-  { value: 'TIMBER', color: 'bg-amber-100 text-amber-700 hover:bg-amber-200' },
-  { value: 'MEDICINAL', color: 'bg-rose-100 text-rose-700 hover:bg-rose-200' },
-  { value: 'ORNAMENTAL', color: 'bg-pink-100 text-pink-700 hover:bg-pink-200' },
-  { value: 'SHADE', color: 'bg-slate-100 text-slate-700 hover:bg-slate-200' },
-  { value: 'HONEY', color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-  { value: 'FIREWOOD', color: 'bg-orange-100 text-orange-700 hover:bg-orange-200' },
-]
+// Flat style for filter badges
+const selectedBadgeClass = 'bg-primary-100 text-primary-700 border-primary-300'
+const unselectedBadgeClass = 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-transparent'
 
 export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   const tCatalog = useTranslations('catalog')
@@ -127,6 +68,38 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   // Local state for search input (shows what user types immediately)
   const [searchInput, setSearchInput] = useState(filters.search || '')
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Track bottom offset to avoid overlapping footer
+  const [bottomOffset, setBottomOffset] = useState(0)
+
+  // Calculate bottom offset based on footer visibility
+  const calculateBottomOffset = useCallback(() => {
+    const footer = document.querySelector('footer')
+    if (!footer) return
+
+    const footerRect = footer.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+
+    // If footer is visible in viewport, adjust bottom offset
+    if (footerRect.top < viewportHeight) {
+      const overlap = viewportHeight - footerRect.top
+      setBottomOffset(Math.max(0, overlap))
+    } else {
+      setBottomOffset(0)
+    }
+  }, [])
+
+  // Listen to scroll and resize events
+  useEffect(() => {
+    calculateBottomOffset()
+    window.addEventListener('scroll', calculateBottomOffset, { passive: true })
+    window.addEventListener('resize', calculateBottomOffset, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', calculateBottomOffset)
+      window.removeEventListener('resize', calculateBottomOffset)
+    }
+  }, [calculateBottomOffset])
 
   // Sync local search input when filters.search changes externally (e.g., clear filters)
   useEffect(() => {
@@ -198,7 +171,10 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
   }
 
   return (
-    <aside className="hidden lg:block fixed left-0 top-16 bottom-0 w-[300px] bg-white border-r border-gray-200 overflow-y-auto z-40">
+    <aside
+      className="hidden lg:block fixed left-0 top-16 w-[300px] bg-white border-r border-gray-200 overflow-y-auto z-40 transition-all duration-150"
+      style={{ bottom: `${bottomOffset}px` }}
+    >
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">{tCatalog('filters')}</h2>
@@ -244,15 +220,15 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                 <div className="flex flex-wrap gap-2">
                   {stratumOptions.map(option => (
                     <Badge
-                      key={option.value}
+                      key={option}
                       className={`cursor-pointer rounded-full border-2 transition-all ${
-                        filters.stratum?.includes(option.value)
-                          ? option.color + ' border-current'
-                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        filters.stratum?.includes(option)
+                          ? selectedBadgeClass
+                          : unselectedBadgeClass
                       }`}
-                      onClick={() => toggleFilter('stratum', option.value)}
+                      onClick={() => toggleFilter('stratum', option)}
                     >
-                      {tStratum(option.value)}
+                      {tStratum(option)}
                     </Badge>
                   ))}
                 </div>
@@ -281,15 +257,15 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                 <div className="flex flex-wrap gap-2">
                   {successionalStageOptions.map(option => (
                     <Badge
-                      key={option.value}
+                      key={option}
                       className={`cursor-pointer rounded-full border-2 transition-all ${
-                        filters.successionalStage?.includes(option.value)
-                          ? option.color + ' border-current'
-                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        filters.successionalStage?.includes(option)
+                          ? selectedBadgeClass
+                          : unselectedBadgeClass
                       }`}
-                      onClick={() => toggleFilter('successionalStage', option.value)}
+                      onClick={() => toggleFilter('successionalStage', option)}
                     >
-                      {tStage(option.value)}
+                      {tStage(option)}
                     </Badge>
                   ))}
                 </div>
@@ -344,15 +320,15 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                 <div className="flex flex-wrap gap-2">
                   {lifeCycleOptions.map(option => (
                     <Badge
-                      key={option.value}
+                      key={option}
                       className={`cursor-pointer rounded-full border-2 transition-all ${
-                        filters.lifeCycle?.includes(option.value)
-                          ? option.color + ' border-current'
-                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        filters.lifeCycle?.includes(option)
+                          ? selectedBadgeClass
+                          : unselectedBadgeClass
                       }`}
-                      onClick={() => toggleFilter('lifeCycle', option.value)}
+                      onClick={() => toggleFilter('lifeCycle', option)}
                     >
-                      {tLifeCycle(option.value)}
+                      {tLifeCycle(option)}
                     </Badge>
                   ))}
                 </div>
@@ -378,8 +354,8 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
               <CollapsibleContent className="space-y-2">
                 <MultiSelect
                   options={regionalBiomeOptions.map(option => ({
-                    value: option.value,
-                    label: tRegionalBiome(option.value)
+                    value: option,
+                    label: tRegionalBiome(option)
                   }))}
                   value={filters.regionalBiome || []}
                   onChange={(value) => {
@@ -412,8 +388,8 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
               <CollapsibleContent className="space-y-2">
                 <MultiSelect
                   options={globalBiomeOptions.map(option => ({
-                    value: option.value,
-                    label: tGlobalBiome(option.value)
+                    value: option,
+                    label: tGlobalBiome(option)
                   }))}
                   value={filters.globalBiome || []}
                   onChange={(value) => {
@@ -447,15 +423,15 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                 <div className="flex flex-wrap gap-2">
                   {foliageTypeOptions.map(option => (
                     <Badge
-                      key={option.value}
+                      key={option}
                       className={`cursor-pointer rounded-full border-2 transition-all ${
-                        filters.foliageType?.includes(option.value)
-                          ? option.color + ' border-current'
-                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        filters.foliageType?.includes(option)
+                          ? selectedBadgeClass
+                          : unselectedBadgeClass
                       }`}
-                      onClick={() => toggleFilter('foliageType', option.value)}
+                      onClick={() => toggleFilter('foliageType', option)}
                     >
-                      {tFoliage(option.value)}
+                      {tFoliage(option)}
                     </Badge>
                   ))}
                 </div>
@@ -482,15 +458,15 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                 <div className="flex flex-wrap gap-2">
                   {growthRateOptions.map(option => (
                     <Badge
-                      key={option.value}
+                      key={option}
                       className={`cursor-pointer rounded-full border-2 transition-all ${
-                        filters.growthRate?.includes(option.value)
-                          ? option.color + ' border-current'
-                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        filters.growthRate?.includes(option)
+                          ? selectedBadgeClass
+                          : unselectedBadgeClass
                       }`}
-                      onClick={() => toggleFilter('growthRate', option.value)}
+                      onClick={() => toggleFilter('growthRate', option)}
                     >
-                      {tGrowth(option.value)}
+                      {tGrowth(option)}
                     </Badge>
                   ))}
                 </div>
@@ -517,15 +493,15 @@ export function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
                 <div className="flex flex-wrap gap-2">
                   {plantUseOptions.map(option => (
                     <Badge
-                      key={option.value}
+                      key={option}
                       className={`cursor-pointer rounded-full border-2 transition-all ${
-                        filters.uses?.includes(option.value)
-                          ? option.color + ' border-current'
-                          : 'border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        filters.uses?.includes(option)
+                          ? selectedBadgeClass
+                          : unselectedBadgeClass
                       }`}
-                      onClick={() => toggleFilter('uses', option.value)}
+                      onClick={() => toggleFilter('uses', option)}
                     >
-                      {tUse(option.value)}
+                      {tUse(option)}
                     </Badge>
                   ))}
                 </div>

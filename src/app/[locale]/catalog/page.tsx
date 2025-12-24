@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { type SpeciesListItem, type SpeciesFilters } from '@/types/species'
 import { parseArrayParam, parseBooleanParam, parseNumberParam } from '@/lib/filterParams'
 import { Prisma } from '@prisma/client'
+import { getTranslations } from '@/lib/getTranslations'
 
 interface CatalogoPageProps {
   params: { locale: string }
@@ -154,6 +155,9 @@ export default async function CatalogoPage({ params, searchParams }: CatalogoPag
   const { species, totalCount } = await getFilteredSpecies(filters, page, pageSize)
   const totalPages = Math.ceil(totalCount / pageSize)
 
+  // Get footer translations
+  const tFooter = await getTranslations(params.locale, 'footer')
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -172,7 +176,24 @@ export default async function CatalogoPage({ params, searchParams }: CatalogoPag
         </div>
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

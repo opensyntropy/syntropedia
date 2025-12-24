@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { TreeDeciduous, Clock, Apple } from 'lucide-react'
 import { type SpeciesListItem } from '@/types/species'
@@ -11,27 +10,6 @@ import { useTranslations } from '@/lib/IntlProvider'
 
 interface SpeciesTableProps {
   species: SpeciesListItem[]
-}
-
-const stratumColors: Record<string, string> = {
-  EMERGENT: 'bg-green-100 text-green-700',
-  CANOPY: 'bg-green-100 text-green-700',
-  SUBCANOPY: 'bg-emerald-100 text-emerald-700',
-  UNDERSTORY: 'bg-lime-100 text-lime-700',
-  GROUND_COVER: 'bg-yellow-100 text-yellow-700',
-}
-
-const successionalStageColors: Record<string, string> = {
-  PIONEER: 'bg-blue-100 text-blue-700',
-  EARLY_SECONDARY: 'bg-indigo-100 text-indigo-700',
-  LATE_SECONDARY: 'bg-purple-100 text-purple-700',
-  CLIMAX: 'bg-violet-100 text-violet-700',
-}
-
-const lifeCycleColors: Record<string, string> = {
-  ANNUAL: 'bg-orange-100 text-orange-700',
-  BIENNIAL: 'bg-amber-100 text-amber-700',
-  PERENNIAL: 'bg-teal-100 text-teal-700',
 }
 
 export function SpeciesTable({ species }: SpeciesTableProps) {
@@ -132,18 +110,18 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
                   <div className="lg:hidden">
                     <span className="text-xs font-medium text-gray-500">{t('stratum')}:</span>
                   </div>
-                  <Badge className={`rounded-full ${stratumColors[specie.stratum]}`}>
+                  <span className="badge-gradient">
                     {tStratum(specie.stratum)}
-                  </Badge>
+                  </span>
                 </div>
 
                 <div className="flex flex-wrap gap-2 lg:block lg:space-y-1">
                   <div className="lg:hidden">
                     <span className="text-xs font-medium text-gray-500">{t('stage')}:</span>
                   </div>
-                  <Badge className={`rounded-full ${successionalStageColors[specie.successionalStage]}`}>
+                  <span className="badge-gradient">
                     {tStage(specie.successionalStage)}
-                  </Badge>
+                  </span>
                 </div>
 
                 {specie.lifeCycle && (
@@ -151,9 +129,9 @@ export function SpeciesTable({ species }: SpeciesTableProps) {
                     <div className="lg:hidden">
                       <span className="text-xs font-medium text-gray-500">{t('lifeCycle')}:</span>
                     </div>
-                    <Badge className={`rounded-full ${lifeCycleColors[specie.lifeCycle]}`}>
+                    <span className="badge-gradient">
                       {tLifeCycle(specie.lifeCycle)}
-                    </Badge>
+                    </span>
                   </div>
                 )}
               </div>

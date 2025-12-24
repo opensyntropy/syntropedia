@@ -150,8 +150,8 @@ export function SubmitPhotoModal({
       <Card className="relative z-10 w-full max-w-2xl mx-4 shadow-xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-full">
-              <Camera className="h-5 w-5 text-green-600" />
+            <div className="p-2 bg-primary-100 rounded-full">
+              <Camera className="h-5 w-5 text-primary-600" />
             </div>
             <div>
               <CardTitle>{labels.title}</CardTitle>
@@ -183,12 +183,12 @@ export function SubmitPhotoModal({
 
           {success ? (
             <div className="text-center py-6">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p className="text-green-700 font-medium">{labels.success}</p>
+              <p className="text-primary-700 font-medium">{labels.success}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -219,7 +219,7 @@ export function SubmitPhotoModal({
                 <Button
                   type="submit"
                   disabled={isSubmitting || photos.length === 0}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-primary-600 hover:bg-primary-700"
                 >
                   {isSubmitting ? (
                     <>

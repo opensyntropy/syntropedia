@@ -30,7 +30,7 @@ export default function AccountPage() {
     .slice(0, 2) || '?'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-syntropy-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">

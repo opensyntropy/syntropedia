@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { User, Users, Settings, LogOut, Shield, Award } from 'lucide-react'
+import { User, Users, LogOut, Shield, Award } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -29,7 +29,7 @@ export function UserMenu() {
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
-          className="rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-50"
+          className="rounded-full border-2 border-primary-600 text-primary-600 hover:bg-primary-100 hover:text-primary-700"
           asChild
         >
           <Link href="/auth/signin">{t('login')}</Link>
@@ -38,7 +38,7 @@ export function UserMenu() {
           className="rounded-full bg-primary-600 text-white hover:bg-primary-700"
           asChild
         >
-          <Link href="/contribute">{t('participate')}</Link>
+          <Link href="/participate">{t('participate')}</Link>
         </Button>
       </div>
     )
@@ -111,12 +111,6 @@ export function UserMenu() {
           <Link href="/account" className="flex cursor-pointer items-center">
             <User className="mr-2 h-4 w-4" />
             <span>{t('myAccount')}</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/account/settings" className="flex cursor-pointer items-center">
-            <Settings className="mr-2 h-4 w-4" />
-            <span>{t('settings')}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

@@ -18,6 +18,7 @@ export default async function BecomeReviewerPage({ params }: BecomeReviewerPageP
   const session = await getSession()
   const { locale } = await params
   const t = await getTranslations(locale, 'becomeReviewer')
+  const tFooter = await getTranslations(locale, 'footer')
 
   // If user is already a reviewer, show message
   if (session?.user && isReviewer(session)) {
@@ -38,7 +39,24 @@ export default async function BecomeReviewerPage({ params }: BecomeReviewerPageP
             </CardContent>
           </Card>
         </main>
-        <Footer />
+        <Footer
+          labels={{
+            description: tFooter('description'),
+            project: tFooter('project'),
+            about: tFooter('about'),
+            catalog: tFooter('catalog'),
+            contribute: tFooter('contribute'),
+            community: tFooter('community'),
+            forum: tFooter('forum'),
+            github: tFooter('github'),
+            discussions: tFooter('discussions'),
+            legal: tFooter('legal'),
+            mitLicense: tFooter('mitLicense'),
+            ccLicense: tFooter('ccLicense'),
+            privacy: tFooter('privacy'),
+            copyright: tFooter('copyright'),
+          }}
+        />
       </div>
     )
   }
@@ -150,7 +168,24 @@ export default async function BecomeReviewerPage({ params }: BecomeReviewerPageP
         </div>
       </main>
 
-      <Footer />
+      <Footer
+        labels={{
+          description: tFooter('description'),
+          project: tFooter('project'),
+          about: tFooter('about'),
+          catalog: tFooter('catalog'),
+          contribute: tFooter('contribute'),
+          community: tFooter('community'),
+          forum: tFooter('forum'),
+          github: tFooter('github'),
+          discussions: tFooter('discussions'),
+          legal: tFooter('legal'),
+          mitLicense: tFooter('mitLicense'),
+          ccLicense: tFooter('ccLicense'),
+          privacy: tFooter('privacy'),
+          copyright: tFooter('copyright'),
+        }}
+      />
     </div>
   )
 }

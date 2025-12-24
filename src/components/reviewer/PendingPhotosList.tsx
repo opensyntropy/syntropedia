@@ -259,7 +259,7 @@ export function PendingPhotosList({ locale = 'en' }: PendingPhotosListProps) {
               <div className="mb-3">
                 <Link
                   href={`/species/${photo.species.slug}`}
-                  className="font-medium text-gray-900 hover:text-green-600 flex items-center gap-1"
+                  className="font-medium text-gray-900 hover:text-primary-600 flex items-center gap-1"
                 >
                   <span className="italic">{photo.species.scientificName}</span>
                   <ExternalLink className="h-3 w-3" />
@@ -278,7 +278,7 @@ export function PendingPhotosList({ locale = 'en' }: PendingPhotosListProps) {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="flex-1 border-green-300 text-green-700 hover:bg-green-50"
+                  className="flex-1 border-primary-300 text-primary-700 hover:bg-primary-50"
                   onClick={() => handleApprove(photo.id)}
                   disabled={processingIds.has(photo.id)}
                 >
